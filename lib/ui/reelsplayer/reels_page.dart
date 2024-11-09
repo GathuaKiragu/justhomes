@@ -8,13 +8,15 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
-import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
-import 'package:just_apartment_live/ui/reelsplayer/comment_popup.dart';
 import 'package:just_apartment_live/ui/reelsplayer/video.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class ReelsPage extends StatefulWidget {
   @override
@@ -30,22 +32,54 @@ class _ReelsPageState extends State<ReelsPage> {
   @override
   void initState() {
     super.initState();
+    _checkCachedVideos(); 
     _fetchVideos();
   }
 
-  Future<void> _fetchVideos() async {
-    final postData = {'key': 'value'};
-    final response = await http.post(
-      Uri.parse('https://justhomes.co.ke/api/reels/get-videos'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(postData),
-    );
+  Future<void> _checkCachedVideos() async {
+    // Check connectivity status
+    var connectivityResult = await Connectivity().checkConnectivity();
+    bool isConnected = connectivityResult != ConnectivityResult.none;
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data['success']) {
+    // Load cached videos if available
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cachedVideos = prefs.getString('cachedVideos');
+    
+    if (cachedVideos != null) {
+      if (mounted) {
         setState(() {
-          videos = (data['data'] as List).map((video) {
+          videos = (json.decode(cachedVideos) as List)
+              .map((videoData) => Video.fromJson(videoData))
+              .toList();
+        });
+      }
+      logger.i("Loaded cached videos, count: ${videos.length}");
+    }
+
+    // Fetch new videos only if online
+    if (isConnected) {
+      await _fetchVideos();
+    } else if (cachedVideos == null) {
+    
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No internet connection")),
+      );
+    }
+  }
+
+  Future<void> _fetchVideos() async {
+    try {
+      final postData = {'key': 'value'};
+      final response = await http.post(
+        Uri.parse('${Configuration.API_URL}reels/get-videos'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(postData),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success']) {
+          List<Video> newVideos = (data['data'] as List).map((video) {
             return Video(
               id: video['id'],
               url: 'https://justhomes.co.ke/${video['video_path']}',
@@ -56,9 +90,77 @@ class _ReelsPageState extends State<ReelsPage> {
               comments: video['comments'],
             );
           }).toList();
-        });
+
+          // Update UI and cache if the widget is still mounted
+          if (mounted) {
+            setState(() {
+              videos = newVideos;
+            });
+
+            // Cache videos as JSON
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString('cachedVideos', json.encode(newVideos.map((video) => video.toJson()).toList()));
+            logger.i("Caching videos, count: ${newVideos.length}");
+          }
+        }
+      } else {
+        logger.e("Failed to fetch videos, status code: ${response.statusCode}");
       }
+    } catch (e) {
+      logger.e("Error fetching videos: $e");
     }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 35.0),
+        child: FloatingActionButton(
+          onPressed: _showVideoOptions,
+          backgroundColor: Colors.purple,
+          child: FaIcon(
+            FontAwesomeIcons.plus,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.vertical,
+            itemCount: videos.length,
+            onPageChanged: (index) async {
+              if (mounted) {
+                setState(() {
+                  _currentPageIndex = index;
+                });
+              }
+            },
+            itemBuilder: (context, index) {
+              final video = videos[index];
+              return CachedVlcPlayerWidget(
+                videoUrl: video.url,
+                user: video.user,
+                caption: video.caption,
+                likes: video.likes.toString(),
+                shares: video.shares.toString(),
+                comments: video.comments,
+                videoID: video.id,
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   void _showVideoOptions() {
@@ -125,53 +227,9 @@ class _ReelsPageState extends State<ReelsPage> {
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 35.0),
-        child: FloatingActionButton(
-          onPressed: _showVideoOptions,
-          backgroundColor: Colors.purple,
-          child: FaIcon(
-            FontAwesomeIcons.plus,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            scrollDirection: Axis.vertical,
-            itemCount: videos.length,
-            onPageChanged: (index) async {
-              setState(() {
-                _currentPageIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              final video = videos[index];
-              return VlcPlayerWidget(
-                videoUrl: video.url,
-                user: video.user,
-                caption: video.caption,
-                likes: video.likes.toString(),
-                shares: video.shares.toString(),
-                comments: video.comments,
-                videoID: video.id,
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-class VlcPlayerWidget extends StatefulWidget {
+class CachedVlcPlayerWidget extends StatefulWidget {
   final int videoID;
   final String videoUrl;
   final String user;
@@ -180,7 +238,7 @@ class VlcPlayerWidget extends StatefulWidget {
   final String shares;
   final List comments;
 
-  VlcPlayerWidget({
+  CachedVlcPlayerWidget({
     required this.videoID,
     required this.videoUrl,
     required this.user,
@@ -191,30 +249,40 @@ class VlcPlayerWidget extends StatefulWidget {
   });
 
   @override
-  _VlcPlayerWidgetState createState() => _VlcPlayerWidgetState();
+  _CachedVlcPlayerWidgetState createState() => _CachedVlcPlayerWidgetState();
 }
 
-class _VlcPlayerWidgetState extends State<VlcPlayerWidget> {
+class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
   late VlcPlayerController _vlcPlayerController;
   bool _isMuted = false;
   bool _isPlaying = true;
+  File? _cachedFile;
 
   @override
   void initState() {
     super.initState();
-    _vlcPlayerController = VlcPlayerController.network(
-      widget.videoUrl,
+    _loadVideo();
+  }
+
+  Future<void> _loadVideo() async {
+    final cachedFile = await DefaultCacheManager().getSingleFile(widget.videoUrl);
+    _cachedFile = cachedFile;
+    _vlcPlayerController = VlcPlayerController.file(
+      _cachedFile!,
       hwAcc: HwAcc.full,
       autoPlay: true,
       options: VlcPlayerOptions(),
     );
 
     _vlcPlayerController.addListener(_onPlayerStateChange);
+    if (mounted) {
+      setState(() {});  
+    }
   }
 
   void _onPlayerStateChange() {
     if (_vlcPlayerController.value.isEnded) {
-      // Handle video end
+       
     }
   }
 
@@ -245,82 +313,85 @@ class _VlcPlayerWidgetState extends State<VlcPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: Container(
-            color: Colors.black,
-            child: VlcPlayer(
-              controller: _vlcPlayerController,
-              aspectRatio: 9 / 16,
-              placeholder: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          top: 60,
-          left: 15,
-          right: 15,
-          child: Row(
+    return _cachedFile == null
+        ? Center(child: CircularProgressIndicator())
+        : Stack(
             children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => DashBoardPage()),
-                  );
-                },
-              ),
-              Spacer(),
-              IconButton(
-                icon: Icon(
-                  _isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: Colors.white,
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black,
+                  child: VlcPlayer(
+                    controller: _vlcPlayerController,
+                    aspectRatio: 9 / 16,
+                    placeholder: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
                 ),
-                onPressed: _togglePlayPause,
+              ),
+              Positioned(
+                top: 60,
+                left: 15,
+                right: 15,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => DashBoardPage()),
+                        );
+                      },
+                    ),
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(
+                        _isPlaying ? Icons.pause : Icons.play_arrow,
+                        color: Colors.white,
+                      ),
+                      onPressed: _togglePlayPause,
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 55,
+                left: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '@${widget.user}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      widget.caption,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 55,
+                right: 20,
+                child: IconButton(
+                  icon: Icon(
+                    _isMuted ? Icons.volume_off : Icons.volume_up,
+                    color: Colors.white,
+                  ),
+                  onPressed: _toggleMute,
+                ),
               ),
             ],
-          ),
-        ),
-        Positioned(
-          bottom: 55,
-          left: 20,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '@${widget.user}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                widget.caption,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: 55,
-          right: 20,
-          child: IconButton(
-            icon: Icon(
-              _isMuted ? Icons.volume_off : Icons.volume_up,
-              color: Colors.white,
-            ),
-            onPressed: _toggleMute,
-          ),
-        ),
-      ],
-    );
+          );
   }
 }
+

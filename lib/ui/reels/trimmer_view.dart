@@ -39,11 +39,10 @@ class _TrimmerViewState extends State<TrimmerView> {
   }
 
   Future<File?> _captureScreenshot() async {
-    // Get a thumbnail image from the video file
     final uint8List = await VideoThumbnail.thumbnailData(
       video: widget.file.path,
       imageFormat: ImageFormat.PNG,
-      maxWidth: 1280, // specify the width of the thumbnail
+      maxWidth: 1280, 
       quality: 75,
     );
 

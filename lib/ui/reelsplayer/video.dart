@@ -16,4 +16,29 @@ class Video {
     required this.shares,
     required this.comments,
   });
+
+    Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'url': url,
+      'user': user,
+      'caption': caption,
+      'likes': likes,
+      'shares': shares,
+      'comments': comments,
+    };
+  }
+
+  // Optionally, add a fromJson factory constructor to easily convert JSON back to a Video instance
+  factory Video.fromJson(Map<String, dynamic> json) {
+    return Video(
+      id: json['id'],
+      url: json['url'],
+      user: json['user'],
+      caption: json['caption'],
+      likes: json['likes'],
+      shares: json['shares'],
+      comments: json['comments'] as List,
+    );
+  }
 }
