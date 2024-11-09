@@ -83,31 +83,85 @@ class _ReelsPageState extends State<ReelsPage> {
     }
   }
 
-  Future<void> _pickVideo() async {
-    // Request permission to access storage
-    var status = await Permission.storage.request();
-    if (status.isGranted) {
-      // If permission is granted, pick the video file
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.video,
-        allowCompression: false,
-      );
-      if (result != null) {
-        final file = File(result.files.single.path!);
+ Future<void> _pickVideo() async {
+  // Request permission to access storage
+  var status = await Permission.storage.request();
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => TrimmerView(file),
-          ),
-        );
-      }
-    } else {
-      // Handle the case when permission is denied
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Permission to access storage denied')),
+  if (status.isGranted) {
+    // If permission is granted, pick the video file
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.video,
+      allowCompression: false,
+    );
+    if (result != null) {
+      final file = File(result.files.single.path!);
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrimmerView(file),
+        ),
       );
     }
+  } else if (status.isDenied) {
+    // Show dialog if permission is denied
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Storage Permission Required'),
+        content: Text(
+            'This app needs storage access to pick videos. Please allow access.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              var newStatus = await Permission.storage.request();
+              if (newStatus.isGranted) {
+                _pickVideo(); // Retry picking the video
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Permission to access storage denied')),
+                );
+              }
+            },
+            child: Text('Allow'),
+          ),
+        ],
+      ),
+    );
+  } else if (status.isPermanentlyDenied) {
+    // Handle permanently denied permission with settings option
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Storage Permission Required'),
+        content: Text(
+            'Storage access is required to pick videos. Please enable it in app settings.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              openAppSettings(); // Open app settings for manual permission
+            },
+            child: Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
