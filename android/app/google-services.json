@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "628362219313",
+    "project_id": "justhomes-e2e83",
+    "storage_bucket": "justhomes-e2e83.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628362219313:android:f925b9017343d170f16a10",
+        "android_client_info": {
+          "package_name": "net.justapartments.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628362219313-2d8jok6hposldmmp4ibkhvhqq7ghjrmh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8QlDtYOh_aQV8M95wwCoOJaJaEFORMoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628362219313-2d8jok6hposldmmp4ibkhvhqq7ghjrmh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

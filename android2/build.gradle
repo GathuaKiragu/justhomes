@@ -1,0 +1,37 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+buildscript {
+
+    repositories {
+        google()
+        //jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        // Using gradle plugin version 4.1.1
+        // classpath 'com.android.tools.build:gradle:4.1.1'
+        // classpath 'com.google.gms:google-services:4.4.0'
+
+        classpath 'com.android.tools.build:gradle:7.0.0' // Use a newer version
+        classpath 'com.google.gms:google-services:4.4.0' // This can remain
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10" // Add 
+    }
+}
