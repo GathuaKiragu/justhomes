@@ -11,6 +11,7 @@ import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
 import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
 import 'package:just_apartment_live/ui/reelsplayer/video.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -18,7 +19,30 @@ import 'package:logger/logger.dart';
 
 import '../login/login.dart';
 
+
 final logger = Logger();
+
+
+// import 'dart:async';
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:image_picker/image_picker.dart';
+// import 'package:just_apartment_live/models/configuration.dart';
+// import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
+// import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
+// import 'package:just_apartment_live/ui/reelsplayer/video.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:logger/logger.dart';
+// import '../login/login.dart';
+
+// final logger = Logger();
 
 class ReelsPage extends StatefulWidget {
   @override
@@ -39,57 +63,38 @@ class _ReelsPageState extends State<ReelsPage> {
     _checkCachedVideos(); 
     _fetchVideos();
     _loadUser();
-    
   }
 
-       Future<void> _loadUser() async {
+  Future<void> _loadUser() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
-    print('User Details: $user');
-    print('User id: ${user['id']}');
-
-    // {id: 122, name: Ruth west, email: ruthwestke@gmail.com, telephone:
-
-
-    if (user.isEmpty) {
-      setState(() {
-        _hasLoggedIn = false;
-        _userID = user['id'];
-      });
-
-    } else {
+    if (user.isNotEmpty) {
       setState(() {
         _hasLoggedIn = true;
+        _userID = user['id'];
       });
     }
-   
   }
 
   Future<void> _checkCachedVideos() async {
-    // Check connectivity status
     var connectivityResult = await Connectivity().checkConnectivity();
     bool isConnected = connectivityResult != ConnectivityResult.none;
 
-    // Load cached videos if available
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? cachedVideos = prefs.getString('cachedVideos');
     
     if (cachedVideos != null) {
-      if (mounted) {
-        setState(() {
-          videos = (json.decode(cachedVideos) as List)
-              .map((videoData) => Video.fromJson(videoData))
-              .toList();
-        });
-      }
+      setState(() {
+        videos = (json.decode(cachedVideos) as List)
+            .map((videoData) => Video.fromJson(videoData))
+            .toList();
+      });
       logger.i("Loaded cached videos, count: ${videos.length}");
     }
 
-    // Fetch new videos only if online
     if (isConnected) {
       await _fetchVideos();
     } else if (cachedVideos == null) {
-    
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("No internet connection")),
       );
@@ -120,17 +125,13 @@ class _ReelsPageState extends State<ReelsPage> {
             );
           }).toList();
 
-          // Update UI and cache if the widget is still mounted
-          if (mounted) {
-            setState(() {
-              videos = newVideos;
-            });
+          setState(() {
+            videos = newVideos;
+          });
 
-            // Cache videos as JSON
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString('cachedVideos', json.encode(newVideos.map((video) => video.toJson()).toList()));
-            logger.i("Caching videos, count: ${newVideos.length}");
-          }
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('cachedVideos', json.encode(newVideos.map((video) => video.toJson()).toList()));
+          logger.i("Caching videos, count: ${newVideos.length}");
         }
       } else {
         logger.e("Failed to fetch videos, status code: ${response.statusCode}");
@@ -167,23 +168,21 @@ class _ReelsPageState extends State<ReelsPage> {
             controller: _pageController,
             scrollDirection: Axis.vertical,
             itemCount: videos.length,
-            onPageChanged: (index) async {
-              if (mounted) {
-                setState(() {
-                  _currentPageIndex = index;
-                });
-              }
+            onPageChanged: (index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
             },
             itemBuilder: (context, index) {
               final video = videos[index];
               return CachedVlcPlayerWidget(
+                videoID: video.id,
                 videoUrl: video.url,
                 user: video.user,
                 caption: video.caption,
                 likes: video.likes.toString(),
                 shares: video.shares.toString(),
                 comments: video.comments,
-                videoID: video.id,
               );
             },
           ),
@@ -191,6 +190,7 @@ class _ReelsPageState extends State<ReelsPage> {
       ),
     );
   }
+
 
   void _showVideoOptions() {
     showModalBottomSheet(
@@ -288,7 +288,18 @@ class _ReelsPageState extends State<ReelsPage> {
       },
     );
   }
+  Future<void> _pickVideoFromGallery() async {
+    final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
 
+    if (videoFile != null) {
+      final file = File(videoFile.path);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrimmerView(file),
+        ),
+      );
+    }
+  }
   Future<void> _recordVideo() async {
     final XFile? videoFile = await _picker.pickVideo(
       source: ImageSource.camera,
@@ -306,17 +317,24 @@ class _ReelsPageState extends State<ReelsPage> {
     }
   }
 
-  Future<void> _pickVideoFromGallery() async {
-    final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
-
-    if (videoFile != null) {
-      final file = File(videoFile.path);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TrimmerView(file),
-        ),
-      );
-    }
+  Future<void> _showLoginPrompt() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Please log in or create an account first', style: TextStyle(fontSize: 15)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+              child: Text('Log in'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -348,11 +366,17 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
   bool _isMuted = false;
   bool _isPlaying = true;
   File? _cachedFile;
+  bool _isLiked = false;
+  late int  _likesCount;
+  late int  _shareCount;
 
   @override
   void initState() {
     super.initState();
+    _likesCount = int.parse(widget.likes);
+    _shareCount = int.parse(widget.shares);
     _loadVideo();
+    _loadLikeStatus();
   }
 
   Future<void> _loadVideo() async {
@@ -367,14 +391,38 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
 
     _vlcPlayerController.addListener(_onPlayerStateChange);
     if (mounted) {
-      setState(() {});  
+      setState(() {});
     }
   }
 
-  void _onPlayerStateChange() {
+    void _onPlayerStateChange() {
     if (_vlcPlayerController.value.isEnded) {
        
     }
+  }
+
+  Future<void> _toggleLike() async {
+    setState(() {
+      _isLiked = !_isLiked;
+      _isLiked ? _likesCount++ : _likesCount--;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLiked_${widget.videoID}', _isLiked);
+    // Update the like status on the server if required
+  }
+
+  Future<void> _shareVideo() async {
+    setState(() {
+      _shareCount++;
+    });
+    Share.share(widget.videoUrl);
+    // Update the share count on the server if required
+  }
+
+  Future<void> _loadLikeStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _isLiked = prefs.getBool('isLiked_${widget.videoID}') ?? false;
+    setState(() {});
   }
 
   @override
@@ -471,6 +519,40 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
                 ),
               ),
               Positioned(
+                bottom: 120,
+                right: 20,
+                child: Column(
+                  children: [
+                    IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.solidHeart,
+                        color: _isLiked ? Colors.red : Colors.white,
+                      ),
+                      onPressed: _toggleLike,
+                    ),
+                    Text(
+                      _likesCount.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    IconButton(
+                      icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
+                      onPressed: _shareVideo,
+                    ),
+                    Text(
+                      _shareCount.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
                 bottom: 55,
                 right: 20,
                 child: IconButton(
@@ -485,4 +567,470 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
           );
   }
 }
+
+// class ReelsPage extends StatefulWidget {
+//   @override
+//   _ReelsPageState createState() => _ReelsPageState();
+// }
+
+// class _ReelsPageState extends State<ReelsPage> {
+//   final PageController _pageController = PageController();
+//   final ImagePicker _picker = ImagePicker();
+//   int _currentPageIndex = 0;
+//   List<Video> videos = [];
+//   bool _hasLoggedIn = false;
+//   int _userID = 0;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _checkCachedVideos(); 
+//     _fetchVideos();
+//     _loadUser();
+    
+//   }
+
+//        Future<void> _loadUser() async {
+//     SharedPreferences localStorage = await SharedPreferences.getInstance();
+//     var user = json.decode(localStorage.getString('user') ?? '{}');
+//     print('User Details: $user');
+//     print('User id: ${user['id']}');
+
+//     // {id: 122, name: Ruth west, email: ruthwestke@gmail.com, telephone:
+
+
+//     if (user.isEmpty) {
+//       setState(() {
+//         _hasLoggedIn = false;
+//         _userID = user['id'];
+//       });
+
+//     } else {
+//       setState(() {
+//         _hasLoggedIn = true;
+//       });
+//     }
+   
+//   }
+
+//   Future<void> _checkCachedVideos() async {
+//     // Check connectivity status
+//     var connectivityResult = await Connectivity().checkConnectivity();
+//     bool isConnected = connectivityResult != ConnectivityResult.none;
+
+//     // Load cached videos if available
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     String? cachedVideos = prefs.getString('cachedVideos');
+    
+//     if (cachedVideos != null) {
+//       if (mounted) {
+//         setState(() {
+//           videos = (json.decode(cachedVideos) as List)
+//               .map((videoData) => Video.fromJson(videoData))
+//               .toList();
+//         });
+//       }
+//       logger.i("Loaded cached videos, count: ${videos.length}");
+//     }
+
+//     // Fetch new videos only if online
+//     if (isConnected) {
+//       await _fetchVideos();
+//     } else if (cachedVideos == null) {
+    
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text("No internet connection")),
+//       );
+//     }
+//   }
+
+//   Future<void> _fetchVideos() async {
+//     try {
+//       final postData = {'key': 'value'};
+//       final response = await http.post(
+//         Uri.parse('${Configuration.API_URL}reels/get-videos'),
+//         headers: {'Content-Type': 'application/json'},
+//         body: json.encode(postData),
+//       );
+
+//       if (response.statusCode == 200) {
+//         final data = json.decode(response.body);
+//         if (data['success']) {
+//           List<Video> newVideos = (data['data'] as List).map((video) {
+//             return Video(
+//               id: video['id'],
+//               url: 'https://justhomes.co.ke/${video['video_path']}',
+//               user: video['user']['name'],
+//               caption: video['description'] ?? '',
+//               likes: video['likes'],
+//               shares: video['shares'],
+//               comments: video['comments'],
+//             );
+//           }).toList();
+
+//           // Update UI and cache if the widget is still mounted
+//           if (mounted) {
+//             setState(() {
+//               videos = newVideos;
+//             });
+
+//             // Cache videos as JSON
+//             SharedPreferences prefs = await SharedPreferences.getInstance();
+//             prefs.setString('cachedVideos', json.encode(newVideos.map((video) => video.toJson()).toList()));
+//             logger.i("Caching videos, count: ${newVideos.length}");
+//           }
+//         }
+//       } else {
+//         logger.e("Failed to fetch videos, status code: ${response.statusCode}");
+//       }
+//     } catch (e) {
+//       logger.e("Error fetching videos: $e");
+//     }
+//   }
+
+//   @override
+//   void dispose() {
+//     _pageController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       floatingActionButton: Padding(
+//         padding: const EdgeInsets.only(bottom: 35.0),
+//         child: FloatingActionButton(
+//           onPressed: _showVideoOptions,
+//           backgroundColor: Colors.purple,
+//           child: FaIcon(
+//             FontAwesomeIcons.plus,
+//             color: Colors.white,
+//           ),
+//         ),
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+//       body: Stack(
+//         children: [
+//           PageView.builder(
+//             controller: _pageController,
+//             scrollDirection: Axis.vertical,
+//             itemCount: videos.length,
+//             onPageChanged: (index) async {
+//               if (mounted) {
+//                 setState(() {
+//                   _currentPageIndex = index;
+//                 });
+//               }
+//             },
+//             itemBuilder: (context, index) {
+//               final video = videos[index];
+//               return CachedVlcPlayerWidget(
+//                 videoUrl: video.url,
+//                 user: video.user,
+//                 caption: video.caption,
+//                 likes: video.likes.toString(),
+//                 shares: video.shares.toString(),
+//                 comments: video.comments,
+//                 videoID: video.id,
+//               );
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+  // void _showVideoOptions() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (context) {
+  //       return Container(
+  //         padding: EdgeInsets.all(16),
+  //         height: 150,
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             ListTile(
+  //               leading: Icon(Icons.fiber_manual_record, color: Colors.red),
+  //               title: Text('Live'),
+  //               onTap: () {
+  //                 // Navigator.of(context).pop();
+  //                 // 
+  //                   _hasLoggedIn?
+  //               {
+
+  //                  Navigator.of(context).pop(),
+  //                 _recordVideo()
+  //               }:
+  //                 showDialog(
+  //                   context: context,
+  //                   builder: (context) {
+  //                     return AlertDialog(
+  //                       title: Text('Please log in or create an account first', style: TextStyle(
+  //                                                 fontSize: 15
+
+  //                       ),),
+  //                       actions: [
+  //                         TextButton(
+  //                           onPressed: () {
+  //                             Navigator.of(context).pop();
+  //                             Navigator.push(
+  //                               context,
+  //                               MaterialPageRoute(
+  //                                 builder: (context) => LoginPage(),
+  //                               ),
+  //                             );
+  //                           },
+  //                           child: Text('Log in'),
+  //                         ),
+  //                       ],
+  //                     );
+  //                   },
+  //                 );
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: Icon(Icons.video_library),
+  //               title: Text('Add Video'),
+  //               onTap: () {
+  //               _hasLoggedIn?
+  //               {
+
+  //                  Navigator.of(context).pop(),
+  //                 _pickVideoFromGallery()
+  //               }:
+  //                 showDialog(
+  //                   context: context,
+  //                   builder: (context) {
+  //                     return AlertDialog(
+  //                       title: Text('Please log in or create an account first',  style: TextStyle(
+  //                         fontSize: 15
+  //                       ),
+  //                       ),
+  //                       actions: [
+  //                         TextButton(
+  //                           onPressed: () {
+  //                             Navigator.of(context).pop();
+  //                             Navigator.push(
+  //                               context,
+  //                               MaterialPageRoute(
+  //                                 builder: (context) => LoginPage(),
+  //                               ),
+  //                             );
+  //                           },
+  //                           child: Text('Log in'),
+  //                         ),
+  //                       ],
+  //                     );
+  //                   },
+  //                 );
+            
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Future<void> _recordVideo() async {
+  //   final XFile? videoFile = await _picker.pickVideo(
+  //     source: ImageSource.camera,
+  //     maxDuration: Duration(minutes: 5),
+  //   );
+
+  //   if (videoFile != null) {
+  //     final file = File(videoFile.path);
+  //     logger.i("videoFile.path: ${videoFile.path}");
+  //     Navigator.of(context).push(
+  //       MaterialPageRoute(
+  //         builder: (context) => TrimmerView(file, isLiveVideo: true,),
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // Future<void> _pickVideoFromGallery() async {
+  //   final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
+
+  //   if (videoFile != null) {
+  //     final file = File(videoFile.path);
+  //     Navigator.of(context).push(
+  //       MaterialPageRoute(
+  //         builder: (context) => TrimmerView(file),
+  //       ),
+  //     );
+  //   }
+  // }
+// }
+
+// class CachedVlcPlayerWidget extends StatefulWidget {
+//   final int videoID;
+//   final String videoUrl;
+//   final String user;
+//   final String caption;
+//   final String likes;
+//   final String shares;
+//   final List comments;
+
+//   CachedVlcPlayerWidget({
+//     required this.videoID,
+//     required this.videoUrl,
+//     required this.user,
+//     required this.caption,
+//     required this.likes,
+//     required this.shares,
+//     required this.comments,
+//   });
+
+//   @override
+//   _CachedVlcPlayerWidgetState createState() => _CachedVlcPlayerWidgetState();
+// }
+
+// class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
+//   late VlcPlayerController _vlcPlayerController;
+//   bool _isMuted = false;
+//   bool _isPlaying = true;
+//   File? _cachedFile;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadVideo();
+//   }
+
+//   Future<void> _loadVideo() async {
+//     final cachedFile = await DefaultCacheManager().getSingleFile(widget.videoUrl);
+//     _cachedFile = cachedFile;
+//     _vlcPlayerController = VlcPlayerController.file(
+//       _cachedFile!,
+//       hwAcc: HwAcc.full,
+//       autoPlay: true,
+//       options: VlcPlayerOptions(),
+//     );
+
+//     _vlcPlayerController.addListener(_onPlayerStateChange);
+//     if (mounted) {
+//       setState(() {});  
+//     }
+//   }
+
+//   void _onPlayerStateChange() {
+//     if (_vlcPlayerController.value.isEnded) {
+       
+//     }
+//   }
+
+//   @override
+//   void dispose() {
+//     _vlcPlayerController.removeListener(_onPlayerStateChange);
+//     _vlcPlayerController.dispose();
+//     super.dispose();
+//   }
+
+//   void _toggleMute() {
+//     setState(() {
+//       _isMuted = !_isMuted;
+//       _vlcPlayerController.setVolume(_isMuted ? 0 : 100);
+//     });
+//   }
+
+//   void _togglePlayPause() {
+//     setState(() {
+//       if (_isPlaying) {
+//         _vlcPlayerController.pause();
+//       } else {
+//         _vlcPlayerController.play();
+//       }
+//       _isPlaying = !_isPlaying;
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return _cachedFile == null
+//         ? Center(child: CircularProgressIndicator())
+//         : Stack(
+//             children: [
+//               Positioned.fill(
+//                 child: Container(
+//                   color: Colors.black,
+//                   child: VlcPlayer(
+//                     controller: _vlcPlayerController,
+//                     aspectRatio: 9 / 16,
+//                     placeholder: Center(
+//                       child: CircularProgressIndicator(),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 top: 60,
+//                 left: 15,
+//                 right: 15,
+//                 child: Row(
+//                   children: [
+//                     IconButton(
+//                       icon: Icon(Icons.arrow_back, color: Colors.white),
+//                       onPressed: () {
+//                         Navigator.pushReplacement(
+//                           context,
+//                           MaterialPageRoute(builder: (context) => DashBoardPage()),
+//                         );
+//                       },
+//                     ),
+//                     Spacer(),
+//                     IconButton(
+//                       icon: Icon(
+//                         _isPlaying ? Icons.pause : Icons.play_arrow,
+//                         color: Colors.white,
+//                       ),
+//                       onPressed: _togglePlayPause,
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               Positioned(
+//                 bottom: 55,
+//                 left: 20,
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       '@${widget.user}',
+//                       style: TextStyle(
+//                         color: Colors.white,
+//                         fontWeight: FontWeight.bold,
+//                         fontSize: 12,
+//                       ),
+//                     ),
+//                     Text(
+//                       widget.caption,
+//                       style: TextStyle(
+//                         color: Colors.white,
+//                         fontSize: 12,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               Positioned(
+//                 bottom: 55,
+//                 right: 20,
+//                 child: IconButton(
+//                   icon: Icon(
+//                     _isMuted ? Icons.volume_off : Icons.volume_up,
+//                     color: Colors.white,
+//                   ),
+//                   onPressed: _toggleMute,
+//                 ),
+//               ),
+//             ],
+//           );
+//   }
+// }
 
