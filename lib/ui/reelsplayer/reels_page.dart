@@ -16,6 +16,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:logger/logger.dart';
 
+import '../login/login.dart';
+
 final logger = Logger();
 
 class ReelsPage extends StatefulWidget {
@@ -28,12 +30,39 @@ class _ReelsPageState extends State<ReelsPage> {
   final ImagePicker _picker = ImagePicker();
   int _currentPageIndex = 0;
   List<Video> videos = [];
+  bool _hasLoggedIn = false;
+  int _userID = 0;
 
   @override
   void initState() {
     super.initState();
     _checkCachedVideos(); 
     _fetchVideos();
+    _loadUser();
+    
+  }
+
+       Future<void> _loadUser() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = json.decode(localStorage.getString('user') ?? '{}');
+    print('User Details: $user');
+    print('User id: ${user['id']}');
+
+    // {id: 122, name: Ruth west, email: ruthwestke@gmail.com, telephone:
+
+
+    if (user.isEmpty) {
+      setState(() {
+        _hasLoggedIn = false;
+        _userID = user['id'];
+      });
+
+    } else {
+      setState(() {
+        _hasLoggedIn = true;
+      });
+    }
+   
   }
 
   Future<void> _checkCachedVideos() async {
@@ -180,16 +209,77 @@ class _ReelsPageState extends State<ReelsPage> {
                 leading: Icon(Icons.fiber_manual_record, color: Colors.red),
                 title: Text('Live'),
                 onTap: () {
-                  Navigator.of(context).pop();
-                  _recordVideo();
+                  // Navigator.of(context).pop();
+                  // 
+                    _hasLoggedIn?
+                {
+
+                   Navigator.of(context).pop(),
+                  _recordVideo()
+                }:
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Please log in or create an account first', style: TextStyle(
+                                                  fontSize: 15
+
+                        ),),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
+                            },
+                            child: Text('Log in'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
               ListTile(
                 leading: Icon(Icons.video_library),
                 title: Text('Add Video'),
                 onTap: () {
-                  Navigator.of(context).pop();
-                  _pickVideoFromGallery();
+                _hasLoggedIn?
+                {
+
+                   Navigator.of(context).pop(),
+                  _pickVideoFromGallery()
+                }:
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('Please log in or create an account first',  style: TextStyle(
+                          fontSize: 15
+                        ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
+                            },
+                            child: Text('Log in'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+            
                 },
               ),
             ],
@@ -207,9 +297,10 @@ class _ReelsPageState extends State<ReelsPage> {
 
     if (videoFile != null) {
       final file = File(videoFile.path);
+      logger.i("videoFile.path: ${videoFile.path}");
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => TrimmerView(file),
+          builder: (context) => TrimmerView(file, isLiveVideo: true,),
         ),
       );
     }
