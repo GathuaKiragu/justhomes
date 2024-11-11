@@ -18,6 +18,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:logger/logger.dart';
 
 import '../login/login.dart';
+import '../reels/comment.dart';
 
 
 final logger = Logger();
@@ -56,6 +57,7 @@ class _ReelsPageState extends State<ReelsPage> {
   List<Video> videos = [];
   bool _hasLoggedIn = false;
   int _userID = 0;
+  String username = '';
 
   @override
   void initState() {
@@ -72,6 +74,7 @@ class _ReelsPageState extends State<ReelsPage> {
       setState(() {
         _hasLoggedIn = true;
         _userID = user['id'];
+        username = user['name'];
       });
     }
   }
@@ -177,6 +180,7 @@ class _ReelsPageState extends State<ReelsPage> {
               final video = videos[index];
               return CachedVlcPlayerWidget(
                 videoID: video.id,
+                 username: username,
                 videoUrl: video.url,
                 user: video.user,
                 caption: video.caption,
@@ -202,87 +206,90 @@ class _ReelsPageState extends State<ReelsPage> {
         return Container(
           padding: EdgeInsets.all(16),
           height: 150,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                leading: Icon(Icons.fiber_manual_record, color: Colors.red),
-                title: Text('Live'),
-                onTap: () {
-                  // Navigator.of(context).pop();
-                  // 
-                    _hasLoggedIn?
-                {
-
-                   Navigator.of(context).pop(),
-                  _recordVideo()
-                }:
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Please log in or create an account first', style: TextStyle(
-                                                  fontSize: 15
-
-                        ),),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(),
-                                ),
-                              );
-                            },
-                            child: Text('Log in'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.video_library),
-                title: Text('Add Video'),
-                onTap: () {
-                _hasLoggedIn?
-                {
-
-                   Navigator.of(context).pop(),
-                  _pickVideoFromGallery()
-                }:
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Please log in or create an account first',  style: TextStyle(
-                          fontSize: 15
-                        ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(),
-                                ),
-                              );
-                            },
-                            child: Text('Log in'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.fiber_manual_record, color: Colors.red),
+                  title: Text('Live'),
+                  onTap: () {
+                    // Navigator.of(context).pop();
+                    // 
+                      _hasLoggedIn?
+                  {
             
-                },
-              ),
-            ],
+                     Navigator.of(context).pop(),
+                    _recordVideo()
+                  }:
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Please log in or create an account first', style: TextStyle(
+                                                    fontSize: 15
+            
+                          ),),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginPage(),
+                                  ),
+                                );
+                              },
+                              child: Text('Log in'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.video_library),
+                  title: Text('Add Video'),
+                  onTap: () {
+                  _hasLoggedIn?
+                  {
+            
+                     Navigator.of(context).pop(),
+                    _pickVideoFromGallery()
+                  }:
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Please log in or create an account first',  style: TextStyle(
+                            fontSize: 15
+                          ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginPage(),
+                                  ),
+                                );
+                              },
+                              child: Text('Log in'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+              
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -338,6 +345,7 @@ class _ReelsPageState extends State<ReelsPage> {
   }
 }
  
+ 
 
 class CachedVlcPlayerWidget extends StatefulWidget {
   final int videoID;
@@ -346,6 +354,7 @@ class CachedVlcPlayerWidget extends StatefulWidget {
   final String caption;
   final String likes;
   final String shares;
+  final String  username;
   final List comments;
 
   CachedVlcPlayerWidget({
@@ -355,6 +364,7 @@ class CachedVlcPlayerWidget extends StatefulWidget {
     required this.caption,
     required this.likes,
     required this.shares,
+    required this.username,
     required this.comments,
   });
 
@@ -370,14 +380,19 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
   bool _isLiked = false;
   late int _likesCount;
   late int _shareCount;
+    bool _hasLoggedIn = false;
+    int?  _userID = 0;
+    String userName = ''  ;
 
   @override
   void initState() {
     super.initState();
     _likesCount = int.parse(widget.likes);
     _shareCount = int.parse(widget.shares);
+    _loadUser();
     _loadVideo();
     _loadLikeStatus();
+    
   }
 
   Future<void> _loadVideo() async {
@@ -391,9 +406,6 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
     );
 
     _vlcPlayerController.addListener(_onPlayerStateChange);
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   void _onPlayerStateChange() {
@@ -411,6 +423,7 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLiked_${widget.videoID}', _isLiked);
+    // Add logic here to update the like status on a server or database if required
   }
 
   Future<void> _shareVideo() async {
@@ -424,13 +437,6 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _isLiked = prefs.getBool('isLiked_${widget.videoID}') ?? false;
     setState(() {});
-  }
-
-  @override
-  void dispose() {
-    _vlcPlayerController.removeListener(_onPlayerStateChange);
-    _vlcPlayerController.dispose();
-    super.dispose();
   }
 
   void _toggleMute() {
@@ -451,126 +457,160 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
     });
   }
 
+    Future<void> _loadUser() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = json.decode(localStorage.getString('user') ?? '{}');
+    print('User Details: $user');
+    print('User id: ${user['id']}');
+
+
+
+    if (user.isEmpty) {
+      setState(() {
+        _hasLoggedIn = false;
+        _userID = user['id'];
+        userName = '';
+      });
+
+    } else {
+      setState(() {
+        _hasLoggedIn = true;
+        _userID = user['id'];
+        userName = user['name'];
+      });
+    }
+   
+  }
+
+void _showCommentsBottomSheet() {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,  
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.4,  
+      maxChildSize: 0.4, 
+      builder: (_, scrollController) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,  
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),  
+          boxShadow: [  
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        child: CommentsWidget(
+          username: widget.username,
+          videoID: widget.videoID,
+          comments: widget.comments,
+        ),
+      ),
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
-    return _cachedFile == null
-        ? Center(child: CircularProgressIndicator())
-        : GestureDetector(
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
             onTap: _togglePlayPause,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black,
-                    child: VlcPlayer(
-                      controller: _vlcPlayerController,
-                      aspectRatio: MediaQuery.of(context).size.aspectRatio,
-                      placeholder: Center(child: CircularProgressIndicator()),
-                    ),
+            child: _cachedFile == null
+                ? Center(child: CircularProgressIndicator())
+                : VlcPlayer(
+                    controller: _vlcPlayerController,
+                    aspectRatio: MediaQuery.of(context).size.aspectRatio,
+                    placeholder: Center(child: CircularProgressIndicator()),
                   ),
-                ),
-                // Show play icon only when paused
-                if (!_isPlaying)
-                     GestureDetector(
-                onTap: _togglePlayPause,
-                child: Center(
-                  child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-
-                    children: [
-                      Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                        size: 80,
-                      ),
-                      Text('Paused', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              ),
-                // Back arrow button
-                Positioned(
-                  top: 40,
-                  left: 20,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => DashBoardPage()));
-                    },
-                  ),
-                ),
-                Positioned(
-                  bottom: 55,
-                  left: 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '@${widget.user}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                      Text(
-                        widget.caption,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 120,
-                  right: 20,
-                  child: Column(
-                    children: [
-                      IconButton(
-                        icon: FaIcon(
-                          FontAwesomeIcons.solidHeart,
-                          color: _isLiked ? Colors.red : Colors.white,
-                        ),
-                        onPressed: _toggleLike,
-                      ),
-                      Text(
-                        _likesCount.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      IconButton(
-                        icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
-                        onPressed: _shareVideo,
-                      ),
-                      Text(
-                        _shareCount.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 55,
-                  right: 20,
-                  child: IconButton(
-                    icon: Icon(
-                      _isMuted ? Icons.volume_off : Icons.volume_up,
-                      color: Colors.white,
-                    ),
-                    onPressed: _toggleMute,
-                  ),
-                ),
-              ],
+          ),
+        ),
+        if (!_isPlaying)
+          Center(
+            child: Icon(
+              Icons.play_arrow,
+              color: Colors.white,
+              size: 80,
             ),
-          );
+          ),
+        _buildInteractiveLayer(),
+      ],
+    );
+  }
+  Future<void> _showLoginPrompt() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Please log in or create an account first', style: TextStyle(fontSize: 15)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+              child: Text('Log in'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  Widget _buildInteractiveLayer() {
+    return Positioned(
+      bottom: 55,
+      right: 20,
+      child: Column(
+        children: [
+          IconButton(
+            icon: FaIcon(
+              FontAwesomeIcons.solidHeart,
+              color: _isLiked ? Colors.red : Colors.white,
+            ),
+            onPressed: _toggleLike,
+          ),
+          Text(
+            'Likes: $_likesCount',
+            style: TextStyle(color: Colors.white),
+          ),
+          IconButton(
+            icon: Icon(Icons.comment, color: Colors.white),
+            onPressed: () {
+              if (widget.username.isEmpty) {
+                _showLoginPrompt();
+              } else {
+                _showCommentsBottomSheet();
+              }
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              _isMuted ? Icons.volume_off : Icons.volume_up,
+              color: Colors.white,
+            ),
+            onPressed: _toggleMute,
+          ),
+          IconButton(
+            icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
+            onPressed: _shareVideo,
+          ),
+          Text(
+            'Shares: $_shareCount',
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _vlcPlayerController.removeListener(_onPlayerStateChange);
+    _vlcPlayerController.dispose();
+    super.dispose();
   }
 }

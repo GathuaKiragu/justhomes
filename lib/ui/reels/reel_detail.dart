@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:just_apartment_live/ui/reels/comment.dart';
 import 'package:just_apartment_live/ui/reelsplayer/reels_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
@@ -13,9 +14,10 @@ class ReelDetailPage extends StatefulWidget {
   final String videoUrl;
   final String user;
   final String caption;
+  final String username;
   final int likes;
   final int shares;
-  final int userID;  
+  final int userID;
   final List comments;
 
   ReelDetailPage({
@@ -26,6 +28,7 @@ class ReelDetailPage extends StatefulWidget {
     required this.likes,
     required this.shares,
     required this.userID,
+    required this.username,
     required this.comments,
   });
 
@@ -40,6 +43,8 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
   bool _isLiked = false;
   late int _likesCount;
   late int _shareCount;
+  late String name;
+  List comments = [];
   final TextEditingController _commentController = TextEditingController();
 
   @override
@@ -47,9 +52,14 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
     super.initState();
     _likesCount = widget.likes;
     _shareCount = widget.shares;
+    comments = widget.comments;
     _loadVideo();
     _loadLikeStatus();
+    setState(() {
+      name = widget.username;
+    });
   }
+  
 
   Future<void> _loadVideo() async {
     _vlcPlayerController = VlcPlayerController.network(
@@ -71,79 +81,91 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
   }
 
   Future<void> _toggleLike() async {
-  setState(() {
-    _isLiked = !_isLiked;
-    _isLiked ? _likesCount++ : _likesCount--;
-  });
+    setState(() {
+      _isLiked = !_isLiked;
+      _isLiked ? _likesCount++ : _likesCount--;
+    });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLiked_${widget.videoID}', _isLiked);
+
+    try {
+      final url = Uri.parse(
+          'https://justhomes.co.ke/api/reels/update-likes?likes=$_likesCount&videoId=${widget.videoID}&user_id=${widget.userID}');
+      final response = await http.post(url);
+
+      if (response.statusCode == 200) {
+        print('Likes updated successfully on server');
+      } else {
+        print('Failed to update likes on server: ${response.body}');
+      }
+    } catch (e) {
+      print('Error updating likes on server: $e');
+    }
+  }
+
+  Future<void> _postComment(String commentText, StateSetter setModalState) async {
+  if (commentText.isEmpty) return;
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setBool('isLiked_${widget.videoID}', _isLiked);
+  final userId = prefs.getInt('user_id') ?? 0;
 
-  try {
-    final userId = prefs.getInt('user_id') ?? 0; // Replace with actual user ID retrieval
-    final url = Uri.parse('https://justhomes.co.ke/api/reels/update-likes?likes=$_likesCount&videoId=${widget.videoID}&user_id=${widget.userID}');
-    final response = await http.post(url);
+  final url = Uri.parse(
+      'https://justhomes.co.ke/api/reels/post-comment?videoID=${widget.videoID}&userID=${widget.userID}&comment=$commentText');
+  final response = await http.post(url);
 
-    if (response.statusCode == 200) {
-      logger.i('Likes updated successfully on server ${response.body}');
-    } else {
-      print('Failed to update likes on server: ${response.body}');
-    }
-  } catch (e) {
-    print('Error updating likes on server: $e');
+  if (response.statusCode == 200) {
+    print("Comment posted successfully");
+
+    final newComment = {
+      'user': {'id': userId, 'name': widget.user},
+      'comment': commentText,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+
+    setState(() {
+      comments.insert(0, newComment); // Add the new comment instantly
+      _commentController.clear(); // Clear the comment input
+    });
+  } else {
+    print("Failed to post comment: ${response.body}");
   }
 }
 
 
-  Future<void> _postComment(String comment) async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var user = json.decode(prefs.getString('user') ?? '{}');
-
-      final url = Uri.parse(
-        'https://justhomes.co.ke/api/reels/post-comment?videoID=${widget.videoID}&userID=${widget.userID}&comment=$comment',
-      );
-
-      final response = await http.post(url);
-
-      if (response.statusCode == 200) {
-        print("Comment posted successfully. Response: ${response.body}");
-      } else {
-        print("Failed to post comment: ${response.body}");
-      }
-    } catch (e) {
-      print("Error posting comment: $e");
-    }
-  }
-
-  void _showCommentDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Post a Comment"),
-        content: TextField(
-          controller: _commentController,
-          decoration: InputDecoration(hintText: "Enter your comment here"),
+void _showCommentsBottomSheet() {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,  
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.4,  
+      maxChildSize: 0.4, 
+      builder: (_, scrollController) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,  
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),  
+          boxShadow: [  
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(0, -2),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              _postComment(_commentController.text);
-              _commentController.clear();
-              Navigator.pop(context);
-            },
-            child: Text("Post"),
-          ),
-        ],
+        child: CommentsWidget(
+          username: name,
+          videoID: widget.videoID,
+          comments: comments,
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
 
   Future<void> _shareVideo() async {
     setState(() {
@@ -157,14 +179,26 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
     _isLiked = prefs.getBool('isLiked_${widget.videoID}') ?? false;
     setState(() {});
   }
+//
 
-  @override
-  void dispose() {
-    _vlcPlayerController.removeListener(_onPlayerStateChange);
-    _vlcPlayerController.dispose();
-    _commentController.dispose();
-    super.dispose();
-  }
+// Inside your ReelDetailPage class
+@override
+void dispose() {
+  // Prepare the updated data to pass back
+  Map<String, dynamic> updatedData = {
+    'likes': _likesCount,
+    'comments': comments.length,
+  };
+
+  // Pass the updated data back to UserReels
+  Navigator.pop(context, updatedData);
+
+  _vlcPlayerController.removeListener(_onPlayerStateChange);
+  _vlcPlayerController.dispose();
+  _commentController.dispose();
+  super.dispose();
+}
+ 
 
   void _toggleMute() {
     setState(() {
@@ -204,14 +238,11 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
               ),
             ),
             if (!_isPlaying)
-              GestureDetector(
-                onTap: _togglePlayPause,
-                child: Center(
-                  child: Icon(
-                    Icons.play_arrow,
-                    color: Colors.white,
-                    size: 80,
-                  ),
+              Center(
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.white,
+                  size: 80,
                 ),
               ),
             Positioned(
@@ -247,7 +278,7 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
               ),
             ),
             Positioned(
-              bottom: 120,
+              bottom: 150,
               right: 20,
               child: Column(
                 children: [
@@ -265,7 +296,7 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 20),
+                //  SizedBox(height: 10),
                   IconButton(
                     icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
                     onPressed: _shareVideo,
@@ -277,18 +308,11 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                                   SizedBox(height: 30),
+
+                                   SizedBox(height: 30),
+
                 ],
-              ),
-            ),
-            Positioned(
-              bottom: 55,
-              right: 20,
-              child: IconButton(
-                icon: Icon(
-                  _isMuted ? Icons.volume_off : Icons.volume_up,
-                  color: Colors.white,
-                ),
-                onPressed: _toggleMute,
               ),
             ),
             Positioned(
@@ -296,7 +320,7 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
               right: 20,
               child: IconButton(
                 icon: Icon(Icons.comment, color: Colors.white),
-                onPressed: _showCommentDialog,
+                onPressed: _showCommentsBottomSheet,
               ),
             ),
           ],
@@ -305,3 +329,5 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
     );
   }
 }
+
+ 

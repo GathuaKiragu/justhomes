@@ -214,25 +214,29 @@ class _UserReelsState extends State<UserReels> {
                               itemBuilder: (context, index) {
                                 final reel = _userReels[index];
                                 return GestureDetector(
-                                  onTap: () {
-                                    logger.i(reel['user']['id']);
-
-  Navigator.push(
+                                  onTap: () async {
+                                    logger.i(reel['user']['name']);
+                                    
+ await Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => ReelDetailPage(
         videoID: reel['id'],
         userID: reel['user']['id'],
         videoUrl: Configuration.WEB_URL + reel['video_path'],
-        user: reel['user'] is String ? reel['user'] : reel['user']['name'], // Extract name if user is a map
+        user: reel['user'] is String ? reel['user'] : reel['user']['name'],
         caption: reel['description'] ?? '',
         likes: reel['likes'],
         shares: reel['shares'],
         comments: reel['comments'],
+        username : reel['user']['name']
       ),
     ),
   );
+
+ 
 },
+
 
                                   child: Card(
                                     margin: const EdgeInsets.only(bottom: 10),
