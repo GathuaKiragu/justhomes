@@ -6,9 +6,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
+import 'package:just_apartment_live/ui/reelsplayer/reels_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'reel_detail.dart';
 
 class UserReels extends StatefulWidget {
   const UserReels({Key? key}) : super(key: key);
@@ -29,35 +31,23 @@ class _UserReelsState extends State<UserReels> {
 
   Future<bool> _getUserReels() async {
     try {
-      // Retrieve user details from SharedPreferences
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var user = json.decode(localStorage.getString('user') ?? '{}');
 
-      final uri =
-          '${Configuration.API_URL}reels/get-user-reels'; // Ensure this URL is correct
+      final uri = '${Configuration.API_URL}reels/get-user-reels';
 
-      // Make the API call
       final response = await http.post(
         Uri.parse(uri),
-        headers: {
-          'Content-Type': 'application/json', // Set content type to JSON
-        },
-        body: json.encode({
-          'user_id': user['id'], // Ensure user['id'] is valid
-        }),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'user_id': user['id']}),
       );
 
-      print("Response: ${response.statusCode} - ${response.body}");
-
       if (response.statusCode == 200) {
-        // Handle success and parse the response body
         var data = json.decode(response.body);
 
-        // Check if the data contains reels
         if (data['success'] == true && data['data'] != null) {
           setState(() {
-            _userReels = List.from(
-                data['data']); // Assign the retrieved reels to _userReels
+            _userReels = List.from(data['data']);
           });
           return true;
         } else {
@@ -65,19 +55,17 @@ class _UserReelsState extends State<UserReels> {
           return false;
         }
       } else {
-        // Handle failure
         print("Failed to fetch user reels: ${response.body}");
         return false;
       }
     } catch (e) {
-      // Handle exceptions (e.g., network errors)
       print("Error fetching user reels: $e");
       return false;
     }
   }
 
   void _deleteReel(String reelId) {
-    // Show confirmation dialog before deleting
+    // Confirmation dialog before deletion
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -94,26 +82,7 @@ class _UserReelsState extends State<UserReels> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the confirmation dialog
-
-                // Show a loading dialog
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (BuildContext context) {
-                    return const AlertDialog(
-                      content: Text('Deleting... Please wait...'),
-                    );
-                  },
-                );
-
-                // Implement the logic to delete the reel using its ID
-                print("Delete reel with ID: $reelId");
-
-                // Call the method to perform the delete API request
-                _performDeleteReel(reelId);
-
-                // Close the loading dialog
-                Navigator.of(context).pop();
+                _performDeleteReel(reelId); // Delete reel
               },
               child: const Text(
                 'Delete',
@@ -128,59 +97,23 @@ class _UserReelsState extends State<UserReels> {
 
   _performDeleteReel(String reelId) async {
     try {
-      // Retrieve user details from SharedPreferences
-
-      final uri =
-          '${Configuration.API_URL}reels/delete-reel'; // Ensure this URL is correct
-
-      // Make the API call
+      final uri = '${Configuration.API_URL}reels/delete-reel';
       final response = await http.post(
         Uri.parse(uri),
-        headers: {
-          'Content-Type': 'application/json', // Set content type to JSON
-        },
-        body: json.encode({
-          'reelId': reelId, // Ensure user['id'] is valid
-        }),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'reelId': reelId}),
       );
 
-      print("Response: ${response.statusCode} - ${response.body}");
-
       if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return UserReels();
-          }),
-        );
-        // Handle success and parse the response body
-        var data = json.decode(response.body);
-
-        // Check if the data contains reels
-        if (data['success'] == true && data['data'] != null) {
-          setState(() {
-            _userReels = List.from(
-                data['data']); // Assign the retrieved reels to _userReels
-          });
-        } else {
-          print("Failed to delete ${data['message']}");
-        }
+        setState(() {
+          _userReels.removeWhere((reel) => reel['id'] == reelId);
+        });
       } else {
-        // Handle failure
-        print("Failed to delete ${response.body}");
+        print("Failed to delete reel: ${response.body}");
       }
     } catch (e) {
-      // Handle exceptions (e.g., network errors)
-      print("Error deleting reels: $e");
+      print("Error deleting reel: $e");
     }
-
-    // Implement the actual delete logic here
-    // Add API call to delete the reel and update state
-    print("Reel deleted with ID: $reelId");
-    // Refresh the list after deletion
-    // setState(() {
-    //   _userReels.removeWhere((reel) => reel['id'] == reelId);
-    // });
   }
 
   @override
@@ -198,7 +131,7 @@ class _UserReelsState extends State<UserReels> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              // Card for uploading video
+              // Upload video card
               Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(
@@ -212,8 +145,7 @@ class _UserReelsState extends State<UserReels> {
                     child: Column(
                       children: [
                         SizedBox(
-                          width: double
-                              .infinity, // Ensure the button takes the full width
+                          width: double.infinity,
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.video_file),
                             label: const Text('UPLOAD VIDEO'),
@@ -225,16 +157,14 @@ class _UserReelsState extends State<UserReels> {
                               textStyle: const TextStyle(fontSize: 18),
                             ),
                             onPressed: () async {
-                              final result =
-                                  await FilePicker.platform.pickFiles(
+                              final result = await FilePicker.platform.pickFiles(
                                 type: FileType.video,
                                 allowCompression: false,
                               );
                               if (result != null) {
                                 final file = File(result.files.single.path!);
                                 setState(() {
-                                  _uploadedVideos
-                                      .add(file); // Add video to the list
+                                  _uploadedVideos.add(file);
                                 });
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
@@ -258,7 +188,7 @@ class _UserReelsState extends State<UserReels> {
               ),
 
               const SizedBox(height: 20),
-              // Card for displaying user reels
+              // User reels list card
               Expanded(
                 child: Card(
                   elevation: 2,
@@ -266,31 +196,43 @@ class _UserReelsState extends State<UserReels> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   color: Colors.grey[200],
-                  margin: EdgeInsets.zero, // Set margin to zero
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: SizedBox.expand(
-                      // Ensure full width is used
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          if (_userReels.isEmpty)
-                            const Text(
-                              "No reels yet.",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.grey),
-                            )
-                          else
-                            // ListView to show user reels
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: _userReels.length,
-                                itemBuilder: (context, index) {
-                                  final reel = _userReels[index];
-                                  return Card(
-                                    margin: const EdgeInsets.only(
-                                        bottom:
-                                            10), // Margin for individual reels
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        if (_userReels.isEmpty)
+                          const Text(
+                            "No reels yet.",
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          )
+                          
+                        else
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _userReels.length,
+                              itemBuilder: (context, index) {
+                                final reel = _userReels[index];
+                                return GestureDetector(
+                                  onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ReelDetailPage(
+        videoID: reel['id'],
+        videoUrl: Configuration.WEB_URL + reel['video_path'],
+        user: reel['user'] is String ? reel['user'] : reel['user']['name'], // Extract name if user is a map
+        caption: reel['description'] ?? '',
+        likes: reel['likes'],
+        shares: reel['shares'],
+        comments: reel['comments'],
+      ),
+    ),
+  );
+},
+
+                                  child: Card(
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
@@ -301,8 +243,8 @@ class _UserReelsState extends State<UserReels> {
                                             child: Image.network(
                                               Configuration.WEB_URL +
                                                   reel['screenshot'],
-                                              width: 90, // Thumbnail width
-                                              height: 90, // Thumbnail height
+                                              width: 90,
+                                              height: 90,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -336,8 +278,6 @@ class _UserReelsState extends State<UserReels> {
                                                 ),
                                                 const SizedBox(height: 10),
                                                 Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       children: [
@@ -384,12 +324,12 @@ class _UserReelsState extends State<UserReels> {
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
