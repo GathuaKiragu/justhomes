@@ -337,6 +337,7 @@ class _ReelsPageState extends State<ReelsPage> {
     );
   }
 }
+ 
 
 class CachedVlcPlayerWidget extends StatefulWidget {
   final int videoID;
@@ -468,30 +469,35 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 60,
-                  left: 15,
-                  right: 15,
-                  child: Row(
+                // Show play icon only when paused
+                if (!_isPlaying)
+                     GestureDetector(
+                onTap: _togglePlayPause,
+                child: Center(
+                  child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => DashBoardPage()),
-                          );
-                        },
+                      Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: 80,
                       ),
-                      Spacer(),
-                      IconButton(
-                        icon: Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: Colors.white,
-                        ),
-                        onPressed: _togglePlayPause,
-                      ),
+                      Text('Paused', style: TextStyle(color: Colors.white)),
                     ],
+                  ),
+                ),
+              ),
+                // Back arrow button
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                         Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DashBoardPage()));
+                    },
                   ),
                 ),
                 Positioned(
@@ -568,235 +574,3 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
           );
   }
 }
-
-
-// class CachedVlcPlayerWidget extends StatefulWidget {
-//   final int videoID;
-//   final String videoUrl;
-//   final String user;
-//   final String caption;
-//   final String likes;
-//   final String shares;
-//   final List comments;
-
-//   CachedVlcPlayerWidget({
-//     required this.videoID,
-//     required this.videoUrl,
-//     required this.user,
-//     required this.caption,
-//     required this.likes,
-//     required this.shares,
-//     required this.comments,
-//   });
-
-//   @override
-//   _CachedVlcPlayerWidgetState createState() => _CachedVlcPlayerWidgetState();
-// }
-
-// class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
-//   late VlcPlayerController _vlcPlayerController;
-//   bool _isMuted = false;
-//   bool _isPlaying = true;
-//   File? _cachedFile;
-//   bool _isLiked = false;
-//   late int  _likesCount;
-//   late int  _shareCount;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _likesCount = int.parse(widget.likes);
-//     _shareCount = int.parse(widget.shares);
-//     _loadVideo();
-//     _loadLikeStatus();
-//   }
-
-//   Future<void> _loadVideo() async {
-//     final cachedFile = await DefaultCacheManager().getSingleFile(widget.videoUrl);
-//     _cachedFile = cachedFile;
-//     _vlcPlayerController = VlcPlayerController.file(
-//       _cachedFile!,
-//       hwAcc: HwAcc.full,
-//       autoPlay: true,
-//       options: VlcPlayerOptions(),
-//     );
-
-//     _vlcPlayerController.addListener(_onPlayerStateChange);
-//     if (mounted) {
-//       setState(() {});
-//     }
-//   }
-
-//     void _onPlayerStateChange() {
-//     if (_vlcPlayerController.value.isEnded) {
-       
-//     }
-//   }
-
-//   Future<void> _toggleLike() async {
-//     setState(() {
-//       _isLiked = !_isLiked;
-//       _isLiked ? _likesCount++ : _likesCount--;
-//     });
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     prefs.setBool('isLiked_${widget.videoID}', _isLiked);
-//     // Update the like status on the server if required
-//   }
-
-//   Future<void> _shareVideo() async {
-//     setState(() {
-//       _shareCount++;
-//     });
-//     Share.share(widget.videoUrl);
-//     // Update the share count on the server if required
-//   }
-
-//   Future<void> _loadLikeStatus() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     _isLiked = prefs.getBool('isLiked_${widget.videoID}') ?? false;
-//     setState(() {});
-//   }
-
-//   @override
-//   void dispose() {
-//     _vlcPlayerController.removeListener(_onPlayerStateChange);
-//     _vlcPlayerController.dispose();
-//     super.dispose();
-//   }
-
-//   void _toggleMute() {
-//     setState(() {
-//       _isMuted = !_isMuted;
-//       _vlcPlayerController.setVolume(_isMuted ? 0 : 100);
-//     });
-//   }
-
-//   void _togglePlayPause() {
-//     setState(() {
-//       if (_isPlaying) {
-//         _vlcPlayerController.pause();
-//       } else {
-//         _vlcPlayerController.play();
-//       }
-//       _isPlaying = !_isPlaying;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return _cachedFile == null
-//         ? Center(child: CircularProgressIndicator())
-//         : Stack(
-//             children: [
-//               Positioned.fill(
-//                 child: Container(
-//                   color: Colors.black,
-//                   child: VlcPlayer(
-//                     controller: _vlcPlayerController,
-//                     aspectRatio: 9 / 16,
-//                     placeholder: Center(
-//                       child: CircularProgressIndicator(),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               Positioned(
-//                 top: 60,
-//                 left: 15,
-//                 right: 15,
-//                 child: Row(
-//                   children: [
-//                     IconButton(
-//                       icon: Icon(Icons.arrow_back, color: Colors.white),
-//                       onPressed: () {
-//                         Navigator.pushReplacement(
-//                           context,
-//                           MaterialPageRoute(builder: (context) => DashBoardPage()),
-//                         );
-//                       },
-//                     ),
-//                     Spacer(),
-//                     IconButton(
-//                       icon: Icon(
-//                         _isPlaying ? Icons.pause : Icons.play_arrow,
-//                         color: Colors.white,
-//                       ),
-//                       onPressed: _togglePlayPause,
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               Positioned(
-//                 bottom: 55,
-//                 left: 20,
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       '@${widget.user}',
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontWeight: FontWeight.bold,
-//                         fontSize: 12,
-//                       ),
-//                     ),
-//                     Text(
-//                       widget.caption,
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 12,
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               Positioned(
-//                 bottom: 120,
-//                 right: 20,
-//                 child: Column(
-//                   children: [
-//                     IconButton(
-//                       icon: FaIcon(
-//                         FontAwesomeIcons.solidHeart,
-//                         color: _isLiked ? Colors.red : Colors.white,
-//                       ),
-//                       onPressed: _toggleLike,
-//                     ),
-//                     Text(
-//                       _likesCount.toString(),
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontWeight: FontWeight.bold,
-//                       ),
-//                     ),
-//                     SizedBox(height: 20),
-//                     IconButton(
-//                       icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
-//                       onPressed: _shareVideo,
-//                     ),
-//                     Text(
-//                       _shareCount.toString(),
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontWeight: FontWeight.bold,
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               Positioned(
-//                 bottom: 55,
-//                 right: 20,
-//                 child: IconButton(
-//                   icon: Icon(
-//                     _isMuted ? Icons.volume_off : Icons.volume_up,
-//                     color: Colors.white,
-//                   ),
-//                   onPressed: _toggleMute,
-//                 ),
-//               ),
-//             ],
-//           );
-//   }
-// }
- 

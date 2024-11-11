@@ -75,7 +75,7 @@ class _UserReelsState extends State<UserReels> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();  
               },
               child: const Text('Cancel'),
             ),
@@ -215,11 +215,14 @@ class _UserReelsState extends State<UserReels> {
                                 final reel = _userReels[index];
                                 return GestureDetector(
                                   onTap: () {
+                                    logger.i(reel['user']['id']);
+
   Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => ReelDetailPage(
         videoID: reel['id'],
+        userID: reel['user']['id'],
         videoUrl: Configuration.WEB_URL + reel['video_path'],
         user: reel['user'] is String ? reel['user'] : reel['user']['name'], // Extract name if user is a map
         caption: reel['description'] ?? '',
