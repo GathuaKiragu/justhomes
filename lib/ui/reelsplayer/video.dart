@@ -17,7 +17,7 @@ class Video {
     required this.comments,
   });
 
-    Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'url': url,
@@ -29,6 +29,17 @@ class Video {
     };
   }
 
+  factory Video.fromUrl(String url, var json) {
+    return Video(
+      id: json['id'],
+      url: url,
+      user: json['user'],
+      caption: json['caption'],
+      likes: json['likes'],
+      shares: json['shares'],
+      comments: json['comments'] as List,
+    );
+  }
   // Optionally, add a fromJson factory constructor to easily convert JSON back to a Video instance
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(

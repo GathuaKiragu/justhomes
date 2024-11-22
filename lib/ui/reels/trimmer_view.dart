@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/reelsplayer/reels_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 import 'package:path/path.dart';
 import 'package:flutter/rendering.dart';
@@ -14,10 +14,14 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 
 class TrimmerView extends StatefulWidget {
-  bool? isLiveVideo; 
+  bool? isLiveVideo;
   final File file;
 
-   TrimmerView(this.file, {Key? key, this.isLiveVideo = false, }) : super(key: key);
+  TrimmerView(
+    this.file, {
+    Key? key,
+    this.isLiveVideo = false,
+  }) : super(key: key);
 
   @override
   State<TrimmerView> createState() => _TrimmerViewState();
@@ -32,8 +36,7 @@ class _TrimmerViewState extends State<TrimmerView> {
   bool _isPlaying = false;
   bool _progressVisibility = false;
   bool _hasLoggedIn = false;
-    int?  _userID = 0;
-
+  int? _userID = 0;
 
   @override
   void initState() {
@@ -42,7 +45,7 @@ class _TrimmerViewState extends State<TrimmerView> {
     _loadUser();
   }
 
-     Future<void> _loadUser() async {
+  Future<void> _loadUser() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
     print('User Details: $user');
@@ -50,19 +53,16 @@ class _TrimmerViewState extends State<TrimmerView> {
 
     // {id: 122, name: Ruth west, email: ruthwestke@gmail.com, telephone:
 
-
     if (user.isEmpty) {
       setState(() {
         _hasLoggedIn = false;
         _userID = user['id'];
       });
-
     } else {
       setState(() {
         _hasLoggedIn = true;
       });
     }
-   
   }
 
   void _loadVideo() {
@@ -73,7 +73,7 @@ class _TrimmerViewState extends State<TrimmerView> {
     final uint8List = await VideoThumbnail.thumbnailData(
       video: widget.file.path,
       imageFormat: ImageFormat.PNG,
-      maxWidth: 1280, 
+      maxWidth: 1280,
       quality: 75,
     );
 
@@ -85,172 +85,195 @@ class _TrimmerViewState extends State<TrimmerView> {
     }
     return null;
   }
- 
+
   //-----------------------------SAVING & COMPRESS RECORDED VIDEO-----------------------------------------------
+  Future<void> saveLiveVideo(BuildContext context) async {
+    setState(() {
+      _progressVisibility = true;
+    });
 
-Future<void> saveLiveVideo(BuildContext context) async {
-  setState(() {
-    _progressVisibility = true;
-  });
+    await _trimmer.saveTrimmedVideo(
+      startValue: _startValue,
+      endValue: _endValue,
+      onSave: (String? outputPath) async {
+        if (outputPath != null) {
+          // Compress and convert video to MP4 if necessary
+          final compressedPath = await _compressVideo(outputPath);
 
-  await _trimmer.saveTrimmedVideo(
-    startValue: _startValue,
-    endValue: _endValue,
-    onSave: (String? outputPath) async {
-      if (outputPath != null) {
-        // Compress and convert video to MP4 if necessary
-        final compressedPath = await _compressVideo(outputPath);
-        
-        if (compressedPath == null) {
-          _showErrorDialog('Failed to compress video', context);
-          return;
+          if (compressedPath == null) {
+            _showErrorDialog('Failed to compress video', context);
+            return;
+          }
+
+          // Capture screenshot
+          final screenshotFile = await _captureScreenshot();
+          if (screenshotFile == null) {
+            _showErrorDialog('Failed to capture screenshot', context);
+            return;
+          }
+
+          // Upload the video
+          await uploadVideoLive(
+            url: 'https://justhomes.co.ke/api/reels/upload-video',
+            userId: _userID ?? 0,
+            description: _descriptionController.text,
+            videoFile: File(compressedPath),
+            screenshotFile: screenshotFile,
+          );
+
+          setState(() {
+            _progressVisibility = false;
+          });
+
+          final snackBar =
+              SnackBar(content: Text('Live video saved successfully.'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        } else {
+          setState(() {
+            _progressVisibility = false;
+          });
+          _showErrorDialog('Failed to save video', context);
         }
+      },
+    );
+  }
 
-        // Capture screenshot
-        final screenshotFile = await _captureScreenshot();
-        if (screenshotFile == null) {
-          _showErrorDialog('Failed to capture screenshot', context);
-          return;
-        }
+  // Future<String?> _compressVideo(String filePath) async {
+  //   final outputFilePath = '${filePath}_compressed.mp4';
+  //   final Completer<String?> completer = Completer();
+  //
+  //   final command = '-i "$filePath" -vcodec libx264 -crf 28 "$outputFilePath"';
+  //
+  //   FFmpegKit.executeAsync(command, (session) async {
+  //     final returnCode = await session.getReturnCode();
+  //     if (ReturnCode.isSuccess(returnCode)) {
+  //       logger.i('Video compression successful');
+  //       completer.complete(outputFilePath);
+  //     } else {
+  //       logger.e('Video compression failed with code: $returnCode');
+  //       completer.complete(null);
+  //     }
+  //   });
+  //
+  //   return completer.future;
+  // }
 
-        // Upload the video
-        await uploadVideoLive(
-          url: 'https://justhomes.co.ke/api/reels/upload-video',
-          userId: _userID ?? 0,
-          description: _descriptionController.text,
-          videoFile: File(compressedPath),
-          screenshotFile: screenshotFile,
-     
-        );
 
-        setState(() {
-          _progressVisibility = false;
-        });
 
-        final snackBar = SnackBar(content: Text('Live video saved successfully.'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+  Future<String?> _compressVideo(String filePath) async {
+    try {
+      // Start video compression
+      final info = await VideoCompress.compressVideo(
+        filePath,
+        quality: VideoQuality.MediumQuality, // Adjust quality as needed
+        deleteOrigin: false, // Set to true if you want to delete the original file
+      );
+
+      if (info != null && info.path != null) {
+        logger.i('Video compression successful: ${info.path}');
+        return info.path; // Path to the compressed video
       } else {
-        setState(() {
-          _progressVisibility = false;
-        });
-        _showErrorDialog('Failed to save video', context);
+        logger.e('Video compression failed');
+        return null;
       }
-    },
-  );
-}
- 
-
-Future<String?> _compressVideo(String filePath) async {
-  final outputFilePath = '${filePath}_compressed.mp4';
-  final Completer<String?> completer = Completer();
-
-  final command = '-i "$filePath" -vcodec libx264 -crf 28 "$outputFilePath"';
-
-  FFmpegKit.executeAsync(command, (session) async {
-    final returnCode = await session.getReturnCode();
-    if (ReturnCode.isSuccess(returnCode)) {
-      logger.i('Video compression successful');
-      completer.complete(outputFilePath);
-    } else {
-      logger.e('Video compression failed with code: $returnCode');
-      completer.complete(null);
+    } catch (e) {
+      logger.e('Error during video compression: $e');
+      return null;
     }
-  });
+  }
 
-  return completer.future;
-}
 
- 
+  Future<void> uploadVideoLive({
+    required String url,
+    required int userId,
+    required String description,
+    required File videoFile,
+    required File screenshotFile,
+  }) async {
+    try {
+      final uri = Uri.parse('$url?user_id=$userId&description=$description');
 
-Future<void> uploadVideoLive({
-  required String url,
-  required int userId,
-  required String description,
-  required File videoFile,
-  required File screenshotFile,
-}) async {
-  try {
-    final uri = Uri.parse('$url?user_id=$userId&description=$description');
+      // Create the multipart request
+      final request = http.MultipartRequest('POST', uri);
 
-    // Create the multipart request
-    final request = http.MultipartRequest('POST', uri);
+      // Attach the video file
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'video',
+          videoFile.path,
+          filename: 'video.mp4',
+        ),
+      );
 
-    // Attach the video file
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'video',
-        videoFile.path,
-        filename: 'video.mp4',
-      ),
-    );
+      // Attach the screenshot file
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'screenshot',
+          screenshotFile.path,
+          filename: 'screenshot.jpg',
+        ),
+      );
 
-    // Attach the screenshot file
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'screenshot',
-        screenshotFile.path,
-        filename: 'screenshot.jpg',
-      ),
-    );
+      // Log request details
+      logger.i('POST Request to: $uri');
+      logger.i('Request fields: user_id=$userId, description=$description');
+      logger.i('Video file: ${videoFile.path}');
+      logger.i('Screenshot file: ${screenshotFile.path}');
 
-    // Log request details
-    logger.i('POST Request to: $uri');
-    logger.i('Request fields: user_id=$userId, description=$description');
-    logger.i('Video file: ${videoFile.path}');
-    logger.i('Screenshot file: ${screenshotFile.path}');
+      // Send the request
+      final response = await request.send();
 
-    // Send the request
+      // Read and log the response
+      final responseData = await response.stream.bytesToString();
+      if (response.statusCode == 200) {
+        logger.i('Upload successful: $responseData');
+      } else {
+        logger.e('Upload failed with status: ${response.statusCode}');
+        logger.e('Response: $responseData');
+      }
+    } catch (e) {
+      logger.e('Error during upload: $e');
+    }
+  }
+
+  Future<void> _uploadLiveVideo({
+    required File videoFile,
+    required String description,
+    required File screenshot,
+    required BuildContext context,
+  }) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = json.decode(localStorage.getString('user') ?? '{}');
+    final userId = user['id'] ?? _userID;
+
+    final uri = Uri.parse("https://justhomes.co.ke/api/reels/upload-video");
+
+    final request = http.MultipartRequest('POST', uri)
+      ..fields['user_id'] = userId.toString()
+      ..fields['description'] = description
+      ..files.add(await http.MultipartFile.fromPath('video', videoFile.path,
+          filename: basename(videoFile.path)))
+      ..files.add(await http.MultipartFile.fromPath(
+          'screenshot', screenshot.path,
+          filename: basename(screenshot.path)));
+
+    logger.i('Uploading live video with user_id: $userId');
+
     final response = await request.send();
-
-    // Read and log the response
-    final responseData = await response.stream.bytesToString();
     if (response.statusCode == 200) {
-      logger.i('Upload successful: $responseData');
+      logger.i('Live video upload successful');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ReelsPage(),
+        ),
+      );
     } else {
-      logger.e('Upload failed with status: ${response.statusCode}');
-      logger.e('Response: $responseData');
+      final responseData = await response.stream.bytesToString();
+      logger.e('Live video upload failed: $responseData');
+      _showErrorDialog('Failed to upload live video', context);
     }
-  } catch (e) {
-    logger.e('Error during upload: $e');
   }
-}
-
-Future<void> _uploadLiveVideo({
-  required File videoFile,
-  required String description,
-  required File screenshot,
-  required BuildContext context,
-}) async {
-  SharedPreferences localStorage = await SharedPreferences.getInstance();
-  var user = json.decode(localStorage.getString('user') ?? '{}');
-  final userId = user['id'] ?? _userID;
-
-  final uri = Uri.parse("https://justhomes.co.ke/api/reels/upload-video");
-
-  final request = http.MultipartRequest('POST', uri)
-    ..fields['user_id'] = userId.toString()
-    ..fields['description'] = description
-    ..files.add(await http.MultipartFile.fromPath('video', videoFile.path, filename: basename(videoFile.path)))
-    ..files.add(await http.MultipartFile.fromPath('screenshot', screenshot.path, filename: basename(screenshot.path)));
-
-  logger.i('Uploading live video with user_id: $userId');
-
-  final response = await request.send();
-  if (response.statusCode == 200) {
-    logger.i('Live video upload successful');
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => ReelsPage(),
-      ),
-    );
-  } else {
-    final responseData = await response.stream.bytesToString();
-    logger.e('Live video upload failed: $responseData');
-    _showErrorDialog('Failed to upload live video', context);
-  }
-}
-
-
 
   //----------------------------------------------------------------------------
 
@@ -301,7 +324,6 @@ Future<void> _uploadLiveVideo({
 
   Future<void> _uploadVideo(
       File videoFile, String description, BuildContext context) async {
-
     final loadingDialog = AlertDialog(
       content: Row(
         children: const [
@@ -339,7 +361,7 @@ Future<void> _uploadLiveVideo({
     if (screenshotFile != null) {
       request.files.add(
         await http.MultipartFile.fromPath(
-          'screenshot',  
+          'screenshot',
           screenshotFile.path,
           filename: basename(screenshotFile.path),
         ),
@@ -350,7 +372,7 @@ Future<void> _uploadLiveVideo({
       final response = await request.send();
       final responseData = await response.stream.bytesToString();
 
-      Navigator.of(context).pop();  
+      Navigator.of(context).pop();
 
       if (response.statusCode == 200) {
         // Redirect to ReelsPage
@@ -492,9 +514,9 @@ Future<void> _uploadLiveVideo({
                             icon: const Icon(Icons.send, color: Colors.white),
                             onPressed: _progressVisibility
                                 ? null
-                                : () => 
-                                widget.isLiveVideo!? saveLiveVideo(context):
-                                _saveVideo(context),
+                                : () => widget.isLiveVideo!
+                                    ? saveLiveVideo(context)
+                                    : _saveVideo(context),
                           ),
                         ),
                       ],

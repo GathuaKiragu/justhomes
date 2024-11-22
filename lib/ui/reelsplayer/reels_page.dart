@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
 import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
+import 'package:just_apartment_live/ui/reelsplayer/comment_popup.dart';
 import 'package:just_apartment_live/ui/reelsplayer/video.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
@@ -20,9 +21,7 @@ import 'package:logger/logger.dart';
 import '../login/login.dart';
 import '../reels/comment.dart';
 
-
 final logger = Logger();
-
 
 // import 'dart:async';
 // import 'dart:convert';
@@ -62,7 +61,7 @@ class _ReelsPageState extends State<ReelsPage> {
   @override
   void initState() {
     super.initState();
-    _checkCachedVideos(); 
+    _checkCachedVideos();
     _fetchVideos();
     _loadUser();
   }
@@ -85,7 +84,7 @@ class _ReelsPageState extends State<ReelsPage> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? cachedVideos = prefs.getString('cachedVideos');
-    
+
     if (cachedVideos != null) {
       setState(() {
         videos = (json.decode(cachedVideos) as List)
@@ -133,7 +132,8 @@ class _ReelsPageState extends State<ReelsPage> {
           });
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          prefs.setString('cachedVideos', json.encode(newVideos.map((video) => video.toJson()).toList()));
+          prefs.setString('cachedVideos',
+              json.encode(newVideos.map((video) => video.toJson()).toList()));
           logger.i("Caching videos, count: ${newVideos.length}");
         }
       } else {
@@ -165,36 +165,31 @@ class _ReelsPageState extends State<ReelsPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            scrollDirection: Axis.vertical,
-            itemCount: videos.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPageIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              final video = videos[index];
-              return CachedVlcPlayerWidget(
-                videoID: video.id,
-                 username: username,
-                videoUrl: video.url,
-                user: video.user,
-                caption: video.caption,
-                likes: video.likes.toString(),
-                shares: video.shares.toString(),
-                comments: video.comments,
-              );
-            },
-          ),
-        ],
+      body: PageView.builder(
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        itemCount: videos.length,
+        onPageChanged: (index) {
+          setState(() {
+            _currentPageIndex = index;
+          });
+        },
+        itemBuilder: (context, index) {
+          final video = videos[index];
+          return CachedVlcPlayerWidget(
+            videoID: video.id,
+            username: username,
+            videoUrl: video.url,
+            user: video.user,
+            caption: video.caption,
+            likes: video.likes.toString(),
+            shares: video.shares.toString(),
+            comments: video.comments,
+          );
+        },
       ),
     );
   }
-
 
   void _showVideoOptions() {
     showModalBottomSheet(
@@ -216,76 +211,67 @@ class _ReelsPageState extends State<ReelsPage> {
                   title: Text('Live'),
                   onTap: () {
                     // Navigator.of(context).pop();
-                    // 
-                      _hasLoggedIn?
-                  {
-            
-                     Navigator.of(context).pop(),
-                    _recordVideo()
-                  }:
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Please log in or create an account first', style: TextStyle(
-                                                    fontSize: 15
-            
-                          ),),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginPage(),
+                    //
+                    _hasLoggedIn
+                        ? {Navigator.of(context).pop(), _recordVideo()}
+                        : showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Please log in or create an account first',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text('Log in'),
                                   ),
-                                );
-                              },
-                              child: Text('Log in'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                                ],
+                              );
+                            },
+                          );
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.video_library),
                   title: Text('Add Video'),
                   onTap: () {
-                  _hasLoggedIn?
-                  {
-            
-                     Navigator.of(context).pop(),
-                    _pickVideoFromGallery()
-                  }:
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Please log in or create an account first',  style: TextStyle(
-                            fontSize: 15
-                          ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginPage(),
+                    _hasLoggedIn
+                        ? {Navigator.of(context).pop(), _pickVideoFromGallery()}
+                        : showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Please log in or create an account first',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text('Log in'),
                                   ),
-                                );
-                              },
-                              child: Text('Log in'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-              
+                                ],
+                              );
+                            },
+                          );
                   },
                 ),
               ],
@@ -295,8 +281,10 @@ class _ReelsPageState extends State<ReelsPage> {
       },
     );
   }
+
   Future<void> _pickVideoFromGallery() async {
-    final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
+    final XFile? videoFile =
+        await _picker.pickVideo(source: ImageSource.gallery);
 
     if (videoFile != null) {
       final file = File(videoFile.path);
@@ -307,6 +295,7 @@ class _ReelsPageState extends State<ReelsPage> {
       );
     }
   }
+
   Future<void> _recordVideo() async {
     final XFile? videoFile = await _picker.pickVideo(
       source: ImageSource.camera,
@@ -318,7 +307,10 @@ class _ReelsPageState extends State<ReelsPage> {
       logger.i("videoFile.path: ${videoFile.path}");
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => TrimmerView(file, isLiveVideo: true,),
+          builder: (context) => TrimmerView(
+            file,
+            isLiveVideo: true,
+          ),
         ),
       );
     }
@@ -329,12 +321,14 @@ class _ReelsPageState extends State<ReelsPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Please log in or create an account first', style: TextStyle(fontSize: 15)),
+          title: Text('Please log in or create an account first',
+              style: TextStyle(fontSize: 15)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
               },
               child: Text('Log in'),
             ),
@@ -344,8 +338,6 @@ class _ReelsPageState extends State<ReelsPage> {
     );
   }
 }
- 
- 
 
 class CachedVlcPlayerWidget extends StatefulWidget {
   final int videoID;
@@ -354,7 +346,7 @@ class CachedVlcPlayerWidget extends StatefulWidget {
   final String caption;
   final String likes;
   final String shares;
-  final String  username;
+  final String username;
   final List comments;
 
   CachedVlcPlayerWidget({
@@ -380,9 +372,13 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
   bool _isLiked = false;
   late int _likesCount;
   late int _shareCount;
-    bool _hasLoggedIn = false;
-    int?  _userID = 0;
-    String userName = ''  ;
+  bool _hasLoggedIn = false;
+  int? _userID = 0;
+  String userName = '';
+  late Timer _likeCountTimer;
+  ValueNotifier<int> _likesCountNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<int> _shareCountNotifier = ValueNotifier<int>(0);
+  late Future<Map<String, dynamic>> _likeStatusFuture;
 
   @override
   void initState() {
@@ -392,11 +388,65 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
     _loadUser();
     _loadVideo();
     _loadLikeStatus();
-    
+    _likeStatusFuture = _fetchLikeStatus(false);
+  }
+
+  Future<void> _loadUser() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = json.decode(localStorage.getString('user') ?? '{}');
+    print('User Details: $user');
+    print('User id: ${user['id']}');
+
+    if (user.isEmpty) {
+      setState(() {
+        _hasLoggedIn = false;
+        _userID = user['id'];
+        userName = '';
+      });
+    } else {
+      setState(() {
+        _hasLoggedIn = true;
+        _userID = user['id'];
+        userName = user['name'];
+      });
+    }
+  }
+
+  Future<void> _shareVideo() async {
+    // Local state update
+    setState(() {
+      _shareCount++;
+    });
+
+    // Update the ValueNotifier for share count
+    _shareCountNotifier.value = _shareCount;
+    // API call to update share count on the server
+    final Uri shareUri = Uri.parse(
+        'https://justhomes.co.ke/api/reels/update-shares?shares=$_shareCount&videoId=${widget.videoID}&user_id=$_userID');
+
+    try {
+      final response = await http.post(shareUri);
+      if (response.statusCode != 200) {
+        print("Failed to update share status: ${response.reasonPhrase}");
+        // If the API fails, revert the UI change
+        setState(() {
+          _shareCount--;
+        });
+        _shareCountNotifier.value = _shareCount;
+      }
+    } catch (e) {
+      print("Error updating share status: $e");
+      // If the API fails, revert the UI change
+      setState(() {
+        _shareCount--;
+      });
+      _shareCountNotifier.value = _shareCount;
+    }
   }
 
   Future<void> _loadVideo() async {
-    final cachedFile = await DefaultCacheManager().getSingleFile(widget.videoUrl);
+    final cachedFile =
+        await DefaultCacheManager().getSingleFile(widget.videoUrl);
     _cachedFile = cachedFile;
     _vlcPlayerController = VlcPlayerController.file(
       _cachedFile!,
@@ -413,24 +463,11 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
       setState(() {
         _isPlaying = false;
       });
+    } else {
+      setState(() {
+        _isPlaying = true;
+      });
     }
-  }
-
-  Future<void> _toggleLike() async {
-    setState(() {
-      _isLiked = !_isLiked;
-      _isLiked ? _likesCount++ : _likesCount--;
-    });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isLiked_${widget.videoID}', _isLiked);
-    // Add logic here to update the like status on a server or database if required
-  }
-
-  Future<void> _shareVideo() async {
-    setState(() {
-      _shareCount++;
-    });
-    Share.share(widget.videoUrl);
   }
 
   Future<void> _loadLikeStatus() async {
@@ -446,72 +483,13 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
     });
   }
 
-  void _togglePlayPause() {
-    setState(() {
-      if (_isPlaying) {
-        _vlcPlayerController.pause();
-      } else {
-        _vlcPlayerController.play();
-      }
-      _isPlaying = !_isPlaying;
-    });
+  @override
+  void dispose() {
+    _vlcPlayerController.removeListener(_onPlayerStateChange);
+    _vlcPlayerController.dispose();
+    _likesCountNotifier.dispose();
+    super.dispose();
   }
-
-    Future<void> _loadUser() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var user = json.decode(localStorage.getString('user') ?? '{}');
-    print('User Details: $user');
-    print('User id: ${user['id']}');
-
-
-
-    if (user.isEmpty) {
-      setState(() {
-        _hasLoggedIn = false;
-        _userID = user['id'];
-        userName = '';
-      });
-
-    } else {
-      setState(() {
-        _hasLoggedIn = true;
-        _userID = user['id'];
-        userName = user['name'];
-      });
-    }
-   
-  }
-
-void _showCommentsBottomSheet() {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,  
-    builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.4,  
-      maxChildSize: 0.4, 
-      builder: (_, scrollController) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,  
-          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),  
-          boxShadow: [  
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: CommentsWidget(
-          username: widget.username,
-          videoID: widget.videoID,
-          comments: widget.comments,
-        ),
-      ),
-    ),
-  );
-}
 
   @override
   Widget build(BuildContext context) {
@@ -519,7 +497,7 @@ void _showCommentsBottomSheet() {
       children: [
         Positioned.fill(
           child: GestureDetector(
-            onTap: _togglePlayPause,
+            onTap: () {},
             child: _cachedFile == null
                 ? Center(child: CircularProgressIndicator())
                 : VlcPlayer(
@@ -541,17 +519,20 @@ void _showCommentsBottomSheet() {
       ],
     );
   }
+
   Future<void> _showLoginPrompt() async {
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Please log in or create an account first', style: TextStyle(fontSize: 15)),
+          title: Text('Please log in or create an account first',
+              style: TextStyle(fontSize: 15)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
               },
               child: Text('Log in'),
             ),
@@ -560,33 +541,175 @@ void _showCommentsBottomSheet() {
       },
     );
   }
+
+  Future<Map<String, dynamic>> _fetchLikeStatus(bool hasLiked) async {
+    try {
+      final response = await http.post(Uri.parse(
+          'https://justhomes.co.ke/api/reels/get-likes-status?videoId=${widget.videoID}'));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        return {'isLiked': hasLiked, 'likes': responseData['likes']}; // Default fallback
+        ; // Assume it returns {"isLiked": bool, "likesCount": int}
+      } else {
+        throw Exception('Failed to load like status');
+      }
+    } catch (e) {
+      logger.e("Failed to fetch like status:" +
+          '   --->https://justhomes.co.ke/api/reels/like-status?videoId=${widget.videoID}');
+      return {'isLiked': false, 'likes': 0}; // Default fallback
+    }
+  }
+
+  Future<void> _toggleLike(bool currentLikeStatus, int likesCount) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      if (_userID == null) {
+        _showLoginPrompt();
+      } else {
+        String videoKey = 'liked_${widget.videoID}'; // Unique key for the video
+        bool hasLiked = prefs.getBool(videoKey) ?? false; // Default to false
+
+        if (!hasLiked) {
+          // Save new like status and increment likes
+          await _saveLikeStatus(widget.videoID, true);
+          likesCount++;
+        } else {
+          // Remove like status and decrement likes
+          await _saveLikeStatus(widget.videoID, false);
+          likesCount--;
+        }
+
+        // Call the API to update the server
+        final response = await http.post(
+          Uri.parse(
+              'https://justhomes.co.ke/api/reels/update-likes?likes=${likesCount}&videoId=${widget.videoID}&user_id=${_userID}'),
+        );
+
+        if (response.statusCode == 200) {
+          logger.i(response.body);
+
+          setState(() {
+            _likeStatusFuture = _fetchLikeStatus(hasLiked);
+          });
+        } else {
+          logger.e("Failed to update like status on server.");
+        }
+      }
+    } catch (e) {
+      logger.e("Error toggling like status: $e");
+    }
+  }
+
+  Future<void> _saveLikeStatus(int videoID, bool isLiked) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String videoKey = 'liked_$videoID'; // Create a unique key for the video
+      await prefs.setBool(videoKey, isLiked); // Save the like status
+      logger.i("Saved like status: Video $videoID isLiked: $isLiked");
+    } catch (e) {
+      logger.e("Error saving like status: $e");
+    }
+  }
+
+  Future<bool> _getLikeStatus(String videoID) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String videoKey = 'liked_$videoID'; // Unique key for the video
+      return prefs.getBool(videoKey) ?? false; // Default to false if not found
+    } catch (e) {
+      logger.e("Error retrieving like status: $e");
+      return false;
+    }
+  }
+
   Widget _buildInteractiveLayer() {
     return Positioned(
       bottom: 55,
       right: 20,
       child: Column(
         children: [
-          IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.solidHeart,
-              color: _isLiked ? Colors.red : Colors.white,
-            ),
-            onPressed: _toggleLike,
+          // Like Button and Likes Count
+          FutureBuilder<Map<String, dynamic>>(
+            future: _likeStatusFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(); // Loading state
+              } else if (snapshot.hasError) {
+                // Handle error gracefully
+                return Container();
+              } else if (snapshot.hasData) {
+                final data = snapshot.data!;
+                final isLiked = data['isLiked'] as bool? ?? false;
+                final likesCount = data['likes'] as int? ?? 0;
+
+                return Column(
+                  children: [
+                    IconButton(
+                      icon: FaIcon(
+                        isLiked
+                            ? FontAwesomeIcons.solidHeart
+                            : FontAwesomeIcons.heart,
+                        color: isLiked ? Colors.red : Colors.white,
+                      ),
+                      onPressed: () => _toggleLike(
+                          isLiked, isLiked ? likesCount + 1 : likesCount - 1),
+                    ),
+                    Text(
+                      'Likes: $likesCount',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                );
+              }
+              return SizedBox(); // Fallback
+            },
           ),
-          Text(
-            'Likes: $_likesCount',
-            style: TextStyle(color: Colors.white),
+
+          // Share Button and Share Count
+          ValueListenableBuilder<int>(
+            valueListenable: _shareCountNotifier,
+            builder: (context, value, child) {
+              return Column(
+                children: [
+                  IconButton(
+                    icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
+                    onPressed: _shareVideo,
+                  ),
+                  Text(
+                    'Shares: $value',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              );
+            },
           ),
+
+          // Comment Button
           IconButton(
             icon: Icon(Icons.comment, color: Colors.white),
             onPressed: () {
               if (widget.username.isEmpty) {
                 _showLoginPrompt();
               } else {
-                _showCommentsBottomSheet();
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return CommentPopup(
+                      comments: widget.comments,
+                      onCommentAdded: (String comment) {
+                        print("New Comment: $comment");
+                      },
+                      videoID: widget.videoID.toString(),
+                    );
+                  },
+                );
               }
             },
           ),
+
+          // Mute/Unmute Button
           IconButton(
             icon: Icon(
               _isMuted ? Icons.volume_off : Icons.volume_up,
@@ -594,23 +717,8 @@ void _showCommentsBottomSheet() {
             ),
             onPressed: _toggleMute,
           ),
-          IconButton(
-            icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
-            onPressed: _shareVideo,
-          ),
-          Text(
-            'Shares: $_shareCount',
-            style: TextStyle(color: Colors.white),
-          ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _vlcPlayerController.removeListener(_onPlayerStateChange);
-    _vlcPlayerController.dispose();
-    super.dispose();
   }
 }
