@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:just_apartment_live/ui/reelsplayer/reel_player.dart';
 
 import 'ui/spalsh_screen/splash_screen.dart';
 
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
           title: 'Flutter App',
           theme: theme,
           darkTheme: darkTheme,
-          home: SplashScreen(),
+          // home: SplashScreen(),
+          home: Reels()
         ),
       ),
     );

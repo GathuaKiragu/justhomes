@@ -30,7 +30,6 @@ environment:
 dependencies:
   adaptive_theme: ^3.6.0
   cached_network_image: ^3.4.1
-  camera: ^0.11.0+2
   camera_android_camerax: null
   carousel_slider: ^5.0.0
   connectivity_plus: ^6.1.0
@@ -69,6 +68,14 @@ dependencies:
   visibility_detector: ^0.4.0+2
   wechat_assets_picker: ^9.2.1
   video_compress:
+  pusher_client:
+  chewie:
+  preload_page_view:
+  cached_video_player_plus:
+  flutter_cache_manager:
+  full_picker: 2.1.0
+  camerawesome: ^2.1.0
+  timeago:
 
 dev_dependencies:
   flutter_lints: ^3.0.0
