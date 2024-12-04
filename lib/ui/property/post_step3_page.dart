@@ -2,21 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:just_apartment_live/api/api.dart';
 import 'package:just_apartment_live/models/configuration.dart';
-import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
 import 'package:just_apartment_live/ui/loading.dart';
 import 'package:just_apartment_live/ui/property/details_page.dart';
 import 'package:just_apartment_live/widgets/header_main_widget.dart';
-import 'package:just_apartment_live/widgets/theme_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class PostStep3Page extends StatefulWidget {
   final propertyID;
-  PostStep3Page({required this.propertyID});
+  const PostStep3Page({super.key, required this.propertyID});
 
   @override
   _PostStep3PageState createState() => _PostStep3PageState();
@@ -125,7 +122,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
 
     if (_selectedListing == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please select Listing By.'),
           backgroundColor: Colors.red,
         ),
@@ -134,7 +131,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
       if ((_selectedListing == 2 || _selectedListing == 3) &&
           _companyController.text == '') {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Enter The Company Name.'),
             backgroundColor: Colors.red,
           ),
@@ -193,7 +190,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
 
   Widget _bodyBuild(context) {
     return Padding(
-      padding: EdgeInsets.all(3.0),
+      padding: const EdgeInsets.all(3.0),
       child: Card(
         elevation: 1.0,
         child: _buildPostForm(context),
@@ -223,9 +220,9 @@ class _PostStep3PageState extends State<PostStep3Page> {
               },
               dropdownBuilder: (context, selectedItem) => Text(
                 selectedItem?['value'] ?? 'Select Listing',
-                style: TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14),
               ),
-              dropdownDecoratorProps: DropDownDecoratorProps(
+              dropdownDecoratorProps: const DropDownDecoratorProps(
                 dropdownSearchDecoration: InputDecoration(
                   labelText: 'Listing By:',
                   hintText: 'Select Listing Type',
@@ -243,8 +240,8 @@ class _PostStep3PageState extends State<PostStep3Page> {
                 ],
               )
             ],
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
               child: Text(
                 "Select Features",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -256,7 +253,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
                 Column(
                   children: List.generate(_propertFeaturesList.length, (index) {
                     return CheckboxListTile(
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                           horizontal: 0.0), // Remove padding
                       title: Text(
                         _propertFeaturesList[index]['feature_name'],
@@ -280,11 +277,11 @@ class _PostStep3PageState extends State<PostStep3Page> {
                     );
                   }),
                 ),
-            SizedBox(height: 20), // Space between features and Dropdown
+            const SizedBox(height: 20), // Space between features and Dropdown
 
             // Add the DropdownSearch widget for listing selection
 
-            SizedBox(
+            const SizedBox(
                 height: 20), // Space between DropdownSearch and TextFormField
 
             TextFormField(
@@ -314,14 +311,14 @@ class _PostStep3PageState extends State<PostStep3Page> {
                 _youtubeLinkController.text = value!;
               },
             ),
-            SizedBox(
+            const SizedBox(
                 height: 20), // Space between TextFormField and ElevatedButton
             ElevatedButton(
               onPressed: () => _submitProperty(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -348,7 +345,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
   Widget _buildTitle(context) {
     return Column(
       children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 10),
         ),
         Text(
@@ -359,7 +356,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
                   ? Colors.white
                   : Colors.black),
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 5),
         ),
         Text(
@@ -386,7 +383,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Upload the Company Logo"),
+          const Text("Upload the Company Logo"),
           GestureDetector(
             onTap: _pickImage,
             child: Stack(
@@ -395,12 +392,12 @@ class _PostStep3PageState extends State<PostStep3Page> {
                 CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[300],
-                  backgroundImage: _logoImage != null
-                      ? FileImage(_logoImage!) // Display selected image
-                      : (_companyLogo != null && _companyLogo!.isNotEmpty
-                          ? NetworkImage(Configuration.WEB_URL +
-                              _companyLogo!) // Display logo from network if exists
-                          : null),
+                  // backgroundImage: _logoImage != null
+                  //     ? FileImage(_logoImage!) // Display selected image
+                  //     : (_companyLogo != null && _companyLogo!.isNotEmpty
+                  //         ? NetworkImage(Configuration.WEB_URL +
+                  //             _companyLogo!) // Display logo from network if exists
+                  //         : null),
                   child: _logoImage == null &&
                           (_companyLogo == null || _companyLogo!.isEmpty)
                       ? Icon(Icons.add_a_photo,
@@ -413,7 +410,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
                     right: 0,
                     top: 0,
                     child: IconButton(
-                      icon: Icon(Icons.close, color: Colors.red),
+                      icon: const Icon(Icons.close, color: Colors.red),
                       onPressed: _removeImage, // Call updated remove function
                     ),
                   ),
@@ -421,7 +418,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
             ),
           ),
           const SizedBox(height: 10),
-          if (_isUploading) CircularProgressIndicator(),
+          if (_isUploading) const CircularProgressIndicator(),
         ],
       ),
     );
@@ -451,10 +448,10 @@ class _PostStep3PageState extends State<PostStep3Page> {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
+            content: const Text(
               "Logo uploaded successfully. Click on Submit once finished",
             ),
-            duration: Duration(
+            duration: const Duration(
                 seconds: 3), // Delay the disappearance (adjust as needed)
             action: SnackBarAction(
               label: 'X',
@@ -508,7 +505,7 @@ class _PostStep3PageState extends State<PostStep3Page> {
           hintText: hintText,
           fillColor: Theme.of(context)
               .colorScheme
-              .background, // Background color based on theme
+              .surface, // Background color based on theme
           filled: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:just_apartment_live/api/api.dart';
-import 'package:just_apartment_live/ui/dashboard/widgets/dropdown_style_helper.dart';
 import 'package:just_apartment_live/ui/property/post_step3_page.dart';
 import 'package:just_apartment_live/ui/property/price_input_formatter.dart';
 import 'package:just_apartment_live/widgets/header_main_widget.dart';
@@ -15,7 +14,7 @@ class PostStep2Page extends StatefulWidget {
   // PostStep2Page({Key? key, required this.title}) : super(key: key);
 
   var propertyID;
-  PostStep2Page({required this.propertyID});
+  PostStep2Page({super.key, required this.propertyID});
 
   // final String title;
 
@@ -70,6 +69,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
 
   final _landMeasurementNameController = TextEditingController();
 
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -199,13 +199,9 @@ class _PostStep2PageState extends State<PostStep2Page> {
           propertyDetails = body['data']['propertyDetails'];
 
           _descriptionController.text =
-              body['data']['propertyDetails']['property_description'] != null
-                  ? body['data']['propertyDetails']['property_description']
-                  : "";
+              body['data']['propertyDetails']['property_description'] ?? "";
           _addressController.text =
-              body['data']['propertyDetails']['address'] != null
-                  ? body['data']['propertyDetails']['address']
-                  : "";
+              body['data']['propertyDetails']['address'] ?? "";
           _amountController.text =
               body['data']['propertyDetails']['amount'] != null
                   ? body['data']['propertyDetails']['amount'].toString()
@@ -315,23 +311,23 @@ class _PostStep2PageState extends State<PostStep2Page> {
   Widget _bodyBuild(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(3.0),
-        child: Container(
+        padding: const EdgeInsets.all(3.0),
+        child: SizedBox(
           width: double.infinity,
           child: Card(
             elevation: 1.0,
             child: Padding(
-              padding: EdgeInsets.all(3.0),
+              padding: const EdgeInsets.all(3.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTitle(context),
-                  SizedBox(
+                  const SizedBox(
                       height:
                           20), // Add some space between the title and the form
                   _initDataFetched
                       ? _buildPostForm(context)
-                      : Center(
+                      : const Center(
                           child: Text(
                             "Loading...Please Wait",
                             style: TextStyle(
@@ -350,7 +346,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
   }
 
   Widget _buildTitle(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisSize: MainAxisSize.min, // Minimize the height of the column
         children: [
@@ -445,7 +441,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                   return null;
                 },
                 compareFn: (item, selectedItem) =>
-                    selectedItem != null && item["id"] == selectedItem["id"],
+                    item["id"] == selectedItem["id"],
               ),
             ),
             Visibility(
@@ -513,7 +509,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                     return null;
                   },
                   compareFn: (item, selectedItem) =>
-                      selectedItem != null && item["id"] == selectedItem["id"],
+                      item["id"] == selectedItem["id"],
                 ),
               ),
             ),
@@ -582,7 +578,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                   //   return null;
                   // },
                   compareFn: (item, selectedItem) =>
-                      selectedItem != null && item["id"] == selectedItem["id"],
+                      item["id"] == selectedItem["id"],
                 ),
               ),
             ),
@@ -695,7 +691,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                     return null;
                   },
                   compareFn: (item, selectedItem) =>
-                      selectedItem != null && item["id"] == selectedItem["id"],
+                      item["id"] == selectedItem["id"],
                 ),
               ),
             ),
@@ -761,7 +757,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                     return null;
                   },
                   compareFn: (item, selectedItem) =>
-                      selectedItem != null && item["id"] == selectedItem["id"],
+                      item["id"] == selectedItem["id"],
                 ),
               ),
             ),
@@ -825,7 +821,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                   return null;
                 },
                 compareFn: (item, selectedItem) =>
-                    selectedItem != null && item["id"] == selectedItem["id"],
+                    item["id"] == selectedItem["id"],
               ),
             ),
             if (_leaseType == '2')
@@ -834,7 +830,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Is this Property on Auction?',
                       style: TextStyle(fontSize: 16.0),
                     ),
@@ -842,7 +838,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                       children: [
                         Expanded(
                           child: RadioListTile<String>(
-                            title: Text('No'),
+                            title: const Text('No'),
                             value: '0',
                             groupValue: _selectedAuction,
                             onChanged: (String? value) {
@@ -859,7 +855,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                         ),
                         Expanded(
                           child: RadioListTile<String>(
-                            title: Text('Yes'),
+                            title: const Text('Yes'),
                             value: '1',
                             groupValue: _selectedAuction,
                             onChanged: (String? value) {
@@ -876,12 +872,12 @@ class _PostStep2PageState extends State<PostStep2Page> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                     if (_propertyType != '7')
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Is this an Offplan Property?',
                             style: TextStyle(fontSize: 16.0),
                           ),
@@ -889,7 +885,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                             children: [
                               Expanded(
                                 child: RadioListTile<String>(
-                                  title: Text('No'),
+                                  title: const Text('No'),
                                   value: '0',
                                   groupValue: _selectedOffPlan,
                                   onChanged: (String? value) {
@@ -907,7 +903,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                               ),
                               Expanded(
                                 child: RadioListTile<String>(
-                                  title: Text('Yes'),
+                                  title: const Text('Yes'),
                                   value: '1',
                                   groupValue: _selectedOffPlan,
                                   onChanged: (String? value) {
@@ -963,7 +959,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                       );
                     },
                   ),
-                  items: [
+                  items: const [
                     "1",
                     "2",
                     "3",
@@ -1020,8 +1016,7 @@ class _PostStep2PageState extends State<PostStep2Page> {
                     }
                     return null;
                   },
-                  compareFn: (item, selectedItem) =>
-                      selectedItem != null && item == selectedItem,
+                  compareFn: (item, selectedItem) => item == selectedItem,
                 ),
               ),
             ),
@@ -1337,14 +1332,14 @@ class _PostStep2PageState extends State<PostStep2Page> {
                     onPressed: () => _submitProperty(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple, // Button background color
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           vertical: 16.0), // Vertical padding
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                             8.0), // Optional: rounded corners
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Continue',
                       style: TextStyle(
                         fontSize: 18, // Increased font size

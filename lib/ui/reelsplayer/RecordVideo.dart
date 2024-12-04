@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:path/path.dart' show join;
 
 class RecordVideoScreen extends StatefulWidget {
+  const RecordVideoScreen({super.key});
+
   @override
   _RecordVideoScreenState createState() => _RecordVideoScreenState();
 }
@@ -59,7 +61,7 @@ class _RecordVideoScreenState extends State<RecordVideoScreen> {
       });
 
       // Start a timer to display recording duration
-      _recordTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         setState(() {
           _recordDuration = Duration(seconds: _recordDuration.inSeconds + 1);
         });
@@ -130,7 +132,7 @@ class _RecordVideoScreenState extends State<RecordVideoScreen> {
                   top: 40,
                   left: 20,
                   child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.switch_camera,
                       color: Colors.white,
                       size: 30,
@@ -149,7 +151,7 @@ class _RecordVideoScreenState extends State<RecordVideoScreen> {
                     right: 20,
                     child: Text(
                       '${_recordDuration.inMinutes.toString().padLeft(2, '0')}:${(_recordDuration.inSeconds % 60).toString().padLeft(2, '0')}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.red,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -159,7 +161,7 @@ class _RecordVideoScreenState extends State<RecordVideoScreen> {
               ],
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

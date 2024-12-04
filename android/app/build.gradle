@@ -5,60 +5,69 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader("UTF-8") { reader ->
-        localProperties.load(reader)
-    }
-}
-
-def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
-if (flutterVersionCode == null) {
-    flutterVersionCode = "1"
-}
-
-def flutterVersionName = localProperties.getProperty("flutter.versionName")
-if (flutterVersionName == null) {
-    flutterVersionName = "1.0"
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 android {
     namespace = "com.example.just_apartment_live"
     compileSdk = 34
-    ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = 17
     }
     packagingOptions {
+        // Fixes duplicate libraries build issue, especially when your project uses more than one plugin that depend on C++ libs.
         pickFirst 'lib/**/libc++_shared.so'
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "net.justapartments.app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdk = 33
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+        applicationId "net.justapartments.app" // Your app’s unique identifier
+      //  minSdk = flutter.minSdkVersion // Uses Flutter's specified min SDK version
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode = flutter.versionCode // Version code from Flutter
+        versionName = flutter.versionName // Version name from Flutter
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
-        }
-    }
+//    signingConfigs {
+//        release {
+//            // Signing configuration to use your keystore
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile file(keystoreProperties['storeFile'])
+//            storePassword keystoreProperties['storePassword']
+//        }
+//    }
+
+//    buildTypes {
+//        release {
+//            signingConfig signingConfigs.release // Apply the signing config for release build
+//            minifyEnabled true // Enables code shrinking and obfuscation for release builds
+//            shrinkResources true // Removes unused resources in the release build
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' // ProGuard settings
+//        }
+//    }
 }
 
 flutter {
-    source = "../.."
+    source = "../.." // Defines the path to your Flutter project
 }
+
+// Dependencies for Google Sign-In or Firebase if necessary
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.0.0') // Adjust version as necessary
+    implementation 'com.google.firebase:firebase-auth' // Include Firebase Auth if you are using it
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10' //
+}
+
+apply plugin: 'com.google.gms.google-services'

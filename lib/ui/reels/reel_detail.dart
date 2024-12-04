@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_apartment_live/ui/reels/comment.dart';
-import 'package:just_apartment_live/ui/reelsplayer/reels_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +18,8 @@ class ReelDetailPage extends StatefulWidget {
   final int userID;
   final List comments;
 
-  ReelDetailPage({
+  const ReelDetailPage({
+    super.key,
     required this.videoID,
     required this.videoUrl,
     required this.user,
@@ -59,7 +58,6 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
       name = widget.username;
     });
   }
-  
 
   Future<void> _loadVideo() async {
     _vlcPlayerController = VlcPlayerController.network(
@@ -104,68 +102,65 @@ class _ReelDetailPageState extends State<ReelDetailPage> {
     }
   }
 
-  Future<void> _postComment(String commentText, StateSetter setModalState) async {
-  if (commentText.isEmpty) return;
+  Future<void> _postComment(
+      String commentText, StateSetter setModalState) async {
+    if (commentText.isEmpty) return;
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final userId = prefs.getInt('user_id') ?? 0;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('user_id') ?? 0;
 
-  final url = Uri.parse(
-      'https://justhomes.co.ke/api/reels/post-comment?videoID=${widget.videoID}&userID=${widget.userID}&comment=$commentText');
-  final response = await http.post(url);
+    final url = Uri.parse(
+        'https://justhomes.co.ke/api/reels/post-comment?videoID=${widget.videoID}&userID=${widget.userID}&comment=$commentText');
+    final response = await http.post(url);
 
-  if (response.statusCode == 200) {
-    print("Comment posted successfully");
+    if (response.statusCode == 200) {
+      print("Comment posted successfully");
 
-    final newComment = {
-      'user': {'id': userId, 'name': widget.user},
-      'comment': commentText,
-      'created_at': DateTime.now().toIso8601String(),
-    };
+      final newComment = {
+        'user': {'id': userId, 'name': widget.user},
+        'comment': commentText,
+        'created_at': DateTime.now().toIso8601String(),
+      };
 
-    setState(() {
-      comments.insert(0, newComment); // Add the new comment instantly
-      _commentController.clear(); // Clear the comment input
-    });
-  } else {
-    print("Failed to post comment: ${response.body}");
+      setState(() {
+        comments.insert(0, newComment); // Add the new comment instantly
+        _commentController.clear(); // Clear the comment input
+      });
+    } else {
+      print("Failed to post comment: ${response.body}");
+    }
   }
-}
 
-
-void _showCommentsBottomSheet() {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,  
-    builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.4,  
-      maxChildSize: 0.4, 
-      builder: (_, scrollController) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,  
-          borderRadius: BorderRadius.vertical(top: Radius.circular(15)),  
-          boxShadow: [  
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: CommentsWidget(
-          username: name,
-          videoID: widget.videoID,
-          comments: comments,
+  void _showCommentsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        maxChildSize: 0.4,
+        builder: (_, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: CommentsWidget(
+            username: name,
+            videoID: widget.videoID,
+            comments: comments,
+          ),
         ),
       ),
-    ),
-  );
-}
-
-
-
+    );
+  }
 
   Future<void> _shareVideo() async {
     setState(() {
@@ -182,23 +177,22 @@ void _showCommentsBottomSheet() {
 //
 
 // Inside your ReelDetailPage class
-@override
-void dispose() {
-  // Prepare the updated data to pass back
-  Map<String, dynamic> updatedData = {
-    'likes': _likesCount,
-    'comments': comments.length,
-  };
+  @override
+  void dispose() {
+    // Prepare the updated data to pass back
+    Map<String, dynamic> updatedData = {
+      'likes': _likesCount,
+      'comments': comments.length,
+    };
 
-  // Pass the updated data back to UserReels
-  Navigator.pop(context, updatedData);
+    // Pass the updated data back to UserReels
+    Navigator.pop(context, updatedData);
 
-  _vlcPlayerController.removeListener(_onPlayerStateChange);
-  _vlcPlayerController.dispose();
-  _commentController.dispose();
-  super.dispose();
-}
- 
+    _vlcPlayerController.removeListener(_onPlayerStateChange);
+    _vlcPlayerController.dispose();
+    _commentController.dispose();
+    super.dispose();
+  }
 
   void _toggleMute() {
     setState(() {
@@ -233,12 +227,12 @@ void dispose() {
                 child: VlcPlayer(
                   controller: _vlcPlayerController,
                   aspectRatio: MediaQuery.of(context).size.aspectRatio,
-                  placeholder: Center(child: CircularProgressIndicator()),
+                  placeholder: const Center(child: CircularProgressIndicator()),
                 ),
               ),
             ),
             if (!_isPlaying)
-              Center(
+              const Center(
                 child: Icon(
                   Icons.play_arrow,
                   color: Colors.white,
@@ -249,7 +243,7 @@ void dispose() {
               top: 40,
               left: 20,
               child: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -261,7 +255,7 @@ void dispose() {
                 children: [
                   Text(
                     '@${widget.user}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
@@ -269,7 +263,7 @@ void dispose() {
                   ),
                   Text(
                     widget.caption,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
                     ),
@@ -291,27 +285,27 @@ void dispose() {
                   ),
                   Text(
                     _likesCount.toString(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                //  SizedBox(height: 10),
+                  //  SizedBox(height: 10),
                   IconButton(
-                    icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
+                    icon: const FaIcon(FontAwesomeIcons.share,
+                        color: Colors.white),
                     onPressed: _shareVideo,
                   ),
                   Text(
                     _shareCount.toString(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                                   SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
-                                   SizedBox(height: 30),
-
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -319,7 +313,7 @@ void dispose() {
               bottom: 160,
               right: 20,
               child: IconButton(
-                icon: Icon(Icons.comment, color: Colors.white),
+                icon: const Icon(Icons.comment, color: Colors.white),
                 onPressed: _showCommentsBottomSheet,
               ),
             ),
@@ -329,5 +323,3 @@ void dispose() {
     );
   }
 }
-
- 

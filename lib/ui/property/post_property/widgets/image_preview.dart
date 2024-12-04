@@ -5,7 +5,8 @@ class ImagePreview extends StatelessWidget {
   final List<File> images;
   final Function(int) onRemoveImage;
 
-  ImagePreview({
+  const ImagePreview({
+    super.key,
     required this.images,
     required this.onRemoveImage,
   });
@@ -15,7 +16,7 @@ class ImagePreview extends StatelessWidget {
     return images.isNotEmpty
         ? Padding(
             padding: const EdgeInsets.only(top: 10.0),
-            child: Container(
+            child: SizedBox(
               height: 100.0,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -35,11 +36,11 @@ class ImagePreview extends StatelessWidget {
                           child: Container(
                             width: 20, // Reduced width
                             height: 20, // Reduced height
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Colors.red,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.close,
                               size: 12, // Reduced icon size
                               color: Colors.white,
@@ -53,6 +54,6 @@ class ImagePreview extends StatelessWidget {
               ),
             ),
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
   }
 }

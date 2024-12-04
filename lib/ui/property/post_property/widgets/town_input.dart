@@ -10,7 +10,8 @@ class TownInput extends StatelessWidget {
   final VoidCallback fetchSubRegions;
   final bool initDataFetched;
 
-  TownInput({
+  const TownInput({
+    super.key,
     required this.townsList,
     required this.userTown,
     required this.isLoadingSubRegions,
@@ -137,6 +138,6 @@ class TownInput extends StatelessWidget {
                 ),
             ],
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
   }
 }

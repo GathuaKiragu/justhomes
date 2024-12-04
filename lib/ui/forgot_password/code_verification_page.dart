@@ -4,14 +4,14 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:just_apartment_live/api/api.dart';
 import 'package:just_apartment_live/ui/forgot_password/reset_password_page.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/widgets/theme_helper.dart';
 
 class CodeVerificationPage extends StatefulWidget {
   final String resetCode;
   final dynamic userDetails;
 
-  CodeVerificationPage({required this.resetCode, required this.userDetails});
+  const CodeVerificationPage(
+      {super.key, required this.resetCode, required this.userDetails});
 
   @override
   _CodeVerificationPageState createState() => _CodeVerificationPageState();
@@ -25,7 +25,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
   _verifyCode() {
     if (_code.length != 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
           content: Text('Please enter the complete code.'),
         ),
@@ -44,7 +44,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
           content: Text('The reset code is incorrect.'),
         ),
@@ -85,28 +85,28 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Verify Code',
           style: TextStyle(
             color: Colors.white, // Set the text color to white
           ),
         ),
         backgroundColor: HexColor('#252742'),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Set the back button color to white
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 40, 20, 10),
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 10),
           child: Column(
             children: [
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Enter the reset code sent to your email address to reset your password.',
                 style: TextStyle(color: Colors.grey),
               ),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               Form(
                 key: _formKey,
                 child: Column(
@@ -129,7 +129,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                         inactiveColor: Colors.grey,
                       ),
                       cursorColor: Colors.black,
-                      animationDuration: Duration(milliseconds: 300),
+                      animationDuration: const Duration(milliseconds: 300),
                       onChanged: (value) {
                         setState(() {
                           _code = value;
@@ -139,9 +139,9 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                         _verifyCode();
                       },
                     ),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     _buildVerifyCodeButton(),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     _buildResendEmailButton(),
                   ],
                 ),
@@ -159,10 +159,10 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
       child: ElevatedButton(
         style: ThemeHelper().buttonStyle(),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+          padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
           child: Text(
             'Verify Code'.toUpperCase(),
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
@@ -173,7 +173,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
 
   _buildResendEmailButton() {
     return _isResending
-        ? CircularProgressIndicator()
+        ? const CircularProgressIndicator()
         : TextButton(
             onPressed: () => _resendEmail(),
             child: Text(

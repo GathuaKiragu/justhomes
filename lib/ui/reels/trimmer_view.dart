@@ -19,9 +19,9 @@ class TrimmerView extends StatefulWidget {
 
   TrimmerView(
     this.file, {
-    Key? key,
+    super.key,
     this.isLiveVideo = false,
-  }) : super(key: key);
+  });
 
   @override
   State<TrimmerView> createState() => _TrimmerViewState();
@@ -125,7 +125,7 @@ class _TrimmerViewState extends State<TrimmerView> {
             _progressVisibility = false;
           });
 
-          final snackBar =
+          const snackBar =
               SnackBar(content: Text('Live video saved successfully.'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else {
@@ -158,16 +158,14 @@ class _TrimmerViewState extends State<TrimmerView> {
   //   return completer.future;
   // }
 
-
-
-
   Future<String?> _compressVideo(String filePath) async {
     try {
       // Start video compression
       final info = await VideoCompress.compressVideo(
         filePath,
         quality: VideoQuality.MediumQuality, // Adjust quality as needed
-        deleteOrigin: false, // Set to true if you want to delete the original file
+        deleteOrigin:
+            false, // Set to true if you want to delete the original file
       );
 
       if (info != null && info.path != null) {
@@ -182,7 +180,6 @@ class _TrimmerViewState extends State<TrimmerView> {
       return null;
     }
   }
-
 
   Future<void> uploadVideoLive({
     required String url,
@@ -265,7 +262,7 @@ class _TrimmerViewState extends State<TrimmerView> {
       logger.i('Live video upload successful');
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ReelsPage(),
+          builder: (context) => const ReelsPage(),
         ),
       );
     } else {
@@ -291,7 +288,7 @@ class _TrimmerViewState extends State<TrimmerView> {
       onSave: (String? outputPath) async {
         if (outputPath != null) {
           final directory = dirname(outputPath);
-          final fileName = 'trimmed_video.mp4';
+          const fileName = 'trimmed_video.mp4';
           final newFilePath = join(directory, fileName);
 
           final trimmedFile = File(newFilePath);
@@ -324,9 +321,9 @@ class _TrimmerViewState extends State<TrimmerView> {
 
   Future<void> _uploadVideo(
       File videoFile, String description, BuildContext context) async {
-    final loadingDialog = AlertDialog(
+    const loadingDialog = AlertDialog(
       content: Row(
-        children: const [
+        children: [
           CircularProgressIndicator(),
           SizedBox(width: 20),
           Text('Uploading video...'),
@@ -342,7 +339,7 @@ class _TrimmerViewState extends State<TrimmerView> {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
 
-    final uri = Uri.parse(Configuration.API_URL + 'reels/upload-video');
+    final uri = Uri.parse('${Configuration.API_URL}reels/upload-video');
     logger.w('Uploading file: ${videoFile.path}');
 
     final request = http.MultipartRequest('POST', uri)
@@ -379,7 +376,7 @@ class _TrimmerViewState extends State<TrimmerView> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (BuildContext context) =>
-                ReelsPage(), // Your ReelsPage widget
+                const ReelsPage(), // Your ReelsPage widget
           ),
         );
       } else {

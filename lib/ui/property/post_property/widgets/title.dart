@@ -4,7 +4,8 @@ class TitleInput extends StatelessWidget {
   final TextEditingController titleController;
   final FormFieldValidator<String>? validator;
 
-  TitleInput({
+  const TitleInput({
+    super.key,
     required this.titleController,
     required this.validator,
   });

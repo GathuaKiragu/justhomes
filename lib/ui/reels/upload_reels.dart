@@ -7,20 +7,19 @@ import 'package:intl/intl.dart';
 import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
 import 'package:just_apartment_live/ui/reelsplayer/reels_page.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'reel_detail.dart';
 
 class UserReels extends StatefulWidget {
-  const UserReels({Key? key}) : super(key: key);
+  const UserReels({super.key});
 
   @override
   State<UserReels> createState() => _UserReelsState();
 }
 
 class _UserReelsState extends State<UserReels> {
-  List<File> _uploadedVideos = []; // List to store uploaded videos
+  final List<File> _uploadedVideos = []; // List to store uploaded videos
   List _userReels = []; // List to hold user reels
 
   @override
@@ -34,7 +33,7 @@ class _UserReelsState extends State<UserReels> {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var user = json.decode(localStorage.getString('user') ?? '{}');
 
-      final uri = '${Configuration.API_URL}reels/get-user-reels';
+      const uri = '${Configuration.API_URL}reels/get-user-reels';
 
       final response = await http.post(
         Uri.parse(uri),
@@ -75,7 +74,7 @@ class _UserReelsState extends State<UserReels> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();  
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
@@ -97,7 +96,7 @@ class _UserReelsState extends State<UserReels> {
 
   _performDeleteReel(String reelId) async {
     try {
-      final uri = '${Configuration.API_URL}reels/delete-reel';
+      const uri = '${Configuration.API_URL}reels/delete-reel';
       final response = await http.post(
         Uri.parse(uri),
         headers: {'Content-Type': 'application/json'},
@@ -157,7 +156,8 @@ class _UserReelsState extends State<UserReels> {
                               textStyle: const TextStyle(fontSize: 18),
                             ),
                             onPressed: () async {
-                              final result = await FilePicker.platform.pickFiles(
+                              final result =
+                                  await FilePicker.platform.pickFiles(
                                 type: FileType.video,
                                 allowCompression: false,
                               );
@@ -206,7 +206,6 @@ class _UserReelsState extends State<UserReels> {
                             "No reels yet.",
                             style: TextStyle(fontSize: 18, color: Colors.grey),
                           )
-                          
                         else
                           Expanded(
                             child: ListView.builder(
@@ -216,28 +215,26 @@ class _UserReelsState extends State<UserReels> {
                                 return GestureDetector(
                                   onTap: () async {
                                     logger.i(reel['user']['name']);
-                                    
- await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ReelDetailPage(
-        videoID: reel['id'],
-        userID: reel['user']['id'],
-        videoUrl: Configuration.WEB_URL + reel['video_path'],
-        user: reel['user'] is String ? reel['user'] : reel['user']['name'],
-        caption: reel['description'] ?? '',
-        likes: reel['likes'],
-        shares: reel['shares'],
-        comments: reel['comments'],
-        username : reel['user']['name']
-      ),
-    ),
-  );
 
- 
-},
-
-
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ReelDetailPage(
+                                            videoID: reel['id'],
+                                            userID: reel['user']['id'],
+                                            videoUrl: Configuration.WEB_URL +
+                                                reel['video_path'],
+                                            user: reel['user'] is String
+                                                ? reel['user']
+                                                : reel['user']['name'],
+                                            caption: reel['description'] ?? '',
+                                            likes: reel['likes'],
+                                            shares: reel['shares'],
+                                            comments: reel['comments'],
+                                            username: reel['user']['name']),
+                                      ),
+                                    );
+                                  },
                                   child: Card(
                                     margin: const EdgeInsets.only(bottom: 10),
                                     child: Padding(

@@ -20,6 +20,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // Profile Page
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -50,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Dashboard',
           style: TextStyle(
               color: Colors.white,
@@ -58,12 +60,12 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         backgroundColor: HexColor('#252742'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DashBoardPage(),
+                builder: (context) => const DashBoardPage(),
               ),
             );
           },
@@ -77,11 +79,11 @@ class _ProfilePageState extends State<ProfilePage> {
           // Purple container with title and username
           Container(
             color: Colors.purple,
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Dashboard',
                   style: TextStyle(
                     color: Colors.white,
@@ -91,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Text(
                   _loggedInUserName, // Display logged-in user's name
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                   ),
@@ -106,46 +108,46 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildGroupCard(
                       'Properties',
                       [
                         _buildIcon(FontAwesomeIcons.building, 'Properties',
-                            context, PropertiesPage()),
-                        _buildIcon(
-                            FontAwesomeIcons.plus, 'Post', context, PostPage()),
+                            context, const PropertiesPage()),
+                        _buildIcon(FontAwesomeIcons.plus, 'Post', context,
+                            const PostPage()),
                         _buildIcon(FontAwesomeIcons.magnifyingGlass, 'Search',
-                            context, SearchPage()),
+                            context, const SearchPage()),
                         _buildIcon(FontAwesomeIcons.calendarDays, 'Calendar',
-                            context, CalendarWithEvents()),
+                            context, const CalendarWithEvents()),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildGroupCard(
                       'Leads, Reels & Favorites',
                       [
                         _buildIcon(FontAwesomeIcons.chartBar, 'Statistics',
-                            context, StatsPage()),
+                            context, const StatsPage()),
                         _buildIcon(FontAwesomeIcons.users, 'Leads', context,
-                            LeadsPage()),
+                            const LeadsPage()),
                         _buildIcon(FontAwesomeIcons.heart, 'Favorites', context,
-                            FavoritesPage()),
+                            const FavoritesPage()),
                         _buildIcon(FontAwesomeIcons.video, 'Reels', context,
-                            UserReels()),
+                            const UserReels()),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildGroupCard(
                       'Profile',
                       [
                         _buildIcon(
                             FontAwesomeIcons.share, 'Share Profile', context),
                         _buildIcon(FontAwesomeIcons.user, 'Profile', context,
-                            UserProfilePage()),
+                            const UserProfilePage()),
                         _buildIcon(FontAwesomeIcons.gear, 'Settings', context,
-                            SettingsPage()),
+                            const SettingsPage()),
                         _buildIcon(FontAwesomeIcons.personCircleMinus,
-                            'Delete Profile', context, ProfilePage()),
+                            'Delete Profile', context, const ProfilePage()),
                         _buildIcon(FontAwesomeIcons.rightFromBracket, 'Logout',
                             context),
                       ],
@@ -181,11 +183,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         .purple, // Light grey in dark mode, purple in light mode
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             GridView.count(
               crossAxisCount: 4,
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               children: icons,
             ),
           ],
@@ -244,7 +246,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   : Colors.purple, // Icon color based on theme
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             label,
             textAlign: TextAlign.center,
@@ -270,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // Navigate to the login page and remove all other routes from the stack
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
+      MaterialPageRoute(builder: (context) => const LoginPage()),
       (Route<dynamic> route) => false,
     );
   }
@@ -283,7 +285,7 @@ class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");
     if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
+      hexColor = "FF$hexColor";
     }
     return int.parse(hexColor, radix: 16);
   }

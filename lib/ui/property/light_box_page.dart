@@ -6,7 +6,8 @@ class LightboxPage extends StatelessWidget {
   final int initialIndex;
   final List<String> images;
 
-  LightboxPage({required this.initialIndex, required this.images});
+  const LightboxPage(
+      {super.key, required this.initialIndex, required this.images});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class LightboxPage extends StatelessWidget {
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.close, color: Colors.white),
+            icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -33,8 +34,8 @@ class LightboxPage extends StatelessWidget {
             maxScale: PhotoViewComputedScale.covered * 2,
           );
         },
-        scrollPhysics: BouncingScrollPhysics(),
-        backgroundDecoration: BoxDecoration(
+        scrollPhysics: const BouncingScrollPhysics(),
+        backgroundDecoration: const BoxDecoration(
           color: Colors.black,
         ),
         pageController: PageController(initialPage: initialIndex),

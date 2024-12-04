@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 class AgentProfilePage extends StatefulWidget {
   final Map<String, dynamic> agent;
 
-  const AgentProfilePage({Key? key, required this.agent}) : super(key: key);
+  const AgentProfilePage({super.key, required this.agent});
 
   @override
   _AgentProfilePageState createState() => _AgentProfilePageState();
@@ -39,7 +39,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
 
   Future<void> _fetchAgentProperties() async {
     try {
-      final uri = '${Configuration.API_URL}agent/agent-properties';
+      const uri = '${Configuration.API_URL}agent/agent-properties';
       final response = await http.post(
         Uri.parse(uri),
         headers: {'Content-Type': 'application/json'},
@@ -108,10 +108,10 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       appBar: AppBar(
         title: Text(
           widget.agent['name'],
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: HexColor('#252742'), // Purple background color
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: isDarkMode ? Colors.grey[850] : Colors.grey[300],
       body: SingleChildScrollView(
@@ -119,7 +119,7 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
           children: [
             // First card displaying agent details
             Card(
-              margin: EdgeInsets.all(8.0),
+              margin: const EdgeInsets.all(8.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -141,13 +141,13 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                               widget.agent['avatar'].isEmpty
                           ? Text(
                               widget.agent['name'][0].toUpperCase(),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 30),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 30),
                             )
                           : null, // Don't show initial if avatar exists
                     ),
 
-                    SizedBox(width: 16.0),
+                    const SizedBox(width: 16.0),
                     // Agent details on the right
                     Expanded(
                       child: Column(
@@ -158,12 +158,12 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                             children: [
                               Text(
                                 widget.agent['name'],
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w400),
                               ),
                               IconButton(
-                                icon: FaIcon(
+                                icon: const FaIcon(
                                   FontAwesomeIcons.share,
                                   color: Colors.purple,
                                 ),
@@ -175,32 +175,32 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
                               "Properties Posted: ${widget.agent['properties_count']}"),
                           if (widget.agent['profile'] != null)
                             Text("Profile: ${widget.agent['profile']}"),
-                          SizedBox(height: 16.0),
+                          const SizedBox(height: 16.0),
                           // WhatsApp and Call buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               OutlinedButton.icon(
-                                icon: FaIcon(
+                                icon: const FaIcon(
                                   FontAwesomeIcons.phone,
                                   size: 16,
                                   color: Colors.purple,
                                 ),
-                                label: Text(
+                                label: const Text(
                                   "Call",
                                   style: TextStyle(color: Colors.purple),
                                 ),
                                 onPressed: () =>
                                     _launchCall(widget.agent['telephone']),
                               ),
-                              SizedBox(width: 8.0),
+                              const SizedBox(width: 8.0),
                               OutlinedButton.icon(
-                                icon: FaIcon(
+                                icon: const FaIcon(
                                   FontAwesomeIcons.whatsapp,
                                   size: 16,
                                   color: Colors.purple,
                                 ),
-                                label: Text(
+                                label: const Text(
                                   "WhatsApp",
                                   style: TextStyle(color: Colors.purple),
                                 ),
@@ -218,18 +218,18 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
             ),
             // Second card displaying properties posted by agents
             Card(
-              margin: EdgeInsets.all(8.0),
+              margin: const EdgeInsets.all(8.0),
               child: Padding(
                 padding: const EdgeInsets.all(1.0),
                 child: isLoading
-                    ? Center(
+                    ? const Center(
                         child:
                             CircularProgressIndicator()) // Show loading indicator
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 8.0, left: 8.0),
                             child: Text(
                               "Properties Posted:",
                               style: TextStyle(

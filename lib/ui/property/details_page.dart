@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:just_apartment_live/api/api.dart';
 import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/dashboard/widgets/latest_properties_widget.dart';
-import 'package:just_apartment_live/ui/property/contact_agent_page.dart';
 import 'package:just_apartment_live/ui/property/light_box_page.dart';
 import 'package:just_apartment_live/ui/report_ad/report_ad_page.dart';
 import 'package:just_apartment_live/widgets/custom_navigation_bar.dart';
@@ -18,7 +17,7 @@ import 'schedule_tour_popup.dart';
 
 class DetailsPage extends StatefulWidget {
   var propertyID;
-  DetailsPage({required this.propertyID});
+  DetailsPage({super.key, required this.propertyID});
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
@@ -27,7 +26,7 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
   bool _init_data_fetched = false;
 
   List<bool> isChecked = List.generate(20, (index) => false);
@@ -39,9 +38,9 @@ class _DetailsPageState extends State<DetailsPage> {
   List _propertyImages = [];
   List _filteredProperties = [];
 
-  List _issueReasonName = [];
+  final List _issueReasonName = [];
 
-  List<Map<String, dynamic>> _reportIssueReasonsListData = [];
+  final List<Map<String, dynamic>> _reportIssueReasonsListData = [];
 
   List _reportIssueReasonsList = [];
 
@@ -49,6 +48,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   var formattedAmount;
 
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -82,7 +82,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
           _reportIssueReasonsList = body['data']['reportIssueReasonsList'];
 
-          List<Map<String, dynamic>> _reportIssueReasonsListData =
+          List<Map<String, dynamic>> reportIssueReasonsListData =
               List<Map<String, dynamic>>.from(
                   body['data']['reportIssueReasonsList']);
 
@@ -157,7 +157,7 @@ class _DetailsPageState extends State<DetailsPage> {
           child: Card(
             elevation: 1.0,
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   Row(
@@ -168,7 +168,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       Expanded(
                         child: Text(
                           _propertyDetails['property_title'].toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
                           ),
@@ -179,7 +179,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                           width:
                               10), // Add some spacing between the title and the amount
                       Text(
@@ -203,33 +203,31 @@ class _DetailsPageState extends State<DetailsPage> {
                           children: [
                             Row(
                               children: [
-                                FaIcon(FontAwesomeIcons.house,
+                                const FaIcon(FontAwesomeIcons.house,
                                     size: 18, color: Colors.grey),
-                                SizedBox(width: 3), // Adjust the space here
+                                const SizedBox(
+                                    width: 3), // Adjust the space here
                                 Text(
                                     _propertyDetails['property_type_name']
                                         .toString(),
-                                    style: TextStyle(fontSize: 15)),
+                                    style: const TextStyle(fontSize: 15)),
                               ],
                             ),
                           ],
                         ),
-                        SizedBox(width: 25),
+                        const SizedBox(width: 25),
                         Column(
                           children: [
                             Row(
                               children: [
-                                FaIcon(FontAwesomeIcons.locationPin,
+                                const FaIcon(FontAwesomeIcons.locationPin,
                                     size: 18, color: Colors.grey),
-                                SizedBox(width: 3), // Adjust the space here
+                                const SizedBox(
+                                    width: 3), // Adjust the space here
                                 Text(
-                                  capitalize(_propertyDetails['town_name']
-                                          .toString()) +
-                                      ", " +
-                                      _propertyDetails['sub_region_name']
-                                          .toString(),
+                                  "${capitalize(_propertyDetails['town_name'].toString())}, ${_propertyDetails['sub_region_name']}",
 
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
                                   ),
                                   overflow: TextOverflow
@@ -306,9 +304,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 9.0),
                                     child: Text(
-                                      'Condition: ' +
-                                              _propertyDetails['condition_name']
-                                                  .toString() ??
+                                      'Condition: ${_propertyDetails['condition_name']}' ??
                                           "",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -369,8 +365,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
-                                      _propertyDetails['bedrooms'].toString() +
-                                          ' Bedroom',
+                                      '${_propertyDetails['bedrooms']} Bedroom',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12,
@@ -430,9 +425,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
-                                      _propertyDetails['parking_spaces']
-                                              .toString() +
-                                          ' Parking',
+                                      '${_propertyDetails['parking_spaces']} Parking',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12,
@@ -517,7 +510,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         Expanded(
                           child: Text(
                             _propertyDetails['property_description'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                             ),
                             textAlign:
@@ -532,7 +525,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     thickness: 1,
                     height: 20,
                   ),
-                  Row(
+                  const Row(
                     children: [
                       Text(
                         "Specifications",
@@ -548,21 +541,21 @@ class _DetailsPageState extends State<DetailsPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: ListView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: _propertyFeatures.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             child: ListTile(
                               contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 0.0),
+                                  const EdgeInsets.symmetric(horizontal: 0.0),
                               leading: Container(
-                                padding: EdgeInsets.all(4.0),
-                                decoration: BoxDecoration(
+                                padding: const EdgeInsets.all(4.0),
+                                decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Colors.purple,
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.check,
                                   color: Colors.white,
                                   size: 20.0,
@@ -603,20 +596,20 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                           ),
 
-                          SizedBox(
+                          const SizedBox(
                               width:
                                   8), // Add some space between the image and text
                           Column(
                             crossAxisAlignment: CrossAxisAlignment
                                 .start, // Align all children to the left
                             children: [
-                              Text(
+                              const Text(
                                 "Listed By:",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 _propertyDetails['created_by_name'] ?? '',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ), // Handle null case
                             ],
                           ),
@@ -640,21 +633,21 @@ class _DetailsPageState extends State<DetailsPage> {
                                   : '${Configuration.WEB_URL}/images/no_user.png',
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                               width:
                                   8), // Add some space between the image and text
                           Column(
                             crossAxisAlignment: CrossAxisAlignment
                                 .start, // Align all children to the left
                             children: [
-                              Text(
+                              const Text(
                                 "Listed By:",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 _propertyDetails['company_name'] ??
                                     'Unknown Company',
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ), // Handle null case
                             ],
                           ),
@@ -666,7 +659,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Container(
                       child: Padding(
-                        padding: EdgeInsets.all(0.0),
+                        padding: const EdgeInsets.all(0.0),
                         child: Row(
                           children: [
                             // ClipRRect(
@@ -704,18 +697,18 @@ class _DetailsPageState extends State<DetailsPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
-                                          FaIcon(
+                                          const FaIcon(
                                             FontAwesomeIcons.phone,
                                             color: Colors.white,
                                             size:
                                                 15, // White icon color for phone
                                           ),
-                                          SizedBox(width: 5),
+                                          const SizedBox(width: 5),
                                           Text(
                                             _propertyDetails[
                                                     'created_by_telephone']
                                                 .toString(), // Replace with actual phone number
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 15,
                                               color: Colors.white, // White text
                                             ),
@@ -723,7 +716,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                         height:
                                             10), // Add some spacing between rows
 
@@ -746,7 +739,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                         side: BorderSide
                                             .none, // No border for solid background
                                       ),
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: <Widget>[
@@ -766,7 +759,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                         ],
                                       ),
                                     ),
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
 
                                     Row(
                                       mainAxisAlignment:
@@ -809,7 +802,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                                     18.0, // Adjust the size to your preference
                                               ),
                                             ),
-                                            SizedBox(width: 8),
+                                            const SizedBox(width: 8),
                                             OutlinedButton(
                                               onPressed: () => {
                                                 launchEmail(
@@ -926,12 +919,12 @@ class _DetailsPageState extends State<DetailsPage> {
                         .start, // Aligns children to the start (left)
                     children: [
                       TextButton.icon(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons
                               .share, // Replace with the appropriate icon if needed
                           color: Colors.blue,
                         ),
-                        label: Text(
+                        label: const Text(
                           "Share Agent Details",
                           style: TextStyle(
                             color: Colors.blue,
@@ -946,11 +939,11 @@ class _DetailsPageState extends State<DetailsPage> {
                         ),
                       ),
                       TextButton.icon(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.help, // Use the help icon for reporting
                           color: Colors.blue,
                         ),
-                        label: Text(
+                        label: const Text(
                           "Report Ad",
                           style: TextStyle(
                             color: Colors.blue,
@@ -977,8 +970,8 @@ class _DetailsPageState extends State<DetailsPage> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(10.0),
+        const Padding(
+          padding: EdgeInsets.all(10.0),
           child: Center(
             child: Text(
               "Similar properties",
@@ -1070,8 +1063,9 @@ class _DetailsPageState extends State<DetailsPage> {
                     height: 250, // Set the height of the image
                     loadingBuilder: (BuildContext context, Widget child,
                         ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null)
+                      if (loadingProgress == null) {
                         return child; // If the image has loaded, return it.
+                      }
                       return Container(
                         width: double.infinity,
                         height: 250,
@@ -1153,33 +1147,33 @@ class _DetailsPageState extends State<DetailsPage> {
         children: [
           // Example shimmer blocks
           Container(
-            margin: EdgeInsets.all(16.0),
+            margin: const EdgeInsets.all(16.0),
             height: 200.0,
             color: isDarkMode
                 ? Colors.grey[800]
                 : Colors.white, // Background color of shimmer item
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
             height: 20.0,
             width: double.infinity,
             color: isDarkMode
                 ? Colors.grey[800]
                 : Colors.white, // Background color of shimmer item
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
             height: 20.0,
             width: double.infinity,
             color: isDarkMode
                 ? Colors.grey[800]
                 : Colors.white, // Background color of shimmer item
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0),
             height: 100.0,
             color: isDarkMode
                 ? Colors.grey[800]
@@ -1245,10 +1239,10 @@ class _DetailsPageState extends State<DetailsPage> {
 
   void _shareAgentDetails(name, telephone, email, agentID) {
     final message = 'Check out this agent:\n'
-        'Name: ${name}\n'
-        'Telephone: ${telephone}\n'
-        'Email: ${email}\n'
-        'Profile Link: https://justhomes.co.ke/agent/profile/${agentID}';
+        'Name: $name\n'
+        'Telephone: $telephone\n'
+        'Email: $email\n'
+        'Profile Link: https://justhomes.co.ke/agent/profile/$agentID';
     Share.share(message);
   }
 }

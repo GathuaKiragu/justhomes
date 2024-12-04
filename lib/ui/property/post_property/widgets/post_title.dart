@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class TitleSection extends StatelessWidget {
+  const TitleSection({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         Padding(
           padding: EdgeInsets.only(top: 10),

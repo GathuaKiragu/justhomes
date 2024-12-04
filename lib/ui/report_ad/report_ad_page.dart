@@ -7,8 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ReportAdDialog extends StatefulWidget {
   final Map<String, dynamic> propertyDetails;
 
-  const ReportAdDialog({Key? key, required this.propertyDetails})
-      : super(key: key);
+  const ReportAdDialog({super.key, required this.propertyDetails});
 
   @override
   _ReportAdDialogState createState() => _ReportAdDialogState();
@@ -31,7 +30,7 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
     // Validate input
     if (_selectedReason == null || _description.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please select a reason and provide a description.'),
         ),
       );
@@ -72,8 +71,8 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Report Submitted'),
-          content: Text(
+          title: const Text('Report Submitted'),
+          content: const Text(
               'Thank you, we have received your report. We shall Review and action.'),
           actions: [
             TextButton(
@@ -81,7 +80,7 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
                 Navigator.of(context).pop(); // Close the confirmation dialog
                 Navigator.of(context).pop(); // Close the report dialog
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -89,7 +88,7 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
     } else {
       // Handle error response
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Failed to submit report. Please try again later.'),
         ),
       );
@@ -101,14 +100,15 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
     return AlertDialog(
       title: Text(
         'Report Ad: ${widget.propertyDetails['property_title']}',
-        style: TextStyle(fontSize: 16),
+        style: const TextStyle(fontSize: 16),
       ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<String>(
-              decoration: InputDecoration(labelText: 'Select Report Reason'),
+              decoration:
+                  const InputDecoration(labelText: 'Select Report Reason'),
               value: _selectedReason,
               onChanged: (String? newValue) {
                 setState(() {
@@ -122,7 +122,7 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               onChanged: (value) {
                 setState(() {
@@ -130,14 +130,14 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
                 });
               },
               maxLines: 5,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Please describe your issue',
                 border: OutlineInputBorder(),
               ),
             ),
             if (_isSubmitting) // Show loading message
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -153,13 +153,13 @@ class _ReportAdDialogState extends State<ReportAdDialog> {
       actions: [
         TextButton(
           onPressed: _submitReport,
-          child: Text('Submit'),
+          child: const Text('Submit'),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(); // Close the dialog
           },
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
       ],
     );

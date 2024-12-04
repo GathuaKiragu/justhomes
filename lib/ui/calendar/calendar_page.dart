@@ -10,6 +10,8 @@ import 'package:url_launcher/url_launcher.dart'; // Add this package to your pub
 import 'package:intl/intl.dart';
 
 class CalendarWithEvents extends StatefulWidget {
+  const CalendarWithEvents({super.key});
+
   @override
   _CalendarWithEventsState createState() => _CalendarWithEventsState();
 }
@@ -101,8 +103,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
             // Check if eventsList is a List and not null or empty
             if (eventsList is List && eventsList.isNotEmpty) {
               // Convert each event in the eventsList to an Event object
-              List<Event> dayEvents =
-                  (eventsList as List<dynamic>).map<Event>((eventData) {
+              List<Event> dayEvents = (eventsList).map<Event>((eventData) {
                 // Ensure eventData has the necessary fields before creating an Event
                 return Event(
                   eventData['name']?.toString() ?? '',
@@ -172,7 +173,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
+              const Expanded(
                 child: Center(
                   child: Text(
                     'Appointment Details',
@@ -182,7 +183,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.close),
+                icon: const Icon(Icons.close),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -196,55 +197,55 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.person, size: 16.0),
-                    SizedBox(width: 4.0),
+                    const Icon(Icons.person, size: 16.0),
+                    const SizedBox(width: 4.0),
                     Text(
                       event.name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.access_time, size: 16.0),
-                    SizedBox(width: 4.0),
+                    const Icon(Icons.access_time, size: 16.0),
+                    const SizedBox(width: 4.0),
                     Text('${event.from} - ${event.to}'),
                   ],
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.phone, size: 16.0),
-                    SizedBox(width: 4.0),
+                    const Icon(Icons.phone, size: 16.0),
+                    const SizedBox(width: 4.0),
                     Text(event.telephone),
                   ],
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.email, size: 16.0),
-                    SizedBox(width: 4.0),
+                    const Icon(Icons.email, size: 16.0),
+                    const SizedBox(width: 4.0),
                     Text(event.email),
                   ],
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.home, size: 16.0),
-                    SizedBox(width: 4.0),
+                    const Icon(Icons.home, size: 16.0),
+                    const SizedBox(width: 4.0),
                     Expanded(
                       // Ensures text wraps within the available space
                       child: Text(
@@ -266,35 +267,35 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                     _callNumber(event.telephone);
                     Navigator.of(context).pop();
                   },
-                  icon: Icon(Icons.phone, size: 18.0),
-                  label: Text('Call', style: TextStyle(fontSize: 14.0)),
+                  icon: const Icon(Icons.phone, size: 18.0),
+                  label: const Text('Call', style: TextStyle(fontSize: 14.0)),
                   style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 48), // Full width
+                    minimumSize: const Size(double.infinity, 48), // Full width
                   ),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 OutlinedButton.icon(
                   onPressed: () {
                     _sendEmail(event.email);
                     Navigator.of(context).pop();
                   },
-                  icon: Icon(Icons.email, size: 18.0),
-                  label: Text('Email', style: TextStyle(fontSize: 14.0)),
+                  icon: const Icon(Icons.email, size: 18.0),
+                  label: const Text('Email', style: TextStyle(fontSize: 14.0)),
                   style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 48), // Full width
+                    minimumSize: const Size(double.infinity, 48), // Full width
                   ),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 OutlinedButton(
                   onPressed: () async {
                     await _cancelAppointment(context,
                         event.calendarId); // Pass the event's calendarId
                   },
-                  child: Text('Cancel Appointment',
-                      style: TextStyle(fontSize: 14.0)),
                   style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 48), // Full width
+                    minimumSize: const Size(double.infinity, 48), // Full width
                   ),
+                  child: const Text('Cancel Appointment',
+                      style: TextStyle(fontSize: 14.0)),
                 ),
               ],
             ),
@@ -343,7 +344,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
         children: [
           if (_isCalendarVisible)
             TableCalendar(
-              calendarStyle: CalendarStyle(
+              calendarStyle: const CalendarStyle(
                 todayDecoration: BoxDecoration(
                   color: Colors.blue,
                   shape: BoxShape.circle,
@@ -412,12 +413,13 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                               ? Icons.visibility_off
                               : Icons.visibility,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           _isCalendarVisible
                               ? 'Hide Calendar'
                               : 'Show Calendar',
-                          style: TextStyle(fontSize: 16, color: Colors.blue),
+                          style:
+                              const TextStyle(fontSize: 16, color: Colors.blue),
                         ),
                       ],
                     ),
@@ -437,7 +439,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                         }).toList(),
                         onChanged: _onMonthChanged,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       DropdownButton<int>(
                         value: _focusedDay.year,
                         items: _years.map<DropdownMenuItem<int>>((int year) {
@@ -464,7 +466,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                   return Center(
                     child: Text(
                       'No meetings on ${DateFormat.yMMMMd().format(_selectedDay)}', // Display the date
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   );
                 }
@@ -487,13 +489,13 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                                     backgroundColor: Colors.white,
                                     child: Text(
                                       event.name[0],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 8.0),
+                                  const SizedBox(width: 8.0),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -506,7 +508,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                                             Expanded(
                                               child: Text(
                                                 event.name,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -514,26 +516,26 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                                             ),
                                             Text(
                                               '${event.from} - ${event.to}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 11.0,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
                                         Row(
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.phone,
                                               color: Colors.white,
                                               size: 14.0,
                                             ),
-                                            SizedBox(width: 4.0),
+                                            const SizedBox(width: 4.0),
                                             Expanded(
                                               child: Text(
                                                 event.telephone,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 11.0,
                                                 ),
@@ -541,19 +543,19 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 4.0),
+                                        const SizedBox(height: 4.0),
                                         Row(
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.email,
                                               color: Colors.white,
                                               size: 14.0,
                                             ),
-                                            SizedBox(width: 4.0),
+                                            const SizedBox(width: 4.0),
                                             Expanded(
                                               child: Text(
                                                 event.email,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 11.0,
                                                 ),
@@ -585,18 +587,19 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Cancellation'),
-          content: Text('Are you sure you want to cancel this appointment?'),
+          title: const Text('Confirm Cancellation'),
+          content:
+              const Text('Are you sure you want to cancel this appointment?'),
           actions: <Widget>[
             TextButton(
               onPressed: () =>
                   Navigator.of(context).pop(false), // User clicks No
-              child: Text('No'),
+              child: const Text('No'),
             ),
             TextButton(
               onPressed: () =>
                   Navigator.of(context).pop(true), // User clicks Yes
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
           ],
         );
@@ -627,8 +630,8 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                 false, // Prevents closing the dialog by tapping outside
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Cancellation Successful'),
-                content: Text('Appointment successfully canceled.'),
+                title: const Text('Cancellation Successful'),
+                content: const Text('Appointment successfully canceled.'),
                 actions: <Widget>[
                   TextButton(
                     style: TextButton.styleFrom(
@@ -642,11 +645,11 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              CalendarWithEvents(), // Your page widget
+                              const CalendarWithEvents(), // Your page widget
                         ),
                       );
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.refresh), // Reload icon
@@ -675,7 +678,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
 
   Widget _buildEventsMarker(int count) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.blue,
       ),
@@ -684,7 +687,7 @@ class _CalendarWithEventsState extends State<CalendarWithEvents> {
       child: Center(
         child: Text(
           '$count',
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 12.0,
           ),

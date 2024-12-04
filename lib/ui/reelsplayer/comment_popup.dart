@@ -247,7 +247,8 @@ class CommentPopup extends StatefulWidget {
   final Function(String) onCommentAdded;
   final String videoID;
 
-  CommentPopup({
+  const CommentPopup({
+    super.key,
     required this.comments,
     required this.onCommentAdded,
     required this.videoID,
@@ -284,8 +285,8 @@ class _CommentPopupState extends State<CommentPopup> {
         width: mediaQuery.size.width * 0.90,
         height: mediaQuery.size.height * 0.70,
         child: Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(20),
@@ -318,7 +319,7 @@ class _CommentPopupState extends State<CommentPopup> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        const Text(
           'Comments',
           style: TextStyle(
             fontSize: 24,
@@ -327,7 +328,7 @@ class _CommentPopupState extends State<CommentPopup> {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
           color: Colors.black,
         ),
@@ -349,17 +350,17 @@ class _CommentPopupState extends State<CommentPopup> {
     return SizeTransition(
       sizeFactor: animation,
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+        contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
         leading: _buildUserThumbnail(comment),
         title: Text(
           comment['user']?['name'] ?? 'Anonymous',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(comment['comment']),
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4.0),
             Text(
               _formatDateTime(comment['created_at']),
               style: TextStyle(color: Colors.grey[600], fontSize: 12),
@@ -372,15 +373,15 @@ class _CommentPopupState extends State<CommentPopup> {
 
   Widget _buildErrorMessage() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.red[100],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         _errorMessage!,
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -392,7 +393,7 @@ class _CommentPopupState extends State<CommentPopup> {
         (comment['user']?['name']?.isNotEmpty ?? false)
             ? comment['user']['name'][0].toUpperCase()
             : '?',
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.white),
       ),
     );
   }
@@ -408,14 +409,14 @@ class _CommentPopupState extends State<CommentPopup> {
               hintText: 'Add a comment...',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: const BorderSide(color: Colors.grey),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             ),
           ),
         ),
         IconButton(
-          icon: Icon(Icons.send),
+          icon: const Icon(Icons.send),
           onPressed: _addComment,
           color: Colors.blue,
         ),
@@ -472,8 +473,9 @@ class _CommentPopupState extends State<CommentPopup> {
     await _postCommentToServer(newComment, widget.videoID);
   }
 
-  Future<void> _postCommentToServer(Map<String, dynamic> comment, String videoID) async {
-    final uri = Configuration.API_URL + 'reels/post-comment';
+  Future<void> _postCommentToServer(
+      Map<String, dynamic> comment, String videoID) async {
+    const uri = '${Configuration.API_URL}reels/post-comment';
 
     final response = await http.post(
       Uri.parse(uri),
@@ -492,7 +494,8 @@ class _CommentPopupState extends State<CommentPopup> {
       });
       // Optionally remove the comment if the post failed
       widget.comments.removeAt(0); // Remove the comment that failed to post
-      _listKey.currentState?.removeItem(0, (context, animation) => _buildCommentTile(comment, animation));
+      _listKey.currentState?.removeItem(
+          0, (context, animation) => _buildCommentTile(comment, animation));
     }
   }
 }

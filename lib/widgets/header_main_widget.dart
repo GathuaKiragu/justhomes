@@ -32,23 +32,25 @@ void navigateToPage(BuildContext context, Widget page) {
 AppBar buildHeader(BuildContext context) {
   return AppBar(
     backgroundColor: appBarColor,
-    iconTheme: IconThemeData(color: Colors.white),
+    iconTheme: const IconThemeData(color: Colors.white),
     centerTitle: false,
     elevation: 0.0,
     actions: <Widget>[
       IconButton(
-        icon: Icon(Icons.add, color: Colors.white),
+        icon: const Icon(Icons.add, color: Colors.white),
         onPressed: () {
           checkIfUserIsLoggedIn().then((result) {
-            navigateToPage(context, result == 1 ? PostPage() : LoginPage());
+            navigateToPage(
+                context, result == 1 ? const PostPage() : const LoginPage());
           });
         },
       ),
       IconButton(
-        icon: Icon(Icons.person_pin, color: Colors.white),
+        icon: const Icon(Icons.person_pin, color: Colors.white),
         onPressed: () {
           checkIfUserIsLoggedIn().then((result) {
-            navigateToPage(context, result == 1 ? ProfilePage() : LoginPage());
+            navigateToPage(
+                context, result == 1 ? const ProfilePage() : const LoginPage());
           });
         },
       ),
@@ -60,32 +62,36 @@ Drawer buildDrawer(BuildContext context, {bool isPublic = false}) {
   return Drawer(
     child: Column(
       children: <Widget>[
-        Divider(height: 30.0),
+        const Divider(height: 30.0),
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              buildDrawerItem(context, Icons.home, 'Home', DashBoardPage()),
               buildDrawerItem(
-                  context, Icons.settings, 'Dashboard', ProfilePage()),
+                  context, Icons.home, 'Home', const DashBoardPage()),
               buildDrawerItem(
-                  context, Icons.people, 'Just Homes Agents', AgentsPage()),
+                  context, Icons.settings, 'Dashboard', const ProfilePage()),
+              buildDrawerItem(context, Icons.people, 'Just Homes Agents',
+                  const AgentsPage()),
               buildDrawerItem(
-                  context, Icons.search, 'Search Property', SearchPage()),
+                  context, Icons.search, 'Search Property', const SearchPage()),
               buildDrawerItem(
                   context,
                   Icons.house_outlined,
                   'OffPlan Properties',
-                  OffPlanPropertiesPage(selectedIndex: 2)),
+                  const OffPlanPropertiesPage(selectedIndex: 2)),
               buildDrawerItem(
                   context,
                   Icons.house_siding_rounded,
                   'On Auction Properties',
-                  AuctionedPropertiesPage(selectedIndex: 2)),
-              buildDrawerItem(context, Icons.house_siding_rounded,
-                  'Government Housing', GovernmentHousing(selectedIndex: 2)),
+                  const AuctionedPropertiesPage(selectedIndex: 2)),
               buildDrawerItem(
-                  context, Icons.house, 'Post New Property', PostPage()),
+                  context,
+                  Icons.house_siding_rounded,
+                  'Government Housing',
+                  const GovernmentHousing(selectedIndex: 2)),
+              buildDrawerItem(
+                  context, Icons.house, 'Post New Property', const PostPage()),
               buildLogoutItem(context),
               buildThemeToggle(context),
               if (isPublic) buildLoginItem(context),
@@ -108,15 +114,15 @@ ListTile buildDrawerItem(
 
 ListTile buildLogoutItem(BuildContext context) {
   return ListTile(
-    leading: Icon(Icons.logout),
-    title: Text('Logout'),
+    leading: const Icon(Icons.logout),
+    title: const Text('Logout'),
     onTap: () async {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       await localStorage.remove(userKey);
       await localStorage.remove(tokenKey);
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
         (Route<dynamic> route) => false,
       );
     },
@@ -125,7 +131,7 @@ ListTile buildLogoutItem(BuildContext context) {
 
 ListTile buildThemeToggle(BuildContext context) {
   return ListTile(
-    title: Text('Light/Dark Mode'),
+    title: const Text('Light/Dark Mode'),
     trailing: Switch(
       value: AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light,
       onChanged: (value) {
@@ -139,10 +145,10 @@ ListTile buildThemeToggle(BuildContext context) {
 
 ListTile buildLoginItem(BuildContext context) {
   return ListTile(
-    leading: Icon(Icons.login),
-    title: Text('Login'),
+    leading: const Icon(Icons.login),
+    title: const Text('Login'),
     onTap: () {
-      navigateToPage(context, LoginPage());
+      navigateToPage(context, const LoginPage());
     },
   );
 }

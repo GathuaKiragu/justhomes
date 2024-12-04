@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:just_apartment_live/ui/reelsplayer/reel_player.dart';
+import 'package:just_apartment_live/ui/reelsplayer/widgets/pusherclient.dart';
 
 import 'ui/spalsh_screen/splash_screen.dart';
 
@@ -12,11 +13,11 @@ void main() {
     statusBarIconBrightness:
         Brightness.light, // Set icons color to light for dark background
   ));
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +35,10 @@ class MyApp extends StatelessWidget {
           title: 'Flutter App',
           theme: theme,
           darkTheme: darkTheme,
-          // home: SplashScreen(),
-          home: Reels()
+          home: SplashScreen(),
+          // home: const SplashScreen()),
+          // home:  RealTimeUpdatePage()),
+          // RealTimeUpdatePage
         ),
       ),
     );
@@ -46,7 +49,7 @@ class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll("#", "");
     if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
+      hexColor = "FF$hexColor";
     }
     return int.parse(hexColor, radix: 16);
   }

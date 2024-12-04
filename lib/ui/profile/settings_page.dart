@@ -16,6 +16,8 @@ import 'package:http/http.dart' as http;
 bool _isUploading = false;
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -48,13 +50,14 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _checkifUserisLoggedIn() async {
-    int _isLoggedIn = 0;
+    int isLoggedIn = 0;
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
-    _isLoggedIn = user['id'] != null ? 1 : 0;
-    return _isLoggedIn;
+    isLoggedIn = user['id'] != null ? 1 : 0;
+    return isLoggedIn;
   }
 
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -103,11 +106,11 @@ class _SettingsPageState extends State<SettingsPage> {
           context: context,
           builder: (BuildContext dialogContext) {
             return AlertDialog(
-              title: Text('Error'),
-              content: Text('Your Password does not match.'),
+              title: const Text('Error'),
+              content: const Text('Your Password does not match.'),
               actions: <Widget>[
                 TextButton(
-                  child: Text('Okay'),
+                  child: const Text('Okay'),
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
                   },
@@ -136,11 +139,11 @@ class _SettingsPageState extends State<SettingsPage> {
               context: context,
               builder: (BuildContext dialogContext) {
                 return AlertDialog(
-                  title: Text('Success'),
-                  content: Text('Profile successfully updated.'),
+                  title: const Text('Success'),
+                  content: const Text('Profile successfully updated.'),
                   actions: <Widget>[
                     TextButton(
-                      child: Text('Okay'),
+                      child: const Text('Okay'),
                       onPressed: () {
                         Navigator.of(dialogContext).pop();
                         Navigator.of(context).pop();
@@ -164,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
         appBarTheme: AppBarTheme(
           backgroundColor: HexColor('#252742'),
         ),
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.black),
           bodyMedium: TextStyle(color: Colors.black),
           bodySmall: TextStyle(color: Colors.black87),
@@ -179,7 +182,7 @@ class _SettingsPageState extends State<SettingsPage> {
         appBarTheme: AppBarTheme(
           backgroundColor: HexColor('#252742'),
         ),
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Colors.white),
           bodySmall: TextStyle(color: Colors.white70),
@@ -203,13 +206,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   ?.copyWith(color: Colors.white),
             ),
             leading: IconButton(
-              icon: Icon(Icons.arrow_back,
+              icon: const Icon(Icons.arrow_back,
                   color: Colors.white), // Set color to white
               onPressed: () => Navigator.of(context).pop(),
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 color: Colors.white,
                 onPressed: () {
                   _checkifUserisLoggedIn().then((result) {
@@ -217,20 +220,21 @@ class _SettingsPageState extends State<SettingsPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            result == 1 ? PostPage() : LoginPage(),
+                            result == 1 ? const PostPage() : const LoginPage(),
                       ),
                     );
                   });
                 },
               ),
               IconButton(
-                icon: Icon(Icons.person_pin),
+                icon: const Icon(Icons.person_pin),
                 color: Colors.white,
                 onPressed: () {
                   _checkifUserisLoggedIn().then((result) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   });
                 },
@@ -272,15 +276,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 hintText: "Enter Email Address",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                  borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.blue, width: 1.5),
+                  borderSide: const BorderSide(color: Colors.blue, width: 1.5),
                 ),
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
@@ -324,15 +328,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                  borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.blue, width: 1.5),
+                  borderSide: const BorderSide(color: Colors.blue, width: 1.5),
                 ),
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
@@ -368,15 +372,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.grey),
+                  borderSide: const BorderSide(color: Colors.grey),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                  borderSide: const BorderSide(color: Colors.grey, width: 1.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(color: Colors.blue, width: 1.5),
+                  borderSide: const BorderSide(color: Colors.blue, width: 1.5),
                 ),
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
@@ -402,7 +406,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   backgroundColor: HexColor('#800080'), // Purple color
                 ),
                 onPressed: () => _updatePassword(context),
-                child: Text(
+                child: const Text(
                   "Update Profile",
                   style: TextStyle(color: Colors.white),
                 ),
@@ -452,7 +456,7 @@ class _SettingsPageState extends State<SettingsPage> {
       padding: const EdgeInsets.all(10.0),
       child: Container(
         width: double.infinity, // Full screen width
-        padding: EdgeInsets.all(10), // Padding inside the border
+        padding: const EdgeInsets.all(10), // Padding inside the border
         decoration: BoxDecoration(
           border: Border.all(
               color: Colors.grey, width: 1), // Border color and width
@@ -461,7 +465,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Upload the Profile Photo"),
+            const Text("Upload the Profile Photo"),
             GestureDetector(
               onTap: _pickImage,
               child: Stack(
@@ -470,16 +474,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey[300],
-                    backgroundImage: _logoImage != null
-                        ? FileImage(_logoImage!) // Display selected image
-                        : (_userProfilePhoto != null &&
-                                _userProfilePhoto!.isNotEmpty
-                            ? NetworkImage(_userProfilePhoto!.startsWith("http")
-                                    ? _userProfilePhoto! // Use as-is if starts with http
-                                    : Configuration.WEB_URL +
-                                        _userProfilePhoto! // Prefix if not
-                                )
-                            : null),
+                    // backgroundImage: _logoImage != null
+                    //     ? FileImage(_logoImage!) // Display selected image
+                    //     : (_userProfilePhoto != null &&
+                    //             _userProfilePhoto!.isNotEmpty
+                    //         ? NetworkImage(_userProfilePhoto!.startsWith("http")
+                    //                 ? _userProfilePhoto! // Use as-is if starts with http
+                    //                 : Configuration.WEB_URL +
+                    //                     _userProfilePhoto! // Prefix if not
+                    //             )
+                    //         : null),
                     child: _logoImage == null &&
                             (_userProfilePhoto == null ||
                                 _userProfilePhoto!.isEmpty)
@@ -494,7 +498,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       right: 0,
                       top: 0,
                       child: IconButton(
-                        icon: Icon(Icons.close, color: Colors.red),
+                        icon: const Icon(Icons.close, color: Colors.red),
                         onPressed: _removeImage, // Call updated remove function
                       ),
                     ),
@@ -502,7 +506,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             const SizedBox(height: 10),
-            if (_isUploading) CircularProgressIndicator(),
+            if (_isUploading) const CircularProgressIndicator(),
           ],
         ),
       ),
@@ -535,10 +539,10 @@ class _SettingsPageState extends State<SettingsPage> {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
+            content: const Text(
               "Logo uploaded successfully. Click on update profile to finish",
             ),
-            duration: Duration(
+            duration: const Duration(
                 seconds: 3), // Delay the disappearance (adjust as needed)
             action: SnackBarAction(
               label: 'X',

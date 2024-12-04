@@ -9,8 +9,8 @@ class FilterSearchWidget extends StatefulWidget {
   final Function(String, String, String, String, String, String)
       onLocationSelected;
 
-  FilterSearchWidget(
-      {required this.properties, required this.onLocationSelected});
+  const FilterSearchWidget(
+      {super.key, required this.properties, required this.onLocationSelected});
 
   @override
   _FilterSearchWidgetState createState() => _FilterSearchWidgetState();
@@ -22,7 +22,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
   bool get wantKeepAlive => true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _searchController = TextEditingController();
-  int _selectedValue = 1;
+  final int _selectedValue = 1;
   String? _selectedItem;
 
   List<Map<String, dynamic>> _townList = [];
@@ -31,13 +31,13 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
   List<Map<String, dynamic>> _propertyTypeList = [];
   List<Map<String, dynamic>> _leaseTypeList = [];
 
-  List<Map<String, dynamic>> _auctionList = [
+  final List<Map<String, dynamic>> _auctionList = [
     {"id": 0, "value": "Auction"},
     {"id": 0, "value": "No"},
     {"id": 1, "value": "Yes"}
   ];
 
-  List<Map<String, dynamic>> _offPlanList = [
+  final List<Map<String, dynamic>> _offPlanList = [
     {"id": 0, "value": "OffPlan"},
     {"id": 0, "value": "No"},
     {"id": 1, "value": "Yes"}
@@ -48,7 +48,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
   var _propertyType = '';
   var _leaseType = '';
   var _onAuction = '';
-  var _offPlan = '';
+  final _offPlan = '';
   bool _showRegionList = false;
 
   bool isFavorite = false; // Add a boolean to track favorite state
@@ -62,51 +62,51 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
       var body = json.decode(res.body);
 
       if (body['success']) {
-        final List<dynamic> _townListData = body['data']['townsList'];
-        final List<dynamic> _regionData = body['data']['subRegions'];
-        final List<dynamic> _propertyTypeData =
+        final List<dynamic> townListData = body['data']['townsList'];
+        final List<dynamic> regionData = body['data']['subRegions'];
+        final List<dynamic> propertyTypeData =
             body['data']['PropertyTypesList'];
-        final List<dynamic> _leaseTypeData = body['data']['leaseTypesList'];
+        final List<dynamic> leaseTypeData = body['data']['leaseTypesList'];
 
-        List<Map<String, dynamic>> _townsArray = [];
-        List<Map<String, dynamic>> _subRegionsArray = [];
-        List<Map<String, dynamic>> _propertyTypeArray = [];
-        List<Map<String, dynamic>> _leaseTypeArray = [];
+        List<Map<String, dynamic>> townsArray = [];
+        List<Map<String, dynamic>> subRegionsArray = [];
+        List<Map<String, dynamic>> propertyTypeArray = [];
+        List<Map<String, dynamic>> leaseTypeArray = [];
 
-        for (var tData in _townListData) {
-          _townsArray.add({
+        for (var tData in townListData) {
+          townsArray.add({
             'id': tData['id'],
             'value': tData['value'],
           });
         }
 
-        for (var rData in _regionData) {
-          _subRegionsArray.add({
+        for (var rData in regionData) {
+          subRegionsArray.add({
             'id': rData['id'],
             'value': rData['value'],
             'town_id': rData['town_id'],
           });
         }
 
-        for (var pData in _propertyTypeData) {
-          _propertyTypeArray.add({
+        for (var pData in propertyTypeData) {
+          propertyTypeArray.add({
             'id': pData['id'],
             'value': pData['value'],
           });
         }
 
-        for (var lData in _leaseTypeData) {
-          _leaseTypeArray.add({
+        for (var lData in leaseTypeData) {
+          leaseTypeArray.add({
             'id': lData['id'],
             'value': lData['value'],
           });
         }
         if (mounted) {
           setState(() {
-            _townList = _townsArray;
-            _subRegionsData = _subRegionsArray;
-            _propertyTypeList = _propertyTypeArray;
-            _leaseTypeList = _leaseTypeArray;
+            _townList = townsArray;
+            _subRegionsData = subRegionsArray;
+            _propertyTypeList = propertyTypeArray;
+            _leaseTypeList = leaseTypeArray;
           });
         }
       }
@@ -194,7 +194,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             ),
             modalBottomSheetProps: ModalBottomSheetProps(
               backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
             ),
@@ -237,8 +237,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             }
             return null;
           },
-          compareFn: (item, selectedItem) =>
-              selectedItem != null && item["id"] == selectedItem["id"],
+          compareFn: (item, selectedItem) => item["id"] == selectedItem["id"],
         ),
       ),
     );
@@ -275,7 +274,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             ),
             modalBottomSheetProps: ModalBottomSheetProps(
               backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
             ),
@@ -314,8 +313,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             }
             return null;
           },
-          compareFn: (item, selectedItem) =>
-              selectedItem != null && item["id"] == selectedItem["id"],
+          compareFn: (item, selectedItem) => item["id"] == selectedItem["id"],
         ),
       ),
     );
@@ -388,8 +386,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             }
             return null;
           },
-          compareFn: (item, selectedItem) =>
-              selectedItem != null && item["id"] == selectedItem["id"],
+          compareFn: (item, selectedItem) => item["id"] == selectedItem["id"],
         ),
       ),
     );
@@ -460,8 +457,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             }
             return null;
           },
-          compareFn: (item, selectedItem) =>
-              selectedItem != null && item["id"] == selectedItem["id"],
+          compareFn: (item, selectedItem) => item["id"] == selectedItem["id"],
         ),
       ),
     );
@@ -516,8 +512,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             }
             return null;
           },
-          compareFn: (item, selectedItem) =>
-              selectedItem != null && item["id"] == selectedItem["id"],
+          compareFn: (item, selectedItem) => item["id"] == selectedItem["id"],
         ),
       ),
     );
@@ -572,8 +567,7 @@ class _FilterSearchWidgetState extends State<FilterSearchWidget>
             }
             return null;
           },
-          compareFn: (item, selectedItem) =>
-              selectedItem != null && item["id"] == selectedItem["id"],
+          compareFn: (item, selectedItem) => item["id"] == selectedItem["id"],
         ),
       ),
     );

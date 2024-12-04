@@ -16,6 +16,8 @@ import 'package:just_apartment_live/ui/property/post_property/widgets/title.dart
 import 'package:just_apartment_live/ui/property/post_property/widgets/regions_input.dart';
 
 class PostPage extends StatefulWidget {
+  const PostPage({super.key});
+
   @override
   _PostPageState createState() => _PostPageState();
 }
@@ -166,14 +168,14 @@ class _PostPageState extends State<PostPage> {
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('No images selected.'),
             ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Permissions are required to pick images.'),
           ),
         );
@@ -181,7 +183,7 @@ class _PostPageState extends State<PostPage> {
     } catch (e) {
       print("Error picking assets: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('An error occurred while picking images.'),
         ),
       );
@@ -196,14 +198,14 @@ class _PostPageState extends State<PostPage> {
           .scaffoldBackgroundColor, // Use theme's scaffold background color
       appBar: buildHeader(context),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(8.0),
-        child: Container(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
           width: double.infinity,
           child: Card(
             elevation: 1.0,
             color: Theme.of(context).cardColor, // Use theme's card color
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   _buildTitle(context),
@@ -218,7 +220,7 @@ class _PostPageState extends State<PostPage> {
   }
 
   Widget _buildTitle(context) {
-    return Column(
+    return const Column(
       children: [
         Padding(
           padding: EdgeInsets.only(top: 10),

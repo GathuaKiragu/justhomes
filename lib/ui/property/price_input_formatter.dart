@@ -24,7 +24,7 @@ class PriceInputFormatter extends TextInputFormatter {
     final newTextLength = newText.length;
 
     // Format the new value with commas and prepend "KSH"
-    newText = "KSH " + NumberFormat('#,###').format(int.parse(newText));
+    newText = "KSH ${NumberFormat('#,###').format(int.parse(newText))}";
 
     // Calculate the new cursor position
     int newCommasCount = 0;

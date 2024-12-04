@@ -8,11 +8,12 @@ import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/widgets/theme_helper.dart';
 
 class ActivationPage extends StatefulWidget {
+  @override
   _ActivationPageState createState() => _ActivationPageState();
 
   final dynamic userDetails;
 
-  ActivationPage({required this.userDetails});
+  const ActivationPage({super.key, required this.userDetails});
 }
 
 class _ActivationPageState extends State<ActivationPage> {
@@ -23,7 +24,7 @@ class _ActivationPageState extends State<ActivationPage> {
   _verifyCode() async {
     if (_code.length != 4) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
           content: Text('Please enter the complete code.'),
         ),
@@ -56,13 +57,13 @@ class _ActivationPageState extends State<ActivationPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginPage(),
+            builder: (context) => const LoginPage(),
           ),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
           content: Text('The reset code is incorrect.'),
         ),
@@ -94,7 +95,7 @@ class _ActivationPageState extends State<ActivationPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
           content: Text("Email could not be sent. Please try later"),
         ),
@@ -112,28 +113,28 @@ class _ActivationPageState extends State<ActivationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Activate Account',
           style: TextStyle(
             color: Colors.white, // Set the text color to white
           ),
         ),
         backgroundColor: HexColor('#252742'),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Set the back button color to white
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 40, 20, 10),
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 10),
           child: Column(
             children: [
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Enter the Activation code sent to your email address to activate your Account.',
                 style: TextStyle(color: Colors.grey),
               ),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               Form(
                 key: _formKey,
                 child: Column(
@@ -156,7 +157,7 @@ class _ActivationPageState extends State<ActivationPage> {
                         inactiveColor: Colors.grey,
                       ),
                       cursorColor: Colors.black,
-                      animationDuration: Duration(milliseconds: 300),
+                      animationDuration: const Duration(milliseconds: 300),
                       onChanged: (value) {
                         setState(() {
                           _code = value;
@@ -166,9 +167,9 @@ class _ActivationPageState extends State<ActivationPage> {
                         _verifyCode();
                       },
                     ),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     _buildVerifyCodeButton(),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     _buildResendEmailButton(),
                   ],
                 ),
@@ -186,10 +187,10 @@ class _ActivationPageState extends State<ActivationPage> {
       child: ElevatedButton(
         style: ThemeHelper().buttonStyle(),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+          padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
           child: Text(
             'Verify Code'.toUpperCase(),
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
           ),
         ),
@@ -200,7 +201,7 @@ class _ActivationPageState extends State<ActivationPage> {
 
   _buildResendEmailButton() {
     return _isResending
-        ? CircularProgressIndicator()
+        ? const CircularProgressIndicator()
         : TextButton(
             onPressed: () => _resendEmail(),
             child: Text(

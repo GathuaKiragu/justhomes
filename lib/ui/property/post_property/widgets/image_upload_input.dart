@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class ImageUploadInput extends StatelessWidget {
   final VoidCallback pickAssets;
 
-  ImageUploadInput({
+  const ImageUploadInput({
+    super.key,
     required this.pickAssets,
   });
 
@@ -31,13 +32,13 @@ class ImageUploadInput extends StatelessWidget {
               side: BorderSide(
                 color: Colors.purple.shade300, // Purple border color
               ),
-              minimumSize:
-                  Size(double.infinity, 50), // Full width and fixed height
+              minimumSize: const Size(
+                  double.infinity, 50), // Full width and fixed height
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 5.0),
+        const Padding(
+          padding: EdgeInsets.only(top: 5.0),
           child: Text(
             'Maximum of 40 photos',
             style: TextStyle(

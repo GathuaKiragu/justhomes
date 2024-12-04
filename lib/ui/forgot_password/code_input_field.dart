@@ -8,7 +8,8 @@ class CodeInputField extends StatefulWidget {
   final bool autoFocus;
   final Function(String)? onChanged;
 
-  CodeInputField({
+  const CodeInputField({
+    super.key,
     required this.controller,
     required this.focusNode,
     this.nextFocusNode,
@@ -38,7 +39,7 @@ class _CodeInputFieldState extends State<CodeInputField> {
       child: Container(
         width: 50,
         height: 50,
-        margin: EdgeInsets.symmetric(horizontal: 5),
+        margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(5),
@@ -50,11 +51,11 @@ class _CodeInputFieldState extends State<CodeInputField> {
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
           maxLength: 1,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: InputBorder.none,
             counterText: '',
           ),
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold, // Make text bold
             fontSize: 18, // Adjust size if needed
           ),

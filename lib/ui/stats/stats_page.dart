@@ -9,6 +9,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StatsPage extends StatefulWidget {
+  const StatsPage({super.key});
+
   @override
   _StatsPageState createState() => _StatsPageState();
 }
@@ -67,7 +69,7 @@ class _StatsPageState extends State<StatsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Stats Page',
           style: TextStyle(
               color: Colors.white,
@@ -75,18 +77,18 @@ class _StatsPageState extends State<StatsPage> {
         ),
         backgroundColor: HexColor('#252742'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DashBoardPage(),
+                builder: (context) => const DashBoardPage(),
               ),
             );
           },
         ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       // appBar: header(context),
       body: ListView(
         children: [
@@ -115,13 +117,13 @@ class _StatsPageState extends State<StatsPage> {
                       ),
                 ),
               ),
-              Container(
+              SizedBox(
                 height: 250,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (!_initDataFetched)
-                      Center(
+                      const Center(
                         child: CircularProgressIndicator(),
                       )
                     else
@@ -141,7 +143,7 @@ class _StatsPageState extends State<StatsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _buildLegendItem(
-                            Color.fromARGB(255, 115, 4, 125),
+                            const Color.fromARGB(255, 115, 4, 125),
                             'Telephone Leads',
                           ),
                           _buildLegendItem(
@@ -171,12 +173,12 @@ class _StatsPageState extends State<StatsPage> {
             height: 12,
             color: color,
           ),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             text,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
         ],
       ),
     );
@@ -204,7 +206,7 @@ class _StatsPageState extends State<StatsPage> {
               SingleChildScrollView(
                 child: GridView.count(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
@@ -237,12 +239,12 @@ class _StatsPageState extends State<StatsPage> {
 
   Widget propertyStatBox(String count, String type, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey.shade200, // Light grey background
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade300), // Light grey border
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
@@ -253,7 +255,7 @@ class _StatsPageState extends State<StatsPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 40, color: Colors.purple), // Icon color
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             count,
             style: TextStyle(
@@ -276,22 +278,22 @@ class _StatsPageState extends State<StatsPage> {
 
   List<PieChartSectionData> showingSections() {
     return List.generate(2, (i) {
-      final double fontSize = 16;
-      final double radius = 50;
+      const double fontSize = 16;
+      const double radius = 50;
 
       final totalLeads = telephoneLeadsCount + messagesCount;
 
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: Color.fromARGB(255, 115, 4, 125),
+            color: const Color.fromARGB(255, 115, 4, 125),
             value: totalLeads == 0 ? 1 : telephoneLeadsCount.toDouble(),
             radius: radius,
             title: '$telephoneLeadsCount',
-            titleStyle: TextStyle(
+            titleStyle: const TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
+              color: Color(0xffffffff),
             ),
           );
         case 1:
@@ -300,10 +302,10 @@ class _StatsPageState extends State<StatsPage> {
             value: messagesCount.toDouble(),
             radius: radius,
             title: '$messagesCount',
-            titleStyle: TextStyle(
+            titleStyle: const TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
+              color: Color(0xffffffff),
             ),
           );
         default:

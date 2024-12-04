@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:just_apartment_live/api/api.dart';
-import 'package:just_apartment_live/models/configuration.dart';
 import 'package:just_apartment_live/ui/dashboard/widgets/filter_search_widget.dart';
 import 'package:just_apartment_live/ui/dashboard/widgets/latest_properties_widget.dart';
-import 'package:just_apartment_live/ui/login/login.dart';
-import 'package:just_apartment_live/ui/profile/profile_page.dart';
-import 'package:just_apartment_live/ui/property/post_page.dart';
-import 'package:just_apartment_live/ui/property/search_page.dart';
 import 'package:just_apartment_live/widgets/custom_navigation_bar.dart';
 import 'package:just_apartment_live/widgets/header_main_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
-import 'package:flutter/services.dart';
 
 class SearchResultsPage extends StatefulWidget {
   final searchParameters;
-  SearchResultsPage({required this.searchParameters});
+  const SearchResultsPage({super.key, required this.searchParameters});
 
   @override
   _SearchResultsPageState createState() => _SearchResultsPageState();

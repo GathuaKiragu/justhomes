@@ -8,7 +8,8 @@ class SubRegionInput extends StatelessWidget {
   final FormFieldValidator<Map<String, dynamic>?>? validator;
   final String selectedSubRegion;
 
-  SubRegionInput({
+  const SubRegionInput({
+    super.key,
     required this.isSubRegionEnabled,
     required this.subRegionsList,
     required this.onChanged,
@@ -111,11 +112,11 @@ class SubRegionInput extends StatelessWidget {
                   onChanged: onChanged,
                   validator: validator,
                   compareFn: (item, selectedItem) =>
-                      item["id"] == selectedItem?["id"],
+                      item["id"] == selectedItem["id"],
                 ),
               ),
             ],
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
   }
 }

@@ -4,10 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_apartment_live/api/api.dart';
 import 'package:just_apartment_live/main.dart';
 import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
-import 'package:just_apartment_live/widgets/header_main_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LeadsPage extends StatefulWidget {
+  const LeadsPage({super.key});
+
   @override
   _LeadsPageState createState() => _LeadsPageState();
 }
@@ -31,6 +32,7 @@ class _LeadsPageState extends State<LeadsPage> {
   List recentMessages = [];
   bool _initDataFetched = false;
 
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -69,7 +71,7 @@ class _LeadsPageState extends State<LeadsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Stats Page',
           style: TextStyle(
               color: Colors.white,
@@ -77,19 +79,19 @@ class _LeadsPageState extends State<LeadsPage> {
         ),
         backgroundColor: HexColor('#252742'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DashBoardPage(),
+                builder: (context) => const DashBoardPage(),
               ),
             );
           },
         ),
       ),
       backgroundColor:
-          Theme.of(context).colorScheme.background, // Dark mode background
+          Theme.of(context).colorScheme.surface, // Dark mode background
       //  appBar: header(context),
       body: ListView(
         children: [
@@ -124,8 +126,8 @@ class _LeadsPageState extends State<LeadsPage> {
                 ),
               ),
               if (!_initDataFetched)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
                   child: Center(
                     child: CircularProgressIndicator(), // Loading indicator
                   ),
@@ -134,7 +136,7 @@ class _LeadsPageState extends State<LeadsPage> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: [
+                    columns: const [
                       DataColumn(label: Text('TITLE')),
                       DataColumn(label: Text('CONTACT')),
                       DataColumn(label: Text('EMAIL')),
@@ -168,7 +170,7 @@ class _LeadsPageState extends State<LeadsPage> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface))), // Email color
-                        DataCell(
+                        const DataCell(
                             Text('-')), // Replace with appropriate data cell
                         DataCell(Text(message['date'] ?? '',
                             style: TextStyle(
@@ -240,12 +242,12 @@ class _LeadsPageState extends State<LeadsPage> {
 
   Widget propertyStatBox(String count, String type, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface, // Card color
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade300), // Light grey border
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
@@ -255,8 +257,8 @@ class _LeadsPageState extends State<LeadsPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 40, color: Color(0xfff8b250)), // Icon color
-          SizedBox(height: 8),
+          Icon(icon, size: 40, color: const Color(0xfff8b250)), // Icon color
+          const SizedBox(height: 8),
           Text(
             count,
             style: TextStyle(

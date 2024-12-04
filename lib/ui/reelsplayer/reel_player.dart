@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -7,6 +8,7 @@ import 'package:just_apartment_live/ui/reelsplayer/widgets/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:io';
@@ -22,11 +24,26 @@ class _ReelsState extends State<Reels> {
   final videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(
       'https://flipfit-cdn.akamaized.net/flip_hls/661f570aab9d840019942b80-473e0b/video_h1.m3u8'));
 
+  bool isUserLoggedIn = false;
+  var userID = 0;
+
   @override
   void initState() {
     super.initState();
+    _checkUserStatus();
     loadVideoClip();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+  }
+
+  Future<void> _checkUserStatus() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    String? userData = localStorage.getString('user');
+    setState(() {
+      isUserLoggedIn = userData != null && userData.isNotEmpty;
+      Map<String, dynamic> jsonMap = jsonDecode(userData!);
+      logger.i("JSON MAP $jsonMap");
+      userID = jsonMap['id'] ?? 0;
+    });
   }
 
   Future<List<dynamic>> _fetchVideos() async {
@@ -47,7 +64,8 @@ class _ReelsState extends State<Reels> {
             "description": video["description"] ?? "",
             "likes": (video["likes"] ?? 0).toString(),
             "shares": (video["shares"] ?? 0).toString(),
-            "comments": (video["comments"])
+            "comments": (video["comments"]),
+            "id": (video["id"])
           };
         }));
       }
@@ -99,6 +117,7 @@ class _ReelsState extends State<Reels> {
                 String description = videoUrls[index]['description'];
                 String likes = videoUrls[index]['likes'];
                 String shares = videoUrls[index]['shares'];
+                var videoID = videoUrls[index]['id'];
                 var comments = videoUrls[index]['comments'];
 
                 return FutureBuilder<String>(
@@ -120,6 +139,7 @@ class _ReelsState extends State<Reels> {
 
                     if (videoSnapshot.hasData) {
                       String cachedVideoPath = videoSnapshot.data!;
+
                       return Stack(
                         children: [
                           // Full-screen black background
@@ -139,24 +159,33 @@ class _ReelsState extends State<Reels> {
                             imageProfile: profile,
                             description: description,
                           ),
+
                           Positioned(
                             bottom: 60,
                             right: 10,
                             width: 50,
                             height: 260,
-                            child: likeShareCommentSave(likes, comments.length,
-                                shares, context, comments, cachedVideoPath),
+                            child: likeShareCommentSave(
+                                likes,
+                                comments.length,
+                                shares,
+                                context,
+                                comments,
+                                cachedVideoPath,
+                                videoID,
+                                userID,
+                                isUserLoggedIn),
                           )
                         ],
                       );
                     }
-                    return Center(child: Text('Failed to load video.'));
+                    return const Center(child: Text('Failed to load video.'));
                   },
                 );
               },
             );
           }
-          return Center(child: Text('No videos available'));
+          return const Center(child: Text('No videos available'));
         },
       ),
     );

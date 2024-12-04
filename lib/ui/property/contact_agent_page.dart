@@ -16,7 +16,7 @@ class ContactAgentPage extends StatefulWidget {
   // final String title;
 
   final int propertyID;
-  ContactAgentPage({required this.propertyID});
+  const ContactAgentPage({super.key, required this.propertyID});
 
   @override
   _ContactAgentPageState createState() => _ContactAgentPageState();
@@ -36,6 +36,7 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
 
   List _propertyImages = [];
 
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -87,7 +88,7 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
     if (res.statusCode == 200) {
       var body = json.decode(res.body);
       if (body['success']) {
-        final snackBar = SnackBar(
+        const snackBar = SnackBar(
           content: Text('Email Successfully Sent.'),
           duration: Duration(seconds: 2),
           backgroundColor: Colors.green,
@@ -106,7 +107,7 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
         );
       }
     } else {
-      final snackBar = SnackBar(
+      const snackBar = SnackBar(
         content: Text('Email Could not be Sent. Please try again later'),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,
@@ -133,7 +134,7 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.all(5.0),
-            child: Container(
+            child: SizedBox(
               width: double.infinity, // Make the container take full width
               child: Card(
                 color: Colors.white, // Set the background color of the card
@@ -145,20 +146,20 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
                       _initDataFetched
                           ? Text(
                               _propertyDetails['property_title'].toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15, // Set font weight to bold
                               ),
                             )
-                          : Text(
+                          : const Text(
                               "Loading Please wait...",
                               style: TextStyle(
                                 fontWeight:
                                     FontWeight.bold, // Set font weight to bold
                               ),
                             ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
                         child: Text(
                           "CONTACT THE AGENT/OWNER",
                           style: TextStyle(
@@ -173,7 +174,7 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
                           _initDataFetched
                               ? _propertyDetails['created_by_name']
                               : "",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14, // Set font weight to bold
                           ),
                         ),
@@ -190,18 +191,18 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
                                   const EdgeInsets.symmetric(vertical: 5.0),
                               child: Row(
                                 children: [
-                                  Icon(Icons.phone), // Telephone icon
-                                  SizedBox(
+                                  const Icon(Icons.phone), // Telephone icon
+                                  const SizedBox(
                                       width: 8), // Space between icon and text
                                   Text(
                                     _propertyDetails['created_by_telephone']
                                         .toString(),
-                                    style: TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
                             )
-                          : Text(""),
+                          : const Text(""),
                       // Padding(
                       //   padding: const EdgeInsets.symmetric(vertical: 5.0),
                       //   child: Row(
@@ -218,8 +219,8 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
                       //     ],
                       //   ),
                       // ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
                         child: Text(
                           "OR",
                           style: TextStyle(
@@ -231,8 +232,8 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
                       Form(
                           key: _formKey,
                           child: Column(children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16.0),
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 16.0),
                               child: Center(
                                 child: Text(
                                   "Drop the owner a message",
@@ -336,7 +337,7 @@ class _ContactAgentPageState extends State<ContactAgentPage> {
                                     foregroundColor:
                                         Colors.white, // White text color
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'SUBMIT',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,

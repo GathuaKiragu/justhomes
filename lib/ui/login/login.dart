@@ -608,6 +608,8 @@ import 'package:http/http.dart' as http;
 import 'package:device_info_plus/device_info_plus.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -651,13 +653,13 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pop(context);
         return Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DashBoardPage()),
+          MaterialPageRoute(builder: (context) => const DashBoardPage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,
-            duration: Duration(milliseconds: 8000),
+            duration: const Duration(milliseconds: 8000),
             content: Text(body['message'].toString()),
             action: SnackBarAction(
               label: 'X',
@@ -674,14 +676,14 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Sign-In Error'),
+            title: const Text('Sign-In Error'),
             content: Text(
               'An error occurred during Apple Sign-In:\n\n$error',
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -694,7 +696,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _loginWithApple(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _handleAppleSignIn,
@@ -703,14 +705,14 @@ class _LoginPageState extends State<LoginPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(vertical: 15),
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: EdgeInsets.only(right: 8.0),
               child: Icon(
                 FontAwesomeIcons.apple,
                 color: Colors.white,
@@ -742,8 +744,8 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,
-            duration: Duration(milliseconds: 8000),
-            content: Text("Email address cannot be empty"),
+            duration: const Duration(milliseconds: 8000),
+            content: const Text("Email address cannot be empty"),
             action: SnackBarAction(
               label: 'X',
               textColor: Colors.orange,
@@ -764,8 +766,8 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,
-            duration: Duration(milliseconds: 8000),
-            content: Text("Phone Number cannot be empty"),
+            duration: const Duration(milliseconds: 8000),
+            content: const Text("Phone Number cannot be empty"),
             action: SnackBarAction(
               label: 'X',
               textColor: Colors.orange,
@@ -782,27 +784,25 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
 
-
     print("BODY LOGIN -----> $data");
     var res = await CallApi().postData(data, 'user/login');
     Loading().loader(context, "Logging in...Please wait");
 
-
     var body = json.decode(res.body);
     print("BODY REEEES -----> ${res.statusCode.runtimeType}}");
 
-    if(res.statusCode == 200) {
+    if (res.statusCode == 200) {
       if (body['success']) {
         SharedPreferences localStorage = await SharedPreferences.getInstance();
         localStorage.setString('user', json.encode(body['data']));
         Navigator.pop(context);
-        return Navigator.push(
-            context, MaterialPageRoute(builder: (context) => DashBoardPage()));
+        return Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const DashBoardPage()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,
-            duration: Duration(milliseconds: 8000),
+            duration: const Duration(milliseconds: 8000),
             content: Text(body['message'].toString()),
             action: SnackBarAction(
               label: 'X',
@@ -813,12 +813,12 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
       Navigator.pop(context);
-    }else{
+    } else {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 8000),
+          duration: const Duration(milliseconds: 8000),
           content: Text("Server Error! ${res.statusCode}"),
           action: SnackBarAction(
             label: 'X',
@@ -867,13 +867,13 @@ class _LoginPageState extends State<LoginPage> {
           localStorage.setString('user', json.encode(body['data']));
           Navigator.pop(context);
           return Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DashBoardPage()));
+              MaterialPageRoute(builder: (context) => const DashBoardPage()));
         } else {
           print("\n\n\n\nERROR ---LOGIN-->>>>>" + res + "\n\n\n\n\n");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red,
-              duration: Duration(milliseconds: 8000),
+              duration: const Duration(milliseconds: 8000),
               content: Text(body['message'].toString()),
               action: SnackBarAction(
                 label: 'X',
@@ -896,14 +896,14 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Sign-In Error'),
+            title: const Text('Sign-In Error'),
             content: Text(
               'An error occurred during Google Sign-In:\n\n$error',
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -916,7 +916,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _loginWithGoogle(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _handleGoogleSignIn,
@@ -925,14 +925,14 @@ class _LoginPageState extends State<LoginPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(vertical: 15),
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 8.0),
+              padding: EdgeInsets.only(right: 8.0),
               child: Icon(
                 FontAwesomeIcons.google,
                 color: Colors.white,
@@ -953,7 +953,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _loginButton(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () => _handleLogin(context),
@@ -962,9 +962,9 @@ class _LoginPageState extends State<LoginPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 15),
+          padding: const EdgeInsets.symmetric(vertical: 15),
         ),
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -991,34 +991,34 @@ class _LoginPageState extends State<LoginPage> {
 
   _buildEmail(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _emailController,
         style: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onBackground), // Dynamic text color
+            color:
+                Theme.of(context).colorScheme.onSurface), // Dynamic text color
         decoration: InputDecoration(
           filled: true,
           fillColor: Theme.of(context)
               .scaffoldBackgroundColor, // Background color of the input
-          labelText: 'Email',
+          labelText: 'Email/Phone',
           labelStyle: TextStyle(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.7)), // Dynamic label color
-          hintText: 'Enter your Email Address.',
+          hintText: 'Enter your Email | Phone.',
           hintStyle: TextStyle(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5)), // Dynamic hint color
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5), // Border color
             ),
           ),
@@ -1027,7 +1027,7 @@ class _LoginPageState extends State<LoginPage> {
             borderSide: BorderSide(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5), // Enabled border color
             ),
           ),
@@ -1049,18 +1049,17 @@ class _LoginPageState extends State<LoginPage> {
           _emailController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildPhone(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _phoneNumberController,
         style: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onBackground), // Dynamic text color
+            color:
+                Theme.of(context).colorScheme.onSurface), // Dynamic text color
         decoration: InputDecoration(
           filled: true,
           fillColor: Theme.of(context)
@@ -1069,20 +1068,20 @@ class _LoginPageState extends State<LoginPage> {
           labelStyle: TextStyle(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.7)), // Dynamic label color
           hintText: 'Enter your Phone Number.',
           hintStyle: TextStyle(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5)), // Dynamic hint color
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5), // Border color
             ),
           ),
@@ -1091,7 +1090,7 @@ class _LoginPageState extends State<LoginPage> {
             borderSide: BorderSide(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5), // Enabled border color
             ),
           ),
@@ -1113,18 +1112,17 @@ class _LoginPageState extends State<LoginPage> {
           _emailController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildPassword(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _passwordController,
         style: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onBackground), // Dynamic text color
+            color:
+                Theme.of(context).colorScheme.onSurface), // Dynamic text color
         obscureText: _obscureText,
         decoration: InputDecoration(
           filled: true,
@@ -1134,20 +1132,20 @@ class _LoginPageState extends State<LoginPage> {
           labelStyle: TextStyle(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.7)), // Dynamic label color
           hintText: 'Enter your password',
           hintStyle: TextStyle(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5)), // Dynamic hint color
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5), // Border color
             ),
           ),
@@ -1156,7 +1154,7 @@ class _LoginPageState extends State<LoginPage> {
             borderSide: BorderSide(
               color: Theme.of(context)
                   .colorScheme
-                  .onBackground
+                  .onSurface
                   .withOpacity(0.5), // Enabled border color
             ),
           ),
@@ -1189,19 +1187,18 @@ class _LoginPageState extends State<LoginPage> {
           _passwordController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildForgetPassword(context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 20),
+      margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
       alignment: Alignment.topRight,
       child: GestureDetector(
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+            MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
           );
         },
         child: Text(
@@ -1227,13 +1224,13 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             SafeArea(
               child: Container(
-                padding: EdgeInsets.fromLTRB(10, 60, 20, 10),
+                padding: const EdgeInsets.fromLTRB(10, 60, 20, 10),
                 child: Column(
                   children: [
                     Text(
                       'LOGIN',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 25), // Dynamic text color
                     ),
                     Text(
@@ -1241,62 +1238,28 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           color: Theme.of(context)
                               .colorScheme
-                              .onBackground), // Dynamic text color
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: ListTile(
-                              title: const Text('Email'),
-                              leading: Radio<int>(
-                                value: 1,
-                                groupValue: selectedOption,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedOption = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              title: const Text('Phone'),
-                              leading: Radio<int>(
-                                value: 2,
-                                groupValue: selectedOption,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedOption = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                              .onSurface), // Dynamic text color
                     ),
                     Form(
                       key: _formKey,
                       child: Column(
                         children: [
-                          selectedOption == 1
-                              ? _buildEmail(context)
-                              : _buildPhone(context),
-                          SizedBox(height: 30.0),
+                          _buildEmail(context),
+                          const SizedBox(height: 30.0),
                           _buildPassword(context),
-                          SizedBox(height: 15.0),
+                          const SizedBox(height: 15.0),
                           _buildForgetPassword(context),
                           _loginButton(context),
-                          SizedBox(height: 15.0),
+                          const SizedBox(height: 15.0),
                           _buildRegisterButton(context),
-                          SizedBox(height: 30.0),
-                          _loginWithGoogle(context),
-                          SizedBox(height: 15.0),
-                          _loginWithApple(context)
+                          const SizedBox(height: 30.0),
+                          Platform.isAndroid
+                              ? _loginWithGoogle(context)
+                              : Container(),
+                          const SizedBox(height: 15.0),
+                          Platform.isIOS
+                              ? _loginWithApple(context)
+                              : Container(),
                         ],
                       ),
                     ),
@@ -1313,13 +1276,13 @@ class _LoginPageState extends State<LoginPage> {
 
 Widget _buildForgetPassword(BuildContext context) {
   return Container(
-    margin: EdgeInsets.fromLTRB(10, 0, 10, 20),
+    margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
     alignment: Alignment.topRight,
     child: GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+          MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
         );
       },
       child: Text(
@@ -1341,7 +1304,7 @@ Widget _buildRegisterButton(BuildContext context) {
         context,
         MaterialPageRoute(
             builder: (context) =>
-                RegisterPage()), // Replace with your RegisterPage widget
+                const RegisterPage()), // Replace with your RegisterPage widget
       );
     },
     child: Text(
@@ -1358,7 +1321,7 @@ Widget _buildPassword(BuildContext context) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: TextField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'Password',
         border: OutlineInputBorder(),
       ),

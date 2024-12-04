@@ -1,10 +1,11 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class VideoPickerScreen extends StatefulWidget {
+  const VideoPickerScreen({super.key});
+
   @override
   _VideoPickerScreenState createState() => _VideoPickerScreenState();
 }
@@ -16,27 +17,28 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
   void _showVideoOptions() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           height: 150,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ListTile(
-                leading: Icon(Icons.fiber_manual_record, color: Colors.red),
-                title: Text('Live'),
+                leading:
+                    const Icon(Icons.fiber_manual_record, color: Colors.red),
+                title: const Text('Live'),
                 onTap: () {
                   Navigator.of(context).pop();
                   _recordVideo();
                 },
               ),
               ListTile(
-                leading: Icon(Icons.video_library),
-                title: Text('Add Video'),
+                leading: const Icon(Icons.video_library),
+                title: const Text('Add Video'),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickVideoFromGallery();
@@ -53,7 +55,8 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
   Future<void> _recordVideo() async {
     final XFile? videoFile = await _picker.pickVideo(
       source: ImageSource.camera,
-      maxDuration: Duration(minutes: 5), // Limit recording duration if needed
+      maxDuration:
+          const Duration(minutes: 5), // Limit recording duration if needed
     );
 
     if (videoFile != null) {
@@ -65,7 +68,8 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
 
   // Function to pick a video from the gallery
   Future<void> _pickVideoFromGallery() async {
-    final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
+    final XFile? videoFile =
+        await _picker.pickVideo(source: ImageSource.gallery);
 
     if (videoFile != null) {
       final file = File(videoFile.path);
@@ -86,15 +90,13 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Video Picker')),
+      appBar: AppBar(title: const Text('Video Picker')),
       body: Center(
         child: ElevatedButton(
           onPressed: _showVideoOptions,
-          child: Text('Show Video Options'),
+          child: const Text('Show Video Options'),
         ),
       ),
     );
   }
 }
-
-

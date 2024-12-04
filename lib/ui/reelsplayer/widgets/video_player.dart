@@ -4,7 +4,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class Videoplayer extends StatefulWidget {
-  const Videoplayer({Key? key, required this.url}) : super(key: key);
+  const Videoplayer({super.key, required this.url});
 
   final String url;
 
@@ -82,9 +82,9 @@ class _VideoplayerState extends State<Videoplayer> {
           children: [
             _isControllerInitialized
                 ? AspectRatio(
-              aspectRatio: controller.value.aspectRatio,
-              child: VideoPlayer(controller),
-            )
+                    aspectRatio: controller.value.aspectRatio,
+                    child: VideoPlayer(controller),
+                  )
                 : const Center(child: CupertinoActivityIndicator()),
             if (_showPlayPauseIcon)
               Icon(

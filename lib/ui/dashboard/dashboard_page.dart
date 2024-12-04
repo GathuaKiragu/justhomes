@@ -149,7 +149,7 @@ class _DashBoardPageState extends State<DashBoardPage>
                   Stack(
                     children: [
                       SizedBox(
-                        height: 270, 
+                        height: 270,
                         child: FadeInImage.assetNetwork(
                           placeholder: 'images/back10.jpg',
                           image: '${Configuration.WEB_URL}/images/back10.jpg',
@@ -182,8 +182,8 @@ class _DashBoardPageState extends State<DashBoardPage>
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => result == 1
-                                          ? ProfilePage()
-                                          : LoginPage(),
+                                          ? const ProfilePage()
+                                          : const LoginPage(),
                                     ),
                                   );
                                 });
@@ -261,8 +261,8 @@ class _DashBoardPageState extends State<DashBoardPage>
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 loginStatus == 1
-                                                    ? PostPage()
-                                                    : LoginPage(),
+                                                    ? const PostPage()
+                                                    : const LoginPage(),
                                           ),
                                         );
                                       },
@@ -307,7 +307,7 @@ class _DashBoardPageState extends State<DashBoardPage>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) {
-                                    return SearchPage();
+                                    return const SearchPage();
                                   }),
                                 );
                               },
@@ -325,7 +325,7 @@ class _DashBoardPageState extends State<DashBoardPage>
                                 elevation:
                                     0, // Optional: remove the shadow if you want a flat appearance
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
@@ -336,7 +336,7 @@ class _DashBoardPageState extends State<DashBoardPage>
                                   SizedBox(
                                       width:
                                           4.0), // Adjust the width to reduce the space
-                                  const Text(
+                                  Text(
                                     "Advanced Search",
                                     style: TextStyle(
                                       color: Colors.white,

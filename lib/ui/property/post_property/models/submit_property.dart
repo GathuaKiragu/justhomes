@@ -43,7 +43,7 @@ class PropertySubmissionService {
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       var user = json.decode(localStorage.getString('user') ?? '{}');
 
-      final uri = Uri.parse(Configuration.API_URL + "property/post");
+      final uri = Uri.parse("${Configuration.API_URL}property/post");
       final request = http.MultipartRequest('POST', uri);
 
       for (var imagePath in images) {

@@ -10,6 +10,8 @@ import 'package:just_apartment_live/widgets/theme_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -43,6 +45,7 @@ class _SearchPageState extends State<SearchPage> {
   String _selectedOffPlan = '0';
   var islogdin = 0;
 
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -107,8 +110,8 @@ class _SearchPageState extends State<SearchPage> {
             key: _formKey,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 16.0),
                   child: Center(
                     child: Text(
                       "Search Properties",
@@ -142,7 +145,7 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.blue, // Focused border color
                           width: 1.5,
                         ),
@@ -178,7 +181,7 @@ class _SearchPageState extends State<SearchPage> {
                       children: <Widget>[
                         DropdownSearch<String>.multiSelection(
                           items: _propertTypesByNameList,
-                          popupProps: PopupPropsMultiSelection.menu(
+                          popupProps: const PopupPropsMultiSelection.menu(
                             showSelectedItems: true,
                           ),
                           onChanged: (List<String> selectedItems) {
@@ -221,7 +224,7 @@ class _SearchPageState extends State<SearchPage> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: DropdownSearch<String>.multiSelection(
                     items: _propertConditionsList,
-                    popupProps: PopupPropsMultiSelection.menu(
+                    popupProps: const PopupPropsMultiSelection.menu(
                       showSelectedItems: true,
                     ),
                     onChanged: (List<String> selectedItems) {
@@ -229,7 +232,7 @@ class _SearchPageState extends State<SearchPage> {
                         _selectedPropertyConditionArray = selectedItems;
                       });
                     },
-                    dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownDecoratorProps: const DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
                         labelText: "Property Condition",
                         hintText: "Select Property Condition",
@@ -242,7 +245,7 @@ class _SearchPageState extends State<SearchPage> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: DropdownSearch<String>.multiSelection(
                     items: _furnishedList,
-                    popupProps: PopupPropsMultiSelection.menu(
+                    popupProps: const PopupPropsMultiSelection.menu(
                       showSelectedItems: true,
                     ),
                     onChanged: (List<String> selectedItems) {
@@ -250,7 +253,7 @@ class _SearchPageState extends State<SearchPage> {
                         _selectedFurnishedArray = selectedItems;
                       });
                     },
-                    dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownDecoratorProps: const DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
                         labelText: "Furnished",
                         hintText: "Select Furnish",
@@ -272,7 +275,7 @@ class _SearchPageState extends State<SearchPage> {
                       },
                     ),
                     items: _leaseTypesList,
-                    dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownDecoratorProps: const DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
                         labelText: "Lease Type",
                         hintText: "Select Lease Type",
@@ -321,7 +324,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Properties on Auction?',
                           style: TextStyle(fontSize: 16.0),
                         ),
@@ -329,7 +332,7 @@ class _SearchPageState extends State<SearchPage> {
                           children: [
                             Expanded(
                               child: RadioListTile<String>(
-                                title: Text('No'),
+                                title: const Text('No'),
                                 value: '0',
                                 groupValue: _selectedAuction,
                                 onChanged: (String? value) {
@@ -343,7 +346,7 @@ class _SearchPageState extends State<SearchPage> {
                             ),
                             Expanded(
                               child: RadioListTile<String>(
-                                title: Text('Yes'),
+                                title: const Text('Yes'),
                                 value: '1',
                                 groupValue: _selectedAuction,
                                 onChanged: (String? value) {
@@ -357,8 +360,8 @@ class _SearchPageState extends State<SearchPage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 16.0),
-                        Text(
+                        const SizedBox(height: 16.0),
+                        const Text(
                           'Offplan Properties?',
                           style: TextStyle(fontSize: 16.0),
                         ),
@@ -366,7 +369,7 @@ class _SearchPageState extends State<SearchPage> {
                           children: [
                             Expanded(
                               child: RadioListTile<String>(
-                                title: Text('No'),
+                                title: const Text('No'),
                                 value: '0',
                                 groupValue: _selectedOffPlan,
                                 onChanged: (String? value) {
@@ -380,7 +383,7 @@ class _SearchPageState extends State<SearchPage> {
                             ),
                             Expanded(
                               child: RadioListTile<String>(
-                                title: Text('Yes'),
+                                title: const Text('Yes'),
                                 value: '1',
                                 groupValue: _selectedOffPlan,
                                 onChanged: (String? value) {
@@ -400,7 +403,7 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, bottom: 10.0),
                   child: DropdownSearch<String>.multiSelection(
-                    items: [
+                    items: const [
                       "1",
                       "2",
                       "3",
@@ -414,7 +417,7 @@ class _SearchPageState extends State<SearchPage> {
                       "11",
                       "12"
                     ],
-                    popupProps: PopupPropsMultiSelection.menu(
+                    popupProps: const PopupPropsMultiSelection.menu(
                       showSelectedItems: true,
                     ),
                     onChanged: (List<String> selectedItems) {
@@ -422,7 +425,7 @@ class _SearchPageState extends State<SearchPage> {
                         _selectedBedroomsArray = selectedItems;
                       });
                     },
-                    dropdownDecoratorProps: DropDownDecoratorProps(
+                    dropdownDecoratorProps: const DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
                         labelText: "Bedrooms",
                         hintText: "Select Bedroom",
@@ -436,13 +439,14 @@ class _SearchPageState extends State<SearchPage> {
                     bottom: 10.0,
                   ),
                   child: Container(
+                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
                     child: TextFormField(
                       controller: _minPriceController,
                       keyboardType: TextInputType.number,
                       style: TextStyle(
                         color: Theme.of(context)
                             .colorScheme
-                            .onBackground, // Dynamic text color
+                            .onSurface, // Dynamic text color
                       ),
                       decoration: InputDecoration(
                         filled: true,
@@ -452,14 +456,14 @@ class _SearchPageState extends State<SearchPage> {
                         labelStyle: TextStyle(
                           color: Theme.of(context)
                               .colorScheme
-                              .onBackground
+                              .onSurface
                               .withOpacity(0.7), // Dynamic label color
                         ),
                         hintText: 'Enter Min Price',
                         hintStyle: TextStyle(
                           color: Theme.of(context)
                               .colorScheme
-                              .onBackground
+                              .onSurface
                               .withOpacity(0.5), // Dynamic hint color
                         ),
                         border: OutlineInputBorder(
@@ -467,7 +471,7 @@ class _SearchPageState extends State<SearchPage> {
                           borderSide: BorderSide(
                             color: Theme.of(context)
                                 .colorScheme
-                                .onBackground
+                                .onSurface
                                 .withOpacity(0.5), // Border color
                           ),
                         ),
@@ -476,7 +480,7 @@ class _SearchPageState extends State<SearchPage> {
                           borderSide: BorderSide(
                             color: Theme.of(context)
                                 .colorScheme
-                                .onBackground
+                                .onSurface
                                 .withOpacity(0.5), // Enabled border color
                           ),
                         ),
@@ -503,7 +507,6 @@ class _SearchPageState extends State<SearchPage> {
                         PriceInputFormatter(),
                       ],
                     ),
-                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
                   ),
                 ),
                 Padding(
@@ -511,13 +514,14 @@ class _SearchPageState extends State<SearchPage> {
                     bottom: 10.0,
                   ),
                   child: Container(
+                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
                     child: TextFormField(
                       controller: _maxPriceController,
                       keyboardType: TextInputType.number,
                       style: TextStyle(
                         color: Theme.of(context)
                             .colorScheme
-                            .onBackground, // Dynamic text color
+                            .onSurface, // Dynamic text color
                       ),
                       decoration: InputDecoration(
                         filled: true,
@@ -527,14 +531,14 @@ class _SearchPageState extends State<SearchPage> {
                         labelStyle: TextStyle(
                           color: Theme.of(context)
                               .colorScheme
-                              .onBackground
+                              .onSurface
                               .withOpacity(0.7), // Dynamic label color
                         ),
                         hintText: 'Enter Max Price',
                         hintStyle: TextStyle(
                           color: Theme.of(context)
                               .colorScheme
-                              .onBackground
+                              .onSurface
                               .withOpacity(0.5), // Dynamic hint color
                         ),
                         border: OutlineInputBorder(
@@ -542,7 +546,7 @@ class _SearchPageState extends State<SearchPage> {
                           borderSide: BorderSide(
                             color: Theme.of(context)
                                 .colorScheme
-                                .onBackground
+                                .onSurface
                                 .withOpacity(0.5), // Border color
                           ),
                         ),
@@ -551,7 +555,7 @@ class _SearchPageState extends State<SearchPage> {
                           borderSide: BorderSide(
                             color: Theme.of(context)
                                 .colorScheme
-                                .onBackground
+                                .onSurface
                                 .withOpacity(0.5), // Enabled border color
                           ),
                         ),
@@ -572,7 +576,6 @@ class _SearchPageState extends State<SearchPage> {
                         PriceInputFormatter(),
                       ],
                     ),
-                    decoration: ThemeHelper().inputBoxDecorationShaddow(),
                   ),
                 ),
                 Row(
@@ -585,13 +588,14 @@ class _SearchPageState extends State<SearchPage> {
                           right: 5,
                         ),
                         child: Container(
+                          decoration: ThemeHelper().inputBoxDecorationShaddow(),
                           child: TextFormField(
                             controller: _parkingSpacesController,
                             keyboardType: TextInputType.number,
                             style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .onBackground, // Dynamic text color
+                                  .onSurface, // Dynamic text color
                             ),
                             decoration: InputDecoration(
                               filled: true,
@@ -601,14 +605,14 @@ class _SearchPageState extends State<SearchPage> {
                               labelStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .onBackground
+                                    .onSurface
                                     .withOpacity(0.7), // Dynamic label color
                               ),
                               hintText: 'Enter Parking Spaces',
                               hintStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .onBackground
+                                    .onSurface
                                     .withOpacity(0.5), // Dynamic hint color
                               ),
                               border: OutlineInputBorder(
@@ -616,7 +620,7 @@ class _SearchPageState extends State<SearchPage> {
                                 borderSide: BorderSide(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onBackground
+                                      .onSurface
                                       .withOpacity(0.5), // Border color
                                 ),
                               ),
@@ -625,7 +629,7 @@ class _SearchPageState extends State<SearchPage> {
                                 borderSide: BorderSide(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onBackground
+                                      .onSurface
                                       .withOpacity(0.5), // Enabled border color
                                 ),
                               ),
@@ -642,7 +646,6 @@ class _SearchPageState extends State<SearchPage> {
                               _parkingSpacesController.text = value!;
                             },
                           ),
-                          decoration: ThemeHelper().inputBoxDecorationShaddow(),
                         ),
                       ),
                     ),
@@ -654,13 +657,14 @@ class _SearchPageState extends State<SearchPage> {
                           right: 0,
                         ),
                         child: Container(
+                          decoration: ThemeHelper().inputBoxDecorationShaddow(),
                           child: TextFormField(
                             controller: _sqmController,
                             keyboardType: TextInputType.number,
                             style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .onBackground, // Dynamic text color
+                                  .onSurface, // Dynamic text color
                             ),
                             decoration: InputDecoration(
                               filled: true,
@@ -670,14 +674,14 @@ class _SearchPageState extends State<SearchPage> {
                               labelStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .onBackground
+                                    .onSurface
                                     .withOpacity(0.7), // Dynamic label color
                               ),
                               hintText: 'Specify the Property Measurements.',
                               hintStyle: TextStyle(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .onBackground
+                                    .onSurface
                                     .withOpacity(0.5), // Dynamic hint color
                               ),
                               border: OutlineInputBorder(
@@ -711,7 +715,6 @@ class _SearchPageState extends State<SearchPage> {
                               _sqmController.text = value!;
                             },
                           ),
-                          decoration: ThemeHelper().inputBoxDecorationShaddow(),
                         ),
                       ),
                     ),
@@ -724,10 +727,10 @@ class _SearchPageState extends State<SearchPage> {
                     child: ElevatedButton(
                       style: ThemeHelper().buttonStyle(),
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                        padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                         child: Text(
                           'Search Property'.toUpperCase(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: Colors.white),

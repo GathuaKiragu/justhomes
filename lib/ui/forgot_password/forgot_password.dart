@@ -5,10 +5,11 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:just_apartment_live/api/api.dart';
 import 'package:just_apartment_live/ui/forgot_password/code_verification_page.dart';
 import 'package:just_apartment_live/ui/loading.dart';
-import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/widgets/theme_helper.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }
@@ -31,7 +32,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 .onSurface
                 .withOpacity(0.1), // Shadow color
             blurRadius: 5.0,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -81,12 +82,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           borderRadius:
               BorderRadius.circular(10.0), // Adjusts the button's shape
         ),
-        padding: EdgeInsets.fromLTRB(40, 10, 40, 10), // Button padding
-        minimumSize: Size(double.infinity, 50), // Full width button
+        padding: const EdgeInsets.fromLTRB(40, 10, 40, 10), // Button padding
+        minimumSize: const Size(double.infinity, 50), // Full width button
       ),
       child: Text(
         'Reset Password'.toUpperCase(),
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
@@ -123,7 +124,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green,
-          duration: Duration(milliseconds: 8000),
+          duration: const Duration(milliseconds: 8000),
           content: Text(body['message'].toString()),
           action: SnackBarAction(
             label: 'X',
@@ -149,7 +150,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 8000),
+          duration: const Duration(milliseconds: 8000),
           content: Text(body['message'].toString()),
           action: SnackBarAction(
             label: 'X',
@@ -168,34 +169,34 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Forgot Password',
           style: TextStyle(
             color: Colors.white, // Set the text color to white
           ),
         ),
         backgroundColor: HexColor('#252742'),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white, // Set the back button color to white
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 40, 20, 10),
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 10),
           child: Column(
             children: [
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Enter your email address to receive password reset instructions.',
                 style: TextStyle(color: Colors.grey),
               ),
-              SizedBox(height: 30.0),
+              const SizedBox(height: 30.0),
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
                     _buildEmailField(),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     _buildResetPasswordButton(),
                   ],
                 ),

@@ -13,7 +13,7 @@ class OffPlanPropertiesPage extends StatefulWidget {
   // Accepting leaseType as a parameter
   final int selectedIndex;
 
-  OffPlanPropertiesPage({required this.selectedIndex});
+  const OffPlanPropertiesPage({super.key, required this.selectedIndex});
 
   @override
   _OffPlanPropertiesPageState createState() => _OffPlanPropertiesPageState();
@@ -131,7 +131,7 @@ class _OffPlanPropertiesPageState extends State<OffPlanPropertiesPage> {
           Column(
             children: [
               Card(
-                margin: EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(8.0),
                 color: Colors.grey.shade100,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -144,7 +144,7 @@ class _OffPlanPropertiesPageState extends State<OffPlanPropertiesPage> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, bottom: 8.0),
                         child: IconButton(
-                          icon: Row(
+                          icon: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.search, color: Colors.black),
@@ -163,7 +163,7 @@ class _OffPlanPropertiesPageState extends State<OffPlanPropertiesPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SearchPage(),
+                                builder: (context) => const SearchPage(),
                               ),
                             );
                           },
@@ -192,7 +192,7 @@ class _OffPlanPropertiesPageState extends State<OffPlanPropertiesPage> {
       child: Column(
         children: List.generate(4, (index) {
           return Container(
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             height: 100,
             color: Colors.white,
           );
@@ -202,16 +202,16 @@ class _OffPlanPropertiesPageState extends State<OffPlanPropertiesPage> {
   }
 
   Future<int> _checkifUserisLoggedIn() async {
-    int _isLoggedIn = 0;
+    int isLoggedIn = 0;
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
 
     if (user['id'] != null) {
-      _isLoggedIn = 1;
+      isLoggedIn = 1;
     } else {
-      _isLoggedIn = 0;
+      isLoggedIn = 0;
     }
 
-    return _isLoggedIn;
+    return isLoggedIn;
   }
 }

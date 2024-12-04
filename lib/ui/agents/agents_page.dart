@@ -10,6 +10,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AgentsPage extends StatefulWidget {
+  const AgentsPage({super.key});
+
   @override
   _AgentsPageState createState() => _AgentsPageState();
 }
@@ -28,7 +30,7 @@ class _AgentsPageState extends State<AgentsPage> {
 
   Future<void> _fetchAgents() async {
     try {
-      final uri = '${Configuration.API_URL}agent/list';
+      const uri = '${Configuration.API_URL}agent/list';
 
       final response = await http.post(
         Uri.parse(uri),
@@ -121,26 +123,26 @@ class _AgentsPageState extends State<AgentsPage> {
       appBar: buildHeader(context),
       backgroundColor: isDarkMode ? Colors.grey[850] : Colors.grey[300],
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               // Wrap entire body with SingleChildScrollView
               child: Column(
                 children: [
                   // Card at the top displaying total agents and search field
                   Card(
-                    margin: EdgeInsets.all(8.0),
+                    margin: const EdgeInsets.all(8.0),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
                           // Search TextField with reduced height and full width
-                          Container(
+                          SizedBox(
                             height: 40, // Reduced height
                             width:
                                 MediaQuery.of(context).size.width, // Full width
                             child: TextField(
                               onChanged: _filterAgents,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Search by name',
                                 border: OutlineInputBorder(),
                               ),
@@ -153,7 +155,7 @@ class _AgentsPageState extends State<AgentsPage> {
                   // List of agents
                   ListView.builder(
                     physics:
-                        NeverScrollableScrollPhysics(), // Disable internal scrolling
+                        const NeverScrollableScrollPhysics(), // Disable internal scrolling
                     shrinkWrap: true, // Use only the necessary height
                     itemCount: filteredAgents.length,
                     itemBuilder: (context, index) {
@@ -178,7 +180,7 @@ class _AgentsPageState extends State<AgentsPage> {
                           );
                         },
                         child: Card(
-                          margin: EdgeInsets.all(8.0),
+                          margin: const EdgeInsets.all(8.0),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
@@ -194,13 +196,13 @@ class _AgentsPageState extends State<AgentsPage> {
                                   child: !hasValidAvatar
                                       ? Text(
                                           agentInitial.toUpperCase(),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 30),
                                         )
                                       : null,
                                 ),
-                                SizedBox(width: 16.0),
+                                const SizedBox(width: 16.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -212,13 +214,15 @@ class _AgentsPageState extends State<AgentsPage> {
                                         children: [
                                           Text(
                                             agent['name'],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 18.0,
                                             ),
                                           ),
                                           IconButton(
-                                            icon: FaIcon(FontAwesomeIcons.share,
-                                                size: 20, color: Colors.purple),
+                                            icon: const FaIcon(
+                                                FontAwesomeIcons.share,
+                                                size: 20,
+                                                color: Colors.purple),
                                             onPressed: () {
                                               // Construct the message for sharing
                                               final message =
@@ -234,9 +238,8 @@ class _AgentsPageState extends State<AgentsPage> {
                                         ],
                                       ),
                                       Text(
-                                        agent['properties_count'].toString() +
-                                            " Properties",
-                                        style: TextStyle(
+                                        "${agent['properties_count']} Properties",
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
                                       if (agent['profile'] != null)
@@ -244,9 +247,11 @@ class _AgentsPageState extends State<AgentsPage> {
                                       Row(
                                         children: [
                                           TextButton.icon(
-                                            icon: FaIcon(FontAwesomeIcons.phone,
-                                                size: 16, color: Colors.purple),
-                                            label: Text(
+                                            icon: const FaIcon(
+                                                FontAwesomeIcons.phone,
+                                                size: 16,
+                                                color: Colors.purple),
+                                            label: const Text(
                                               "Call",
                                               style: TextStyle(
                                                   color: Colors.purple),
@@ -254,13 +259,13 @@ class _AgentsPageState extends State<AgentsPage> {
                                             onPressed: () =>
                                                 _launchCall(agent['telephone']),
                                           ),
-                                          SizedBox(width: 8.0),
+                                          const SizedBox(width: 8.0),
                                           TextButton.icon(
-                                            icon: FaIcon(
+                                            icon: const FaIcon(
                                                 FontAwesomeIcons.whatsapp,
                                                 size: 16,
                                                 color: Colors.purple),
-                                            label: Text(
+                                            label: const Text(
                                               "WhatsApp",
                                               style: TextStyle(
                                                   color: Colors.purple),

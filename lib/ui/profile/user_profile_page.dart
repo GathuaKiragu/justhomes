@@ -16,6 +16,8 @@ import 'package:http/http.dart' as http;
 bool _isUploading = false;
 
 class UserProfilePage extends StatefulWidget {
+  const UserProfilePage({super.key});
+
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
@@ -126,11 +128,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
             context: context,
             builder: (BuildContext dialogContext) {
               return AlertDialog(
-                title: Text('Success'),
-                content: Text('Profile successfully updated.'),
+                title: const Text('Success'),
+                content: const Text('Profile successfully updated.'),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Okay'),
+                    child: const Text('Okay'),
                     onPressed: () {
                       Navigator.of(dialogContext).pop(); // Close the dialog
                       Navigator.of(context).pop(); // Close the profile page
@@ -152,30 +154,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Profile"),
+        title: const Text("Edit Profile"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PostPage(),
+                  builder: (context) => const PostPage(),
                 ),
               );
             },
           ),
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfilePage(),
+                  builder: (context) => const ProfilePage(),
                 ),
               );
             },
@@ -212,7 +214,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               ? Colors
                                   .grey[850] // Darker background for dark mode
                               : Colors.white, // White background for light mode
-                          margin: EdgeInsets.only(bottom: 16.0),
+                          margin: const EdgeInsets.only(bottom: 16.0),
                         ),
                       ),
                     ),
@@ -258,16 +260,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: () => _submitForm(context),
-                    child: Text(
-                      "Update Profile",
-                      style: TextStyle(
-                          color: Colors.white), // Set text color to white
-                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
                           Colors.purple, // Set background color to purple
-                      minimumSize:
-                          Size(double.infinity, 48), // Fit the entire width
+                      minimumSize: const Size(
+                          double.infinity, 48), // Fit the entire width
+                    ),
+                    child: const Text(
+                      "Update Profile",
+                      style: TextStyle(
+                          color: Colors.white), // Set text color to white
                     ),
                   ),
                 ),
@@ -283,33 +285,33 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Upload the Company Logo"),
+        const Text("Upload the Company Logo"),
         GestureDetector(
           onTap: _pickImage,
           child: Stack(
             alignment: Alignment.topRight,
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.grey[300],
-                backgroundImage: _logoImage != null
-                    ? FileImage(_logoImage!) // Display selected image
-                    : (_companyLogo != null && _companyLogo!.isNotEmpty
-                        ? NetworkImage(Configuration.WEB_URL +
-                            _companyLogo!) // Display logo from network if exists
-                        : null),
-                child: _logoImage == null &&
-                        (_companyLogo == null || _companyLogo!.isEmpty)
-                    ? Icon(Icons.add_a_photo, size: 30, color: Colors.grey[700])
-                    : null,
-              ),
+              // CircleAvatar(
+              //   radius: 50,
+              //   backgroundColor: Colors.grey[300],
+              //   backgroundImage: _logoImage != null
+              //       ? FileImage(_logoImage!)
+              //       : (_companyLogo != null && _companyLogo!.isNotEmpty
+              //           ? NetworkImage(Configuration.WEB_URL +
+              //               _companyLogo!) // Display logo from network if exists
+              //           : null),
+              //   child: _logoImage == null &&
+              //           (_companyLogo == null || _companyLogo!.isEmpty)
+              //       ? Icon(Icons.add_a_photo, size: 30, color: Colors.grey[700])
+              //       : null,
+              // ),
               if (_logoImage != null ||
                   (_companyLogo != null && _companyLogo!.isNotEmpty))
                 Positioned(
                   right: 0,
                   top: 0,
                   child: IconButton(
-                    icon: Icon(Icons.close, color: Colors.red),
+                    icon: const Icon(Icons.close, color: Colors.red),
                     onPressed: _removeImage, // Call updated remove function
                   ),
                 ),
@@ -317,7 +319,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
         ),
         const SizedBox(height: 10),
-        if (_isUploading) CircularProgressIndicator(),
+        if (_isUploading) const CircularProgressIndicator(),
       ],
     );
   }
@@ -347,10 +349,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
+            content: const Text(
               "Logo uploaded successfully. Click on update profile to finish",
             ),
-            duration: Duration(
+            duration: const Duration(
                 seconds: 3), // Delay the disappearance (adjust as needed)
             action: SnackBarAction(
               label: 'X',
@@ -403,7 +405,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           hintText: hintText,
           fillColor: Theme.of(context)
               .colorScheme
-              .background, // Background color based on theme
+              .surface, // Background color based on theme
           filled: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),

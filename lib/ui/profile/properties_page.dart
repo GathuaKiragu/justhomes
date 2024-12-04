@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PropertiesPage extends StatefulWidget {
+  const PropertiesPage({super.key});
+
   @override
   _PropertiesPageState createState() => _PropertiesPageState();
 }
@@ -29,16 +31,16 @@ class _PropertiesPageState extends State<PropertiesPage> {
   var islogdin = 0;
 
   _checkifUserisLoggedIn() async {
-    int _isLoggedIn = 0;
+    int isLoggedIn = 0;
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
 
     if (user['id'] != null) {
-      _isLoggedIn = 1;
+      isLoggedIn = 1;
     } else {
-      _isLoggedIn = 0;
+      isLoggedIn = 0;
     }
-    return _isLoggedIn;
+    return isLoggedIn;
   }
 
   @override
@@ -131,18 +133,18 @@ class _PropertiesPageState extends State<PropertiesPage> {
             ),
           ),
           trailing: _isDeleting
-              ? CircularProgressIndicator()
+              ? const CircularProgressIndicator()
               : PopupMenuButton<String>(
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'edit',
                       child: ListTile(
                         leading: Icon(Icons.edit),
                         title: Text('Edit'),
                       ),
                     ),
-                    PopupMenuItem<String>(
+                    const PopupMenuItem<String>(
                       value: 'delete',
                       child: ListTile(
                         leading: Icon(Icons.delete),
@@ -167,7 +169,7 @@ class _PropertiesPageState extends State<PropertiesPage> {
                   },
                 ),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }
@@ -177,17 +179,17 @@ class _PropertiesPageState extends State<PropertiesPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm Delete"),
-          content: Text("Are you sure you want to delete this property?"),
+          title: const Text("Confirm Delete"),
+          content: const Text("Are you sure you want to delete this property?"),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
+              child: const Text(
                 "Delete",
                 style: TextStyle(color: Colors.red),
               ),
@@ -222,7 +224,7 @@ class _PropertiesPageState extends State<PropertiesPage> {
 
       if (body['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Property successfully deleted.'),
             backgroundColor: Colors.purple,
           ),
@@ -238,21 +240,21 @@ class _PropertiesPageState extends State<PropertiesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             'No Properties Found',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'It looks like you have not added any properties yet.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.grey),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -261,11 +263,11 @@ class _PropertiesPageState extends State<PropertiesPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return PostPage();
+                  return const PostPage();
                 }),
               );
             },
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.add, color: Colors.white),
@@ -291,7 +293,7 @@ class _PropertiesPageState extends State<PropertiesPage> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               'Properties',
               style: TextStyle(
                 color: Colors.white,
@@ -299,24 +301,26 @@ class _PropertiesPageState extends State<PropertiesPage> {
               ),
             ),
             backgroundColor: HexColor('#252742'),
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
             elevation: 0.0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 color: Colors.white,
                 onPressed: () {
                   _checkifUserisLoggedIn().then((result) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return result == 1 ? PostPage() : LoginPage();
+                        return result == 1
+                            ? const PostPage()
+                            : const LoginPage();
                       }),
                     );
                   });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_apartment_live/ui/reelsplayer/reel_player.dart';
 
 import '../ui/dashboard/dashboard_page.dart';
 import '../ui/favorites/favorites_page.dart';
@@ -9,7 +10,8 @@ class CustomNavigationBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
 
-  CustomNavigationBar({
+  const CustomNavigationBar({
+    super.key,
     required this.selectedIndex,
     required this.onItemSelected,
   });
@@ -19,14 +21,14 @@ class CustomNavigationBar extends StatelessWidget {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DashBoardPage()),
+          MaterialPageRoute(builder: (context) => const DashBoardPage()),
         );
         break;
       case 1:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => PropertyByTypePage(
+              builder: (context) => const PropertyByTypePage(
                     leaseType: '1',
                     selectedIndex: 1,
                   )),
@@ -36,7 +38,7 @@ class CustomNavigationBar extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => PropertyByTypePage(
+              builder: (context) => const PropertyByTypePage(
                     leaseType: '2',
                     selectedIndex: 2,
                   )),
@@ -45,13 +47,13 @@ class CustomNavigationBar extends StatelessWidget {
       case 3:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ReelsPage()),
+          MaterialPageRoute(builder: (context) => const Reels()),
         );
         break;
       case 4:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => FavoritesPage()),
+          MaterialPageRoute(builder: (context) => const FavoritesPage()),
         );
         break;
     }
@@ -69,7 +71,7 @@ class CustomNavigationBar extends StatelessWidget {
         onItemSelected(index);
         _navigate(context, index);
       },
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
           label: 'Home',

@@ -10,7 +10,7 @@ import 'package:just_apartment_live/widgets/theme_helper.dart';
 class ResetPasswordPage extends StatefulWidget {
   final dynamic userDetails;
 
-  ResetPasswordPage({required this.userDetails});
+  const ResetPasswordPage({super.key, required this.userDetails});
 
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
@@ -50,7 +50,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
     if (res.statusCode == 200 && body['success']) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Password reset successful. Please login to continue.'),
         ),
@@ -60,7 +60,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              LoginPage(), // Replace with your login page widget
+              const LoginPage(), // Replace with your login page widget
         ),
       );
     } else {
@@ -77,30 +77,30 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Reset Password',
           style: TextStyle(
             color: Colors.white,
           ),
         ),
         backgroundColor: HexColor('#252742'),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 40, 20, 10),
+          padding: const EdgeInsets.fromLTRB(20, 40, 20, 10),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 20.0),
-                Text(
+                const SizedBox(height: 20.0),
+                const Text(
                   'Reset your password using the form below.',
                   style: TextStyle(color: Colors.grey),
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 TextFormField(
                   controller: _emailController,
                   readOnly: true,
@@ -116,7 +116,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: !_passwordVisible,
@@ -149,7 +149,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: !_confirmPasswordVisible,
@@ -183,16 +183,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 Container(
                   decoration: ThemeHelper().buttonBoxDecoration(context),
                   child: ElevatedButton(
                     style: ThemeHelper().buttonStyle(),
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(40, 10, 40, 10),
+                      padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                       child: Text(
                         'Reset Password'.toUpperCase(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),

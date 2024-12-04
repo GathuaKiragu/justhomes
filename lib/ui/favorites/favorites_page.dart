@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
 
 class FavoritesPage extends StatefulWidget {
+  const FavoritesPage({super.key});
+
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
 }
@@ -118,7 +120,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         Column(
           children: [
             Card(
-              margin: EdgeInsets.all(8.0),
+              margin: const EdgeInsets.all(8.0),
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.grey[800] // Dark mode background color
                   : Colors.grey.shade100, // Light mode background color
@@ -157,17 +159,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               "Please log in to view your favorites.",
               style: TextStyle(fontSize: 18, color: Colors.black),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -175,7 +177,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     Colors.purple, // Set the button color to purple
                 foregroundColor: Colors.white, // Set the text color to white
               ),
-              child: Text("Login"),
+              child: const Text("Login"),
             )
           ],
         ),
@@ -192,7 +194,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       child: Column(
         children: List.generate(4, (index) {
           return Container(
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             height: 100,
             color: isDarkMode
                 ? Colors.grey[800]
@@ -204,16 +206,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<int> _checkifUserisLoggedIn() async {
-    int _isLoggedIn = 0;
+    int isLoggedIn = 0;
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
 
     if (user['id'] != null) {
-      _isLoggedIn = 1;
+      isLoggedIn = 1;
     } else {
-      _isLoggedIn = 0;
+      isLoggedIn = 0;
     }
 
-    return _isLoggedIn;
+    return isLoggedIn;
   }
 }

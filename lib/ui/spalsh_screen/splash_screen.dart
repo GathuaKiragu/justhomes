@@ -49,7 +49,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_apartment_live/ui/dashboard/dashboard_page.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:logger/logger.dart';
@@ -57,8 +56,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final logger = Logger();
 
-
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -110,23 +110,25 @@ class _SplashScreenState extends State<SplashScreen> {
       logger.e("Error fetching videos: $e");
     }
   }
+
   // Function to cache a single video
   Future<void> _cacheVideo(String videoUrl) async {
     final cacheManager = DefaultCacheManager();
     await cacheManager.downloadFile(videoUrl);
   }
+
   _navigateToHome() async {
     _cacheVideos();
     await Future.delayed(
-      Duration(seconds: 8), // Adjust the duration as needed
-          () {},
+      const Duration(seconds: 4), // Adjust the duration as needed
+      () {},
     );
 
     // if (isVideosCached) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DashBoardPage()),
-      );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const DashBoardPage()),
+    );
     // }
   }
 
@@ -144,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen> {
             width: double.infinity,
             height: double.infinity,
           ),
-          CircularProgressIndicator(
+          const CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           ),
         ],

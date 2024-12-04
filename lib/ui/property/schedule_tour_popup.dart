@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ScheduleTourPopup extends StatefulWidget {
   final String propertyId;
 
-  ScheduleTourPopup({required this.propertyId});
+  const ScheduleTourPopup({super.key, required this.propertyId});
 
   @override
   _ScheduleTourPopupState createState() => _ScheduleTourPopupState();
@@ -103,7 +103,7 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
       ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -113,7 +113,7 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.access_time, size: 24.0),
@@ -126,14 +126,14 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                       ],
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, color: Colors.red),
+                      icon: const Icon(Icons.close, color: Colors.red),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
@@ -155,10 +155,10 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                         },
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Select Time',
                         ),
                         value: _selectedTime,
@@ -187,10 +187,10 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _fullNameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Full Name',
                   ),
                   validator: (value) {
@@ -200,10 +200,10 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -214,10 +214,10 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _telephoneController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Telephone',
                   ),
                   keyboardType: TextInputType.phone,
@@ -228,7 +228,7 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                     return null;
                   },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Align(
                   alignment: Alignment.center,
                   child: SizedBox(
@@ -240,11 +240,11 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
                         foregroundColor: Colors.white,
                       ),
                       child: _isLoading
-                          ? CircularProgressIndicator(
+                          ? const CircularProgressIndicator(
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(Colors.purple),
                             )
-                          : Text('Submit'),
+                          : const Text('Submit'),
                     ),
                   ),
                 ),
@@ -286,14 +286,14 @@ class _ScheduleTourPopupState extends State<ScheduleTourPopup> {
 
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Tour scheduled successfully!'),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Failed to schedule tour. Please try again later.'),
             backgroundColor: Colors.red,
           ),

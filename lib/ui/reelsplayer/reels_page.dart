@@ -45,6 +45,8 @@ final logger = Logger();
 // final logger = Logger();
 
 class ReelsPage extends StatefulWidget {
+  const ReelsPage({super.key});
+
   @override
   _ReelsPageState createState() => _ReelsPageState();
 }
@@ -85,20 +87,18 @@ class _ReelsPageState extends State<ReelsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? cachedVideos = prefs.getString('cachedVideos');
 
-    if (cachedVideos != null) {
-      setState(() {
-        videos = (json.decode(cachedVideos) as List)
-            .map((videoData) => Video.fromJson(videoData))
-            .toList();
-      });
-      logger.i("Loaded cached videos, count: ${videos.length}");
-    }
+    setState(() {
+      videos = (json.decode(cachedVideos!) as List)
+          .map((videoData) => Video.fromJson(videoData))
+          .toList();
+    });
+    logger.i("Loaded cached videos, count: ${videos.length}");
 
     if (isConnected) {
       await _fetchVideos();
     } else if (cachedVideos == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No internet connection")),
+        const SnackBar(content: Text("No internet connection")),
       );
     }
   }
@@ -158,7 +158,7 @@ class _ReelsPageState extends State<ReelsPage> {
         child: FloatingActionButton(
           onPressed: _showVideoOptions,
           backgroundColor: Colors.purple,
-          child: FaIcon(
+          child: const FaIcon(
             FontAwesomeIcons.plus,
             color: Colors.white,
           ),
@@ -194,12 +194,12 @@ class _ReelsPageState extends State<ReelsPage> {
   void _showVideoOptions() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           height: 150,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -207,8 +207,9 @@ class _ReelsPageState extends State<ReelsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ListTile(
-                  leading: Icon(Icons.fiber_manual_record, color: Colors.red),
-                  title: Text('Live'),
+                  leading:
+                      const Icon(Icons.fiber_manual_record, color: Colors.red),
+                  title: const Text('Live'),
                   onTap: () {
                     // Navigator.of(context).pop();
                     //
@@ -218,7 +219,7 @@ class _ReelsPageState extends State<ReelsPage> {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text(
+                                title: const Text(
                                   'Please log in or create an account first',
                                   style: TextStyle(fontSize: 15),
                                 ),
@@ -229,11 +230,12 @@ class _ReelsPageState extends State<ReelsPage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => LoginPage(),
+                                          builder: (context) =>
+                                              const LoginPage(),
                                         ),
                                       );
                                     },
-                                    child: Text('Log in'),
+                                    child: const Text('Log in'),
                                   ),
                                 ],
                               );
@@ -242,8 +244,8 @@ class _ReelsPageState extends State<ReelsPage> {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.video_library),
-                  title: Text('Add Video'),
+                  leading: const Icon(Icons.video_library),
+                  title: const Text('Add Video'),
                   onTap: () {
                     _hasLoggedIn
                         ? {Navigator.of(context).pop(), _pickVideoFromGallery()}
@@ -251,7 +253,7 @@ class _ReelsPageState extends State<ReelsPage> {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text(
+                                title: const Text(
                                   'Please log in or create an account first',
                                   style: TextStyle(fontSize: 15),
                                 ),
@@ -262,11 +264,12 @@ class _ReelsPageState extends State<ReelsPage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => LoginPage(),
+                                          builder: (context) =>
+                                              const LoginPage(),
                                         ),
                                       );
                                     },
-                                    child: Text('Log in'),
+                                    child: const Text('Log in'),
                                   ),
                                 ],
                               );
@@ -299,7 +302,7 @@ class _ReelsPageState extends State<ReelsPage> {
   Future<void> _recordVideo() async {
     final XFile? videoFile = await _picker.pickVideo(
       source: ImageSource.camera,
-      maxDuration: Duration(minutes: 5),
+      maxDuration: const Duration(minutes: 5),
     );
 
     if (videoFile != null) {
@@ -321,16 +324,16 @@ class _ReelsPageState extends State<ReelsPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Please log in or create an account first',
+          title: const Text('Please log in or create an account first',
               style: TextStyle(fontSize: 15)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               },
-              child: Text('Log in'),
+              child: const Text('Log in'),
             ),
           ],
         );
@@ -349,7 +352,8 @@ class CachedVlcPlayerWidget extends StatefulWidget {
   final String username;
   final List comments;
 
-  CachedVlcPlayerWidget({
+  const CachedVlcPlayerWidget({
+    super.key,
     required this.videoID,
     required this.videoUrl,
     required this.user,
@@ -376,7 +380,7 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
   int? _userID = 0;
   String userName = '';
   late Timer _likeCountTimer;
-  ValueNotifier<int> _likesCountNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<int> _likesCountNotifier = ValueNotifier<int>(0);
   final ValueNotifier<int> _shareCountNotifier = ValueNotifier<int>(0);
   late Future<Map<String, dynamic>> _likeStatusFuture;
 
@@ -499,16 +503,17 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
           child: GestureDetector(
             onTap: () {},
             child: _cachedFile == null
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : VlcPlayer(
                     controller: _vlcPlayerController,
                     aspectRatio: MediaQuery.of(context).size.aspectRatio,
-                    placeholder: Center(child: CircularProgressIndicator()),
+                    placeholder:
+                        const Center(child: CircularProgressIndicator()),
                   ),
           ),
         ),
         if (!_isPlaying)
-          Center(
+          const Center(
             child: Icon(
               Icons.play_arrow,
               color: Colors.white,
@@ -525,16 +530,16 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Please log in or create an account first',
+          title: const Text('Please log in or create an account first',
               style: TextStyle(fontSize: 15)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
               },
-              child: Text('Log in'),
+              child: const Text('Log in'),
             ),
           ],
         );
@@ -549,13 +554,16 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
 
-        return {'isLiked': hasLiked, 'likes': responseData['likes']}; // Default fallback
-        ; // Assume it returns {"isLiked": bool, "likesCount": int}
+        return {
+          'isLiked': hasLiked,
+          'likes': responseData['likes']
+        }; // Default fallback
+// Assume it returns {"isLiked": bool, "likesCount": int}
       } else {
         throw Exception('Failed to load like status');
       }
     } catch (e) {
-      logger.e("Failed to fetch like status:" +
+      logger.e("Failed to fetch like status:"
           '   --->https://justhomes.co.ke/api/reels/like-status?videoId=${widget.videoID}');
       return {'isLiked': false, 'likes': 0}; // Default fallback
     }
@@ -584,7 +592,7 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
         // Call the API to update the server
         final response = await http.post(
           Uri.parse(
-              'https://justhomes.co.ke/api/reels/update-likes?likes=${likesCount}&videoId=${widget.videoID}&user_id=${_userID}'),
+              'https://justhomes.co.ke/api/reels/update-likes?likes=$likesCount&videoId=${widget.videoID}&user_id=$_userID'),
         );
 
         if (response.statusCode == 200) {
@@ -635,7 +643,7 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
             future: _likeStatusFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); // Loading state
+                return const CircularProgressIndicator(); // Loading state
               } else if (snapshot.hasError) {
                 // Handle error gracefully
                 return Container();
@@ -658,12 +666,12 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
                     ),
                     Text(
                       'Likes: $likesCount',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 );
               }
-              return SizedBox(); // Fallback
+              return const SizedBox(); // Fallback
             },
           ),
 
@@ -674,12 +682,13 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
               return Column(
                 children: [
                   IconButton(
-                    icon: FaIcon(FontAwesomeIcons.share, color: Colors.white),
+                    icon: const FaIcon(FontAwesomeIcons.share,
+                        color: Colors.white),
                     onPressed: _shareVideo,
                   ),
                   Text(
                     'Shares: $value',
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               );
@@ -688,7 +697,7 @@ class _CachedVlcPlayerWidgetState extends State<CachedVlcPlayerWidget> {
 
           // Comment Button
           IconButton(
-            icon: Icon(Icons.comment, color: Colors.white),
+            icon: const Icon(Icons.comment, color: Colors.white),
             onPressed: () {
               if (widget.username.isEmpty) {
                 _showLoginPrompt();

@@ -13,7 +13,8 @@ class PropertyByTypePage extends StatefulWidget {
   final String leaseType; // Accepting leaseType as a parameter
   final int selectedIndex;
 
-  PropertyByTypePage({required this.leaseType, required this.selectedIndex});
+  const PropertyByTypePage(
+      {super.key, required this.leaseType, required this.selectedIndex});
 
   @override
   _PropertyByTypePageState createState() => _PropertyByTypePageState();
@@ -131,7 +132,7 @@ class _PropertyByTypePageState extends State<PropertyByTypePage> {
           Column(
             children: [
               Card(
-                margin: EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(8.0),
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.grey[800] // Dark mode background color
                     : Colors.grey.shade100, // Light mode background color
@@ -155,7 +156,7 @@ class _PropertyByTypePageState extends State<PropertyByTypePage> {
                                       ? Colors.white
                                       : Colors
                                           .black), // Icon color for dark mode
-                              SizedBox(
+                              const SizedBox(
                                   width:
                                       4.0), // Add some space between the icon and text
                               Text(
@@ -174,7 +175,7 @@ class _PropertyByTypePageState extends State<PropertyByTypePage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => SearchPage()),
+                                  builder: (context) => const SearchPage()),
                             );
                           },
                         ),
@@ -205,7 +206,7 @@ class _PropertyByTypePageState extends State<PropertyByTypePage> {
       child: Column(
         children: List.generate(4, (index) {
           return Container(
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             height: 100,
             color: isDarkMode
                 ? Colors.grey[800]
@@ -217,16 +218,16 @@ class _PropertyByTypePageState extends State<PropertyByTypePage> {
   }
 
   Future<int> _checkifUserisLoggedIn() async {
-    int _isLoggedIn = 0;
+    int isLoggedIn = 0;
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = json.decode(localStorage.getString('user') ?? '{}');
 
     if (user['id'] != null) {
-      _isLoggedIn = 1;
+      isLoggedIn = 1;
     } else {
-      _isLoggedIn = 0;
+      isLoggedIn = 0;
     }
 
-    return _isLoggedIn;
+    return isLoggedIn;
   }
 }

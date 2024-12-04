@@ -12,7 +12,8 @@ class NextButtonWidget extends StatelessWidget {
   final String propertyID;
   final PropertySubmissionService _propertySubmissionService;
 
-  NextButtonWidget({
+  const NextButtonWidget({
+    super.key,
     required this.formKey,
     required this.images,
     required this.userTown,
@@ -26,7 +27,7 @@ class NextButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 30.0),
-      child: Container(
+      child: SizedBox(
         width: double.infinity, // Full width of the parent
         child: ElevatedButton(
           onPressed: () => _propertySubmissionService.submitProperty(
@@ -41,9 +42,10 @@ class NextButtonWidget extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple, // Purple background color
             foregroundColor: Colors.white, // White font color
-            minimumSize: Size(double.infinity, 50), // Set a minimum height
+            minimumSize:
+                const Size(double.infinity, 50), // Set a minimum height
           ),
-          child: Text("Next"),
+          child: const Text("Next"),
         ),
       ),
     );

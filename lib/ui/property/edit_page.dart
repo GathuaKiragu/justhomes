@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class EditPage extends StatefulWidget {
   var propertyID;
-  EditPage({required this.propertyID});
+  EditPage({super.key, required this.propertyID});
 
   @override
   _EditPageState createState() => _EditPageState();
@@ -14,6 +14,6 @@ class _EditPageState extends State<EditPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Text("Edit Page");
+    return const Text("Edit Page");
   }
 }

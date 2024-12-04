@@ -17,7 +17,7 @@ import 'package:intl/intl.dart';
 class LatestPropertiesWidget extends StatefulWidget {
   final List<dynamic> latestProperties;
 
-  LatestPropertiesWidget({required this.latestProperties});
+  const LatestPropertiesWidget({super.key, required this.latestProperties});
 
   @override
   _LatestPropertiesWidgetState createState() => _LatestPropertiesWidgetState();
@@ -29,6 +29,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
   bool get wantKeepAlive => true;
   List _userFavorites = []; // Changed to List<int> for better type safety
   Map<int, bool> _favoriteStatus = {};
+  @override
   void initState() {
     super.initState();
     _getInitData();
@@ -45,7 +46,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          child: Padding(
+          child: const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(
               child: Text(
@@ -65,20 +66,20 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
 
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(top: 5.0, bottom: 15.0),
       itemCount: widget.latestProperties.length,
       itemBuilder: (BuildContext context, int index) {
         var address = widget.latestProperties[index]['address'] ?? "";
-        int _propertyID = widget.latestProperties[index]['id'];
+        int propertyID = widget.latestProperties[index]['id'];
         List<String> propertyImagesList = widget.latestProperties[index]
                 ['property_images']
             .split(", ")
             .toList();
-        int _currentImageIndex = 0;
+        int currentImageIndex = 0;
 
         // Determine the icon color based on local favorite status
-        Color faviconColor = _favoriteStatus[_propertyID] == true
+        Color faviconColor = _favoriteStatus[propertyID] == true
             ? Colors.red.shade500
             : Colors.white;
 
@@ -99,12 +100,12 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return DetailsPage(propertyID: _propertyID);
+                            return DetailsPage(propertyID: propertyID);
                           }),
                         );
                       },
                       child: ClipRRect(
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(10.0),
                           topRight: Radius.circular(10.0),
                         ),
@@ -117,15 +118,15 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                             enableInfiniteScroll: true,
                             reverse: false,
                             autoPlay: false,
-                            autoPlayInterval: Duration(seconds: 3),
+                            autoPlayInterval: const Duration(seconds: 3),
                             autoPlayAnimationDuration:
-                                Duration(milliseconds: 800),
+                                const Duration(milliseconds: 800),
                             autoPlayCurve: Curves.fastOutSlowIn,
                             enlargeCenterPage: false,
                             scrollDirection: Axis.horizontal,
                             onPageChanged: (index, reason) {
                               setState(() {
-                                _currentImageIndex =
+                                currentImageIndex =
                                     index; // Update the current image index
                               });
                             },
@@ -134,7 +135,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                             return Builder(
                               builder: (BuildContext context) {
                                 return ClipRRect(
-                                  borderRadius: BorderRadius.only(
+                                  borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(10.0),
                                     topRight: Radius.circular(10.0),
                                   ),
@@ -159,7 +160,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                           borderRadius: BorderRadius.circular(8.0),
                           child: Container(
                             color: Colors.purple,
-                            padding: EdgeInsets.all(6.0),
+                            padding: const EdgeInsets.all(6.0),
                             child: Text(
                               widget.latestProperties[index]['on_auction'] == 1
                                   ? "Auction"
@@ -171,7 +172,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                           (widget.latestProperties[index]
                                                   ['lease_type_name'] ??
                                               "Unknown")),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -185,13 +186,13 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                       top: 60,
                       right: 16,
                       child: GestureDetector(
-                        onTap: () => _toggleFavorite(context, _propertyID),
+                        onTap: () => _toggleFavorite(context, propertyID),
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: HexColor('#252742'),
                           ),
-                          padding: EdgeInsets.all(6.0),
+                          padding: const EdgeInsets.all(6.0),
                           child: Icon(
                             Icons.favorite,
                             color: faviconColor,
@@ -212,10 +213,11 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                             return Container(
                               width: 10.0,
                               height: 10.0,
-                              margin: EdgeInsets.symmetric(horizontal: 2.0),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 2.0),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: _currentImageIndex == index
+                                color: currentImageIndex == index
                                     ? Colors.white
                                     : Colors.grey,
                               ),
@@ -231,18 +233,19 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return DetailsPage(propertyID: _propertyID);
+                        return DetailsPage(propertyID: propertyID);
                       }),
                     );
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(top: 10.0, left: 5, bottom: 5),
+                    padding:
+                        const EdgeInsets.only(top: 10.0, left: 5, bottom: 5),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
                             widget.latestProperties[index]['property_title'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -263,23 +266,19 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                       widget.latestProperties[index]['property_type_name']),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 0.0, left: 0, bottom: 5),
+                  padding: const EdgeInsets.only(top: 0.0, left: 0, bottom: 5),
                   child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.location_pin,
                         color: Colors.purple,
                         size: 15,
                       ),
                       Expanded(
                         child: Text(
-                          capitalize(
-                                  widget.latestProperties[index]['town_name']) +
-                              ", " +
-                              widget.latestProperties[index]['sub_region_name']
-                                  .toString(),
+                          "${capitalize(widget.latestProperties[index]['town_name'])}, ${widget.latestProperties[index]['sub_region_name']}",
 
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                           ),
                           overflow: TextOverflow
@@ -293,18 +292,16 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 8, bottom: 5, right: 8),
+                  padding: const EdgeInsets.only(left: 8, bottom: 5, right: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
                           widget.latestProperties[index]['amount'] != null
-                              ? "KSH " +
-                                  NumberFormat('#,##0').format(
-                                      widget.latestProperties[index]['amount'])
+                              ? "KSH ${NumberFormat('#,##0').format(widget.latestProperties[index]['amount'])}"
                               : "-", // You can change this to any placeholder text if amount is null
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -319,18 +316,18 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                           },
                           child: Row(
                             children: [
-                              SizedBox(width: 7),
-                              Icon(
+                              const SizedBox(width: 7),
+                              const Icon(
                                 Icons.phone,
                                 size: 12,
                                 color: Colors.purple,
                               ),
-                              SizedBox(width: 5),
+                              const SizedBox(width: 5),
                               Text(
                                 widget.latestProperties[index]
                                         ['created_by_telephone']
                                     .toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.purple),
@@ -343,7 +340,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            SizedBox(width: 7),
+                            const SizedBox(width: 7),
                             GestureDetector(
                               onTap: () {
                                 launchWhatsAppLink(
@@ -357,7 +354,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                             ['created_by_name']
                                         .toString());
                               },
-                              child: Row(
+                              child: const Row(
                                 children: [
                                   FaIcon(
                                     FontAwesomeIcons.whatsapp,
@@ -409,7 +406,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                                 .shade200, // Light mode color
                                         shape: BoxShape.circle,
                                       ),
-                                      padding: EdgeInsets.all(8),
+                                      padding: const EdgeInsets.all(8),
                                       child: FaIcon(
                                         FontAwesomeIcons.star,
                                         size: 14,
@@ -423,7 +420,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                       ),
                                     ),
                                   Padding(
-                                    padding: EdgeInsets.only(left: 8),
+                                    padding: const EdgeInsets.only(left: 8),
                                     child: Text(
                                       widget.latestProperties[index]
                                               ['condition_name'] ??
@@ -455,7 +452,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                             .grey.shade200, // Light mode color
                                     shape: BoxShape.circle,
                                   ),
-                                  padding: EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(8),
                                   child: FaIcon(
                                     FontAwesomeIcons.bed,
                                     size: 16,
@@ -469,7 +466,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 8),
+                                  padding: const EdgeInsets.only(left: 8),
                                   child: Text(
                                     "${widget.latestProperties[index]['bedrooms']} Bedrooms",
                                     style: TextStyle(
@@ -485,7 +482,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                               ],
                             ),
                           TextButton(
-                              child: Icon(
+                              child: const Icon(
                                 Icons.email,
                                 color: Colors.purple,
                                 size: 18.0,
@@ -499,17 +496,17 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                                         ['created_by_name']);
                               }),
                           TextButton.icon(
-                            icon: FaIcon(
+                            icon: const FaIcon(
                               FontAwesomeIcons.share,
                               color: Colors.purple,
                               size: 18.0,
                             ),
-                            label: Text(
+                            label: const Text(
                               '',
                               style: TextStyle(color: Colors.purple),
                             ),
                             style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 5.0, vertical: 1.0),
                             ),
                             onPressed: () =>
@@ -569,11 +566,10 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
-            title: Text('Login First!'),
-            content: Text('Please Login First to add Favorites.'),
+            title: const Text('Login First!'),
+            content: const Text('Please Login First to add Favorites.'),
             actions: <Widget>[
               ElevatedButton(
-                child: const Text('Cancel'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey, // Grey background color
                   foregroundColor: Colors.white, // Text color
@@ -581,9 +577,9 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                 onPressed: () {
                   Navigator.of(dialogContext).pop(); // Close the dialog
                 },
+                child: const Text('Cancel'),
               ),
               ElevatedButton(
-                child: const Text('Login'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple, // Purple background color
                   foregroundColor: Colors.white, // Text color
@@ -594,10 +590,11 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return LoginPage();
+                      return const LoginPage();
                     }),
                   );
                 },
+                child: const Text('Login'),
               )
             ],
           );
@@ -709,11 +706,9 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
       if (body['success']) {
         setState(() {
           _userFavorites = body['data']['properties'];
-          _favoriteStatus = Map.fromIterable(
-            _userFavorites,
-            key: (item) => item as int,
-            value: (_) => true,
-          );
+          _favoriteStatus = {
+            for (var item in _userFavorites) item as int: true
+          };
         });
       }
     }

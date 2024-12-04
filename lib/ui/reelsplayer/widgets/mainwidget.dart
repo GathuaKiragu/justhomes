@@ -4,48 +4,102 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:full_picker/full_picker.dart';
-import 'package:just_apartment_live/ui/reelsplayer/widgets/image.dart';
 import 'package:http/http.dart' as http;
+import 'package:just_apartment_live/ui/login/login.dart';
+import 'package:just_apartment_live/ui/reelsplayer/widgets/likes_widget.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:video_compress/video_compress.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 final logger = Logger();
 
-Column likeShareCommentSave(var likes, var comments, var shares,
-    BuildContext ctx, var commentList, String filepath) {
+_showSignInPrompt(BuildContext ctx) {
+  showDialog(
+    context: ctx,
+    builder: (context) => AlertDialog(
+      title: const Text('Sign In Required'),
+      content: const Text('To like or share videos, you must be signed in.'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const LoginPage()));
+          },
+          child: const Text('Login'),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget lockedInteractionPrompt(BuildContext ctx) {
+  return GestureDetector(
+    onTap: () => _showSignInPrompt(ctx),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(
+          CupertinoIcons.lock,
+          size: 30,
+          color: Colors.red,
+        ),
+        const SizedBox(height: 10),
+      ],
+    ),
+  );
+}
+
+Column likeShareCommentSave(
+    var likes,
+    var comments,
+    var shares,
+    BuildContext ctx,
+    var commentList,
+    String filepath,
+    var videoId,
+    var userId,
+    var isUserLoggedIn) {
   return Column(
     children: [
-      iconDetail(CupertinoIcons.heart, likes.toString(), () {
-        print("I was liked");
-      }),
+      isUserLoggedIn
+          ? LikeWidget(
+              initialLikes: int.parse(likes),
+              videoId: videoId,
+              userId: userId,
+            )
+          : lockedInteractionPrompt(ctx),
       const SizedBox(height: 25),
-      iconDetail(CupertinoIcons.chat_bubble, comments.toString(), () {
-        print("I was commented");
-        showCommentsDialog(ctx, commentList);
-      }),
+      isUserLoggedIn
+          ? iconDetail(CupertinoIcons.chat_bubble, comments.toString(), () {
+              print("I was commented");
+              showCommentsDialog(ctx, commentList);
+            })
+          : lockedInteractionPrompt(ctx),
       const SizedBox(height: 25),
-      iconDetail(CupertinoIcons.arrow_turn_up_right, shares.toString(),
-          () async {
-        print("I was shared");
-        if (await File(filepath).exists()) {
-          // Share the video file
-          logger.i("ERROR ! ------>  $filepath");
-          XFile videoFile = XFile(filepath);
+      isUserLoggedIn
+          ? iconDetail(CupertinoIcons.arrow_turn_up_right, shares.toString(),
+              () async {
+              print("I was shared");
+              if (await File(filepath).exists()) {
+                // Share the video file
+                logger.i("ERROR ! ------>  $filepath");
+                XFile videoFile = XFile(filepath);
 
-          await Share.shareXFiles([videoFile],
-              text: 'Check out this cool just homes video!');
-        } else {
-          // Show an error message if file doesn't exist
-          logger.e("ERROR ! ------>  $filepath");
-          ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text('Video file not found!')),
-          );
-        }
-      }),
+                await Share.shareXFiles([videoFile],
+                    text: 'Check out this cool just homes video!');
+              } else {
+                // Show an error message if file doesn't exist
+                logger.e("ERROR ! ------>  $filepath");
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Video file not found!')),
+                );
+              }
+            })
+          : lockedInteractionPrompt(ctx),
       const SizedBox(height: 25),
       const Icon(CupertinoIcons.ellipsis_vertical,
           size: 22, color: Colors.white),
@@ -56,7 +110,7 @@ Column likeShareCommentSave(var likes, var comments, var shares,
 Widget postComment(String time, String postComment, String profileName,
     String profileImage, int likeCount) {
   return Padding(
-    padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+    padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -65,10 +119,10 @@ Widget postComment(String time, String postComment, String profileName,
           backgroundImage:
               NetworkImage(profileImage), // Recommended for circular images
           child: profileImage == null
-              ? Icon(Icons.person) // Fallback if no image is available
+              ? const Icon(Icons.person) // Fallback if no image is available
               : null,
         ),
-        SizedBox(width: 16.0),
+        const SizedBox(width: 16.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,26 +138,26 @@ Widget postComment(String time, String postComment, String profileName,
                   children: [
                     Text(
                       profileName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
                       postComment,
-                      style: TextStyle(fontSize: 14.0),
+                      style: const TextStyle(fontSize: 14.0),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 12.0),
+            const SizedBox(height: 12.0),
             Row(
               children: [
-                Text(time, style: TextStyle(fontWeight: FontWeight.w600)),
-                SizedBox(width: 1),
+                Text(time, style: const TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(width: 1),
                 InkWell(
                   onTap: () {},
                   child: Text('$likeCount'),
                 ),
-                SizedBox(width: 1),
+                const SizedBox(width: 1),
               ],
             ),
           ],
@@ -114,11 +168,11 @@ Widget postComment(String time, String postComment, String profileName,
 }
 
 void showCommentsDialog(BuildContext context, var comments) {
-  TextEditingController _controller = TextEditingController();
+  TextEditingController controller = TextEditingController();
 
   showModalBottomSheet(
     context: context,
-    shape: RoundedRectangleBorder(
+    shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
     builder: (BuildContext context) {
@@ -127,10 +181,10 @@ void showCommentsDialog(BuildContext context, var comments) {
         child: Column(
           children: [
             // Display existing comments
-            Center(child: Text("Comments")),
+            const Center(child: Text("Comments")),
             Expanded(
               child: comments.isEmpty
-                  ? Center(child: Text("No comments"))
+                  ? const Center(child: Text("No comments"))
                   : ListView.builder(
                       itemCount: comments.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -138,7 +192,9 @@ void showCommentsDialog(BuildContext context, var comments) {
                         return postComment(
                           timeago.format(DateTime.parse(comment['created_at'])),
                           comment['comment'],
-                          comment['user'] ?? 'User1',
+                          comment['user'] is Map
+                              ? comment['user']["name"]
+                              : "_",
                           'https://xsgames.co/randomusers/assets/avatars/male/51.jpg',
                           comments.length,
                         );
@@ -152,31 +208,31 @@ void showCommentsDialog(BuildContext context, var comments) {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: _controller,
+                      controller: controller,
                       decoration: InputDecoration(
                         hintText: 'Add a comment...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide: const BorderSide(color: Colors.grey),
                         ),
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 16.0),
                       ),
                       maxLines: 3,
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.send),
+                    icon: const Icon(Icons.send),
                     onPressed: () {
-                      if (_controller.text.isNotEmpty) {
+                      if (controller.text.isNotEmpty) {
                         // Handle comment submission (you might want to add the comment to your database here)
                         comments.add({
-                          'comment': _controller.text,
+                          'comment': controller.text,
                           'user':
                               'Current User', // Replace with actual user info
                           'created_at': DateTime.now().toIso8601String(),
                         });
-                        _controller.clear(); // Clear input field
+                        controller.clear(); // Clear input field
                         Navigator.pop(
                             context); // Close the dialog after submitting
                         showCommentsDialog(
@@ -194,9 +250,9 @@ void showCommentsDialog(BuildContext context, var comments) {
   );
 }
 
-Future<void> updateLikes(int like, int videoId, int user_id) async {
+Future<void> updateLikes(int like, int videoId, int userId) async {
   var url =
-      "https://justhomes.co.ke/api/reels/update-likes?likes=$like&videoId=$videoId&user_id=$user_id";
+      "https://justhomes.co.ke/api/reels/update-likes?likes=$like&videoId=$videoId&user_id=$userId";
   try {
     final response = await http.post(Uri.parse(url));
     if (response.statusCode == 200) {
@@ -256,7 +312,15 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             children: [
-              const Icon(CupertinoIcons.arrow_left, color: Colors.white),
+              IconButton(
+                icon: Icon(
+                  CupertinoIcons.arrow_left,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
               const Text(
                 'Just Homes',
                 style: TextStyle(
@@ -271,13 +335,13 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
                 onPressed: () {
                   FullPicker(
                     context: context,
-                    prefixName: 'just hones',
+                    prefixName: 'just homes',
                     file: false,
                     voiceRecorder: false,
                     video: true,
                     videoCamera: true,
-                    imageCamera: true,
-                    imageCropper: true,
+                    imageCamera: false,
+                    imageCropper: false,
                     multiFile: false,
                     url: false,
                     onError: (final int value) {
@@ -289,7 +353,53 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
                       if (kDebugMode) {
                         print(' ----  onSelected ----');
                       }
-                      setState(() {});
+
+                      // Check if there are any selected videos
+                      if (value.xFile.isNotEmpty) {
+                        // Access the first file in the list (since it's a List<XFile?>)
+                        XFile selectedXFile = value.xFile.firstWhere(
+                            (xfile) => xfile != null,
+                            orElse: () =>
+                                null // Handle the case where the file is null
+                            )!;
+
+                        // Convert XFile to File
+                        File videoFile = File(selectedXFile.path);
+
+                        final uint8List = await VideoThumbnail.thumbnailData(
+                          video: videoFile.path,
+                          imageFormat: ImageFormat.PNG,
+                          maxWidth: 1280,
+                          quality: 75,
+                        );
+
+                        final filePath = '${videoFile.path}_thumbnail.png';
+                        final file = File(filePath);
+                        await file.writeAsBytes(uint8List!);
+
+                        final screenshotFile = file;
+
+                        // Assuming you want to take a screenshot from the video (e.g., a preview image)
+                        // You can either manually create a screenshot or use an existing file as the screenshot
+                        // Here, we assume `screenshotFile` is pre-defined or fetched as needed
+
+                        // Now, call the `uploadVideoLive` function to upload the video and screenshot
+                        await uploadVideoLive(
+                          url:
+                              'https://justhomes.co.ke/api/reels/upload-video', // Replace with the actual upload URL
+                          userId: 123, // Replace with the actual user ID
+                          description:
+                              'New Video', // Replace with your description
+                          videoFile: videoFile,
+                          screenshotFile: screenshotFile,
+                          context:
+                              context, // Pass the context for showing progress
+                        );
+
+                        setState(() {});
+                      } else {
+                        print('No video selected');
+                      }
                     },
                   );
                 },
@@ -298,11 +408,102 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
           ),
         ),
         const Spacer(),
-        Padding(
-          padding: const EdgeInsets.symmetric(
+        const Padding(
+          padding: EdgeInsets.symmetric(
             horizontal: 20.0,
             vertical: 40.0,
           ),
         ),
       ]);
+}
+
+Future<void> uploadVideoLive({
+  required String url,
+  required int userId,
+  required String description,
+  required File videoFile,
+  required File screenshotFile,
+  required BuildContext context, // To show progress dialog
+}) async {
+  try {
+    // Show progress dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 20),
+              Text("Uploading..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Compress the video
+    final compressedVideo = await VideoCompress.compressVideo(
+      videoFile.path,
+      quality: VideoQuality.MediumQuality,
+      deleteOrigin: false, // Keeps the original video
+    );
+
+    if (compressedVideo == null) {
+      throw Exception("Video compression failed.");
+    }
+
+    File compressedVideoFile = File(compressedVideo.path!);
+
+    final uri = Uri.parse('$url?user_id=$userId&description=$description');
+
+    // Create the multipart request
+    final request = http.MultipartRequest('POST', uri);
+
+    // Attach the compressed video file
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'video',
+        compressedVideoFile.path,
+        filename: 'video.mp4',
+      ),
+    );
+
+    // Attach the screenshot file
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'screenshot',
+        screenshotFile.path,
+        filename: 'screenshot.jpg',
+      ),
+    );
+
+    // Log request details
+    print('POST Request to: $uri');
+    print('Request fields: user_id=$userId, description=$description');
+    print('Video file: ${compressedVideoFile.path}');
+    print('Screenshot file: ${screenshotFile.path}');
+
+    // Send the request
+    final response = await request.send();
+
+    // Read and log the response
+    final responseData = await response.stream.bytesToString();
+    Navigator.of(context).pop(); // Close the progress dialog
+
+    if (response.statusCode == 200) {
+      // Show success message
+      Fluttertoast.showToast(msg: "Upload successful!");
+    } else {
+      // Show error message
+      Fluttertoast.showToast(msg: "Upload failed: ${response.statusCode}");
+      print('Upload failed with status: ${response.statusCode}');
+      print('Response: $responseData');
+    }
+  } catch (e) {
+    Navigator.of(context).pop(); // Close the progress dialog
+    Fluttertoast.showToast(msg: "Error: $e");
+    print('Error during upload: $e');
+  }
 }

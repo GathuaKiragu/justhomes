@@ -12,6 +12,8 @@ import 'package:just_apartment_live/widgets/theme_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -42,6 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _buildTelephone(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _telephoneController,
         keyboardType: TextInputType.number,
@@ -102,12 +105,12 @@ class _RegisterPageState extends State<RegisterPage> {
           _telephoneController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildFullName(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _nameController,
         style: TextStyle(
@@ -167,12 +170,12 @@ class _RegisterPageState extends State<RegisterPage> {
           _nameController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildEmail(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _emailController,
         style: TextStyle(
@@ -235,12 +238,12 @@ class _RegisterPageState extends State<RegisterPage> {
           _emailController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildPassword(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _passwordController,
         obscureText: !_passwordVisible,
@@ -316,12 +319,12 @@ class _RegisterPageState extends State<RegisterPage> {
           _passwordController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildConfirmPassword(context) {
     return Container(
+      decoration: ThemeHelper().inputBoxDecorationShaddow(),
       child: TextFormField(
         controller: _confirmPasswordController,
         obscureText: !_confirmPasswordVisible,
@@ -402,19 +405,18 @@ class _RegisterPageState extends State<RegisterPage> {
           _confirmPasswordController.text = value!;
         },
       ),
-      decoration: ThemeHelper().inputBoxDecorationShaddow(),
     );
   }
 
   _buildForgetPassword(context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 0, 10, 20),
+      margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
       alignment: Alignment.topRight,
       child: GestureDetector(
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+            MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
           );
         },
         child: Text(
@@ -517,7 +519,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _buildLoginButton(context) {
-    return Container(
+    return SizedBox(
       width: double.infinity, // Makes the button full width
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -527,11 +529,11 @@ class _RegisterPageState extends State<RegisterPage> {
             borderRadius:
                 BorderRadius.circular(10.0), // Adjusts the button's shape
           ),
-          padding: EdgeInsets.fromLTRB(40, 10, 40, 10), // Button padding
+          padding: const EdgeInsets.fromLTRB(40, 10, 40, 10), // Button padding
         ),
         child: Text(
           'Register'.toUpperCase(),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
           ),
@@ -543,7 +545,7 @@ class _RegisterPageState extends State<RegisterPage> {
               _registerUser(context);
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   backgroundColor: Colors.red,
                   content: Text(
                       'Please accept the Terms & Conditions and Privacy Policy'),
@@ -558,7 +560,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _buildRegisterButton(context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(10, 20, 10, 20),
+      margin: const EdgeInsets.fromLTRB(10, 20, 10, 20),
       child: Text.rich(
         TextSpan(children: [
           TextSpan(
@@ -574,7 +576,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ..onTap = () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               },
             style: TextStyle(
@@ -601,7 +603,7 @@ class _RegisterPageState extends State<RegisterPage> {
           children: [
             SafeArea(
               child: Container(
-                padding: EdgeInsets.fromLTRB(10, 40, 20, 10),
+                padding: const EdgeInsets.fromLTRB(10, 40, 20, 10),
                 child: Column(
                   children: [
                     Text(
@@ -617,21 +619,21 @@ class _RegisterPageState extends State<RegisterPage> {
                         color: isDarkMode ? Colors.white : Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     Form(
                       key: _formKey,
                       child: Column(
                         children: [
                           _buildFullName(context),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           _buildEmail(context),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           _buildTelephone(context),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           _buildPassword(context),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           _buildConfirmPassword(context),
-                          SizedBox(height: 15.0),
+                          const SizedBox(height: 15.0),
                           _buildForgetPassword(context),
                           _buildTermsAndPrivacyCheckbox(context),
                           _buildLoginButton(context),
@@ -677,7 +679,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.green,
-          duration: Duration(milliseconds: 8000),
+          duration: const Duration(milliseconds: 8000),
           content: Text(body['message'].toString()),
           action: SnackBarAction(
             label: 'X',
@@ -699,7 +701,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          duration: Duration(milliseconds: 8000),
+          duration: const Duration(milliseconds: 8000),
           content: Text(body['message'].toString()),
           action: SnackBarAction(
             label: 'X',
