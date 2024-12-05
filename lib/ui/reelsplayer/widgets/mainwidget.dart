@@ -9,6 +9,7 @@ import 'package:full_picker/full_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/ui/reelsplayer/widgets/likes_widget.dart';
+import 'package:just_apartment_live/ui/reelsplayer/widgets/share_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -81,24 +82,12 @@ Column likeShareCommentSave(
           : lockedInteractionPrompt(ctx),
       const SizedBox(height: 25),
       isUserLoggedIn
-          ? iconDetail(CupertinoIcons.arrow_turn_up_right, shares.toString(),
-              () async {
-              print("I was shared");
-              if (await File(filepath).exists()) {
-                // Share the video file
-                logger.i("ERROR ! ------>  $filepath");
-                XFile videoFile = XFile(filepath);
-
-                await Share.shareXFiles([videoFile],
-                    text: 'Check out this cool just homes video!');
-              } else {
-                // Show an error message if file doesn't exist
-                logger.e("ERROR ! ------>  $filepath");
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Video file not found!')),
-                );
-              }
-            })
+          ? ShareWidget(
+              initialShares: int.parse(likes),
+              videoId: videoId,
+              userId: userId,
+              filepath: filepath,
+            )
           : lockedInteractionPrompt(ctx),
       const SizedBox(height: 25),
       const Icon(CupertinoIcons.ellipsis_vertical,
@@ -176,79 +165,172 @@ void showCommentsDialog(BuildContext context, var comments) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
     ),
     builder: (BuildContext context) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Display existing comments
-            const Center(child: Text("Comments")),
-            Expanded(
-              child: comments.isEmpty
-                  ? const Center(child: Text("No comments"))
-                  : ListView.builder(
-                      itemCount: comments.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final comment = comments[index];
-                        return postComment(
-                          timeago.format(DateTime.parse(comment['created_at'])),
-                          comment['comment'],
-                          comment['user'] is Map
-                              ? comment['user']["name"]
-                              : "_",
-                          'https://xsgames.co/randomusers/assets/avatars/male/51.jpg',
-                          comments.length,
-                        );
-                      },
-                    ),
-            ),
-            // Input field to add new comment
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                        hintText: 'Add a comment...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(color: Colors.grey),
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize
+                  .min, // Ensures dialog content adjusts to its content
+              children: [
+                // Display existing comments
+                const Center(child: Text("Comments")),
+                Expanded(
+                  child: comments.isEmpty
+                      ? const Center(child: Text("No comments"))
+                      : ListView.builder(
+                          itemCount: comments.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final comment = comments[index];
+                            return postComment(
+                              timeago.format(
+                                  DateTime.parse(comment['created_at'])),
+                              comment['comment'],
+                              comment['user'] is Map
+                                  ? comment['user']["name"]
+                                  : "_",
+                              'https://xsgames.co/randomusers/assets/avatars/male/51.jpg',
+                              comments.length,
+                            );
+                          },
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 16.0),
+                ),
+                // Input field to add new comment
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 8.0,
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          decoration: InputDecoration(
+                            hintText: 'Add a comment...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(color: Colors.grey),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10.0,
+                              horizontal: 16.0,
+                            ),
+                          ),
+                        ),
                       ),
-                      maxLines: 3,
-                    ),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          if (controller.text.isNotEmpty) {
+                            // Handle comment submission
+                            comments.add({
+                              'comment': controller.text,
+                              'user':
+                                  'Current User', // Replace with actual user info
+                              'created_at': DateTime.now().toIso8601String(),
+                            });
+                            controller.clear(); // Clear input field
+                            Navigator.pop(context); // Close the dialog
+                            showCommentsDialog(
+                                context, comments); // Refresh the comment list
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () {
-                      if (controller.text.isNotEmpty) {
-                        // Handle comment submission (you might want to add the comment to your database here)
-                        comments.add({
-                          'comment': controller.text,
-                          'user':
-                              'Current User', // Replace with actual user info
-                          'created_at': DateTime.now().toIso8601String(),
-                        });
-                        controller.clear(); // Clear input field
-                        Navigator.pop(
-                            context); // Close the dialog after submitting
-                        showCommentsDialog(
-                            context, comments); // Refresh the comment list
-                      }
-                    },
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       );
     },
   );
 }
+
+// void showCommentsDialog(BuildContext context, var comments) {
+//   TextEditingController controller = TextEditingController();
+//
+//   showModalBottomSheet(
+//     context: context,
+//     shape: const RoundedRectangleBorder(
+//       borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+//     ),
+//     builder: (BuildContext context) {
+//       return Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           children: [
+//             // Display existing comments
+//             const Center(child: Text("Comments")),
+//             Expanded(
+//               child: comments.isEmpty
+//                   ? const Center(child: Text("No comments"))
+//                   : ListView.builder(
+//                       itemCount: comments.length,
+//                       itemBuilder: (BuildContext context, int index) {
+//                         final comment = comments[index];
+//                         return postComment(
+//                           timeago.format(DateTime.parse(comment['created_at'])),
+//                           comment['comment'],
+//                           comment['user'] is Map
+//                               ? comment['user']["name"]
+//                               : "_",
+//                           'https://xsgames.co/randomusers/assets/avatars/male/51.jpg',
+//                           comments.length,
+//                         );
+//                       },
+//                     ),
+//             ),
+//             // Input field to add new comment
+//             Padding(
+//               padding: const EdgeInsets.only(top: 8.0),
+//               child: Row(
+//                 children: [
+//                   Expanded(
+//                     child: TextField(
+//                       controller: controller,
+//                       decoration: InputDecoration(
+//                         hintText: 'Add a comment...',
+//                         border: OutlineInputBorder(
+//                           borderRadius: BorderRadius.circular(8.0),
+//                           borderSide: const BorderSide(color: Colors.grey),
+//                         ),
+//                         contentPadding: const EdgeInsets.symmetric(
+//                             vertical: 10.0, horizontal: 16.0),
+//                       ),
+//                       maxLines: 3,
+//                     ),
+//                   ),
+//                   IconButton(
+//                     icon: const Icon(Icons.send),
+//                     onPressed: () {
+//                       if (controller.text.isNotEmpty) {
+//                         // Handle comment submission (you might want to add the comment to your database here)
+//                         comments.add({
+//                           'comment': controller.text,
+//                           'user':
+//                               'Current User', // Replace with actual user info
+//                           'created_at': DateTime.now().toIso8601String(),
+//                         });
+//                         controller.clear(); // Clear input field
+//                         Navigator.pop(
+//                             context); // Close the dialog after submitting
+//                         showCommentsDialog(
+//                             context, comments); // Refresh the comment list
+//                       }
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
 
 Future<void> updateLikes(int like, int videoId, int userId) async {
   var url =

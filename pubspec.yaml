@@ -59,7 +59,7 @@ dependencies:
   sign_in_with_apple:
   table_calendar: ^3.0.9
   url_launcher: ^6.1.5
-  video_player: ^2.5.0
+  video_player: ^2.9.2
   video_thumbnail: ^0.5.3
   video_trimmer: ^3.0.0
   visibility_detector: ^0.4.0+2

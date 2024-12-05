@@ -120,15 +120,17 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToHome() async {
     _cacheVideos();
     await Future.delayed(
-      const Duration(seconds: 4), // Adjust the duration as needed
-      () {},
+      const Duration(seconds: 5), // Adjust the duration as needed
+      () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DashBoardPage()),
+        );
+      },
     );
 
     // if (isVideosCached) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const DashBoardPage()),
-    );
+
     // }
   }
 

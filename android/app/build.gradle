@@ -1,9 +1,17 @@
+
+//plugins {
+//    id "com.android.application"
+//    id "kotlin-android"
+//    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+//    id "dev.flutter.flutter-gradle-plugin"
+//}
+
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id "dev.flutter.flutter-gradle-plugin"
+    id("com.android.application")
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
 }
+
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("key.properties")
@@ -13,49 +21,51 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.example.just_apartment_live"
-    compileSdk = 34
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = 17
-    }
+
     packagingOptions {
         // Fixes duplicate libraries build issue, especially when your project uses more than one plugin that depend on C++ libs.
         pickFirst 'lib/**/libc++_shared.so'
     }
 
-
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 
     defaultConfig {
         applicationId "net.justapartments.app" // Your app’s unique identifier
-      //  minSdk = flutter.minSdkVersion // Uses Flutter's specified min SDK version
-        minSdkVersion 24
-        targetSdkVersion 34
+        //  minSdk = flutter.minSdkVersion // Uses Flutter's specified min SDK version
+
+        minSdk=24
+        targetSdk = flutter.targetSdkVersion // Uses Flutter's specified target SDK version
         versionCode = flutter.versionCode // Version code from Flutter
         versionName = flutter.versionName // Version name from Flutter
     }
 
-//    signingConfigs {
-//        release {
-//            // Signing configuration to use your keystore
-//            keyAlias keystoreProperties['keyAlias']
-//            keyPassword keystoreProperties['keyPassword']
-//            storeFile file(keystoreProperties['storeFile'])
-//            storePassword keystoreProperties['storePassword']
-//        }
-//    }
+    signingConfigs {
+        release {
+            // Signing configuration to use your keystore
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
 
-//    buildTypes {
-//        release {
-//            signingConfig signingConfigs.release // Apply the signing config for release build
-//            minifyEnabled true // Enables code shrinking and obfuscation for release builds
-//            shrinkResources true // Removes unused resources in the release build
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' // ProGuard settings
-//        }
-//    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release // Apply the signing config for release build
+            minifyEnabled true // Enables code shrinking and obfuscation for release builds
+            shrinkResources true // Removes unused resources in the release build
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' // ProGuard settings
+        }
+    }
 }
 
 flutter {

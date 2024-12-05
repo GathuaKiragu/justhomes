@@ -108,7 +108,11 @@ class _ReelsState extends State<Reels> {
             List<dynamic> videoUrls = snapshot.data!;
             return PreloadPageView.builder(
               scrollDirection: Axis.vertical,
-              controller: PreloadPageController(),
+              preloadPagesCount:5,
+              controller: PreloadPageController(
+                keepPage: false,
+                initialPage: 0
+              ),
               itemCount: videoUrls.length,
               itemBuilder: (BuildContext context, int index) {
                 String videoUrl = videoUrls[index]['video'];
