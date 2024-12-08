@@ -75,14 +75,20 @@ Column likeShareCommentSave(
               videoId: videoId,
               userId: userId,
             )
-          : lockedInteractionPrompt(ctx),
+          : iconDetail(CupertinoIcons.heart, comments.toString(), () {
+              print("I was commented");
+              _showSignInPrompt(ctx);
+            }),
       const SizedBox(height: 25),
       isUserLoggedIn
           ? iconDetail(CupertinoIcons.chat_bubble, comments.toString(), () {
               print("I was commented");
               showCommentsDialog(ctx, commentList);
             })
-          : lockedInteractionPrompt(ctx),
+          : iconDetail(CupertinoIcons.chat_bubble, comments.toString(), () {
+              print("I was commented");
+              _showSignInPrompt(ctx);
+            }),
       const SizedBox(height: 25),
       isUserLoggedIn
           ? ShareWidget(
@@ -91,7 +97,11 @@ Column likeShareCommentSave(
               userId: userId,
               filepath: filepath,
             )
-          : lockedInteractionPrompt(ctx),
+          : iconDetail(CupertinoIcons.arrow_turn_up_right, comments.toString(),
+              () {
+              print("I was commented");
+              _showSignInPrompt(ctx);
+            }),
       const SizedBox(height: 25),
       const Icon(CupertinoIcons.ellipsis_vertical,
           size: 22, color: Colors.white),
@@ -194,7 +204,7 @@ void showCommentsDialog(BuildContext context, var comments) {
                                   : ".",
                               comment['user'] is Map
                                   ? (comment['user']["avatar"] ??
-                                  'https://www.shutterstock.com/image-vector/default-profile-picture-avatar-photo-260nw-1681253560.jpg')
+                                      'https://www.shutterstock.com/image-vector/default-profile-picture-avatar-photo-260nw-1681253560.jpg')
                                   : 'https://www.shutterstock.com/image-vector/default-profile-picture-avatar-photo-260nw-1681253560.jpg',
                               comments.length,
                             );
@@ -498,89 +508,90 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
                 ),
               ),
               const Spacer(),
-              Row( children: [IconButton(
-                icon: const Icon(CupertinoIcons.videocam,
-                    color: Colors.purple, size: 36),
-                // onPressed: () {
-                onPressed: () {
-                  _showVideoOptions(context, widget.isLoggedIn);
-                },
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(CupertinoIcons.videocam,
+                        color: Colors.purple, size: 36),
+                    // onPressed: () {
+                    onPressed: () {
+                      _showVideoOptions(context, widget.isLoggedIn);
+                    },
 
-                // FullPicker(
-                //   context: context,
-                //   prefixName: 'just homes',
-                //   file: false,
-                //   voiceRecorder: false,
-                //   video: true,
-                //   videoCamera: true,
-                //   imageCamera: false,
-                //   imageCropper: false,
-                //   multiFile: false,
-                //   url: false,
-                //   onError: (final int value) {
-                //     if (kDebugMode) {
-                //       print(' ----  onError ----=$value');
-                //     }
-                //   },
-                //   onSelected: (final FullPickerOutput value) async {
-                //     if (kDebugMode) {
-                //       print(' ----  onSelected ----');
-                //     }
-                //
-                //     // Check if there are any selected videos
-                //     if (value.xFile.isNotEmpty) {
-                //       // Access the first file in the list (since it's a List<XFile?>)
-                //       XFile selectedXFile = value.xFile.firstWhere(
-                //           (xfile) => xfile != null,
-                //           orElse: () =>
-                //               null // Handle the case where the file is null
-                //           )!;
-                //
-                //       // Convert XFile to File
-                //       File videoFile = File(selectedXFile.path);
-                //
-                //       final uint8List = await VideoThumbnail.thumbnailData(
-                //         video: videoFile.path,
-                //         imageFormat: ImageFormat.PNG,
-                //         maxWidth: 1280,
-                //         quality: 75,
-                //       );
-                //
-                //       final filePath = '${videoFile.path}_thumbnail.png';
-                //       final file = File(filePath);
-                //       await file.writeAsBytes(uint8List!);
-                //
-                //       final screenshotFile = file;
-                //
-                //       // Assuming you want to take a screenshot from the video (e.g., a preview image)
-                //       // You can either manually create a screenshot or use an existing file as the screenshot
-                //       // Here, we assume `screenshotFile` is pre-defined or fetched as needed
-                //
-                //       // Now, call the `uploadVideoLive` function to upload the video and screenshot
-                //       await uploadVideoLive(
-                //         url:
-                //             'https://justhomes.co.ke/api/reels/upload-video', // Replace with the actual upload URL
-                //         userId: 123, // Replace with the actual user ID
-                //         description:
-                //             'New Video', // Replace with your description
-                //         videoFile: videoFile,
-                //         screenshotFile: screenshotFile,
-                //         context:
-                //             context, // Pass the context for showing progress
-                //       );
-                //
-                //       setState(() {});
-                //     } else {
-                //       print('No video selected');
-                //     }
-                //   },
-                // );
-                // },
+                    // FullPicker(
+                    //   context: context,
+                    //   prefixName: 'just homes',
+                    //   file: false,
+                    //   voiceRecorder: false,
+                    //   video: true,
+                    //   videoCamera: true,
+                    //   imageCamera: false,
+                    //   imageCropper: false,
+                    //   multiFile: false,
+                    //   url: false,
+                    //   onError: (final int value) {
+                    //     if (kDebugMode) {
+                    //       print(' ----  onError ----=$value');
+                    //     }
+                    //   },
+                    //   onSelected: (final FullPickerOutput value) async {
+                    //     if (kDebugMode) {
+                    //       print(' ----  onSelected ----');
+                    //     }
+                    //
+                    //     // Check if there are any selected videos
+                    //     if (value.xFile.isNotEmpty) {
+                    //       // Access the first file in the list (since it's a List<XFile?>)
+                    //       XFile selectedXFile = value.xFile.firstWhere(
+                    //           (xfile) => xfile != null,
+                    //           orElse: () =>
+                    //               null // Handle the case where the file is null
+                    //           )!;
+                    //
+                    //       // Convert XFile to File
+                    //       File videoFile = File(selectedXFile.path);
+                    //
+                    //       final uint8List = await VideoThumbnail.thumbnailData(
+                    //         video: videoFile.path,
+                    //         imageFormat: ImageFormat.PNG,
+                    //         maxWidth: 1280,
+                    //         quality: 75,
+                    //       );
+                    //
+                    //       final filePath = '${videoFile.path}_thumbnail.png';
+                    //       final file = File(filePath);
+                    //       await file.writeAsBytes(uint8List!);
+                    //
+                    //       final screenshotFile = file;
+                    //
+                    //       // Assuming you want to take a screenshot from the video (e.g., a preview image)
+                    //       // You can either manually create a screenshot or use an existing file as the screenshot
+                    //       // Here, we assume `screenshotFile` is pre-defined or fetched as needed
+                    //
+                    //       // Now, call the `uploadVideoLive` function to upload the video and screenshot
+                    //       await uploadVideoLive(
+                    //         url:
+                    //             'https://justhomes.co.ke/api/reels/upload-video', // Replace with the actual upload URL
+                    //         userId: 123, // Replace with the actual user ID
+                    //         description:
+                    //             'New Video', // Replace with your description
+                    //         videoFile: videoFile,
+                    //         screenshotFile: screenshotFile,
+                    //         context:
+                    //             context, // Pass the context for showing progress
+                    //       );
+                    //
+                    //       setState(() {});
+                    //     } else {
+                    //       print('No video selected');
+                    //     }
+                    //   },
+                    // );
+                    // },
+                  ),
+                  // Text('New Video', style: TextStyle(color: Colors.white))
+                ],
               ),
-                // Text('New Video', style: TextStyle(color: Colors.white))
-  ],
-              ),
-
             ],
           ),
         ),
