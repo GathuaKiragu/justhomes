@@ -11,6 +11,7 @@ import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/ui/property/details_page.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
@@ -29,6 +30,7 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
   bool get wantKeepAlive => true;
   List _userFavorites = []; // Changed to List<int> for better type safety
   Map<int, bool> _favoriteStatus = {};
+  Map<int, int> currentImageIndices = {};
   @override
   void initState() {
     super.initState();
@@ -76,7 +78,9 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                 ['property_images']
             .split(", ")
             .toList();
-        int currentImageIndex = 0;
+        // int currentImageIndex = 0;
+        int currentImageIndex = currentImageIndices[propertyID] ?? 0;
+
 
         // Determine the icon color based on local favorite status
         Color faviconColor = _favoriteStatus[propertyID] == true
@@ -95,62 +99,121 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
               children: [
                 Stack(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return DetailsPage(propertyID: propertyID);
-                          }),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0),
-                        ),
-                        child: CarouselSlider(
-                          options: CarouselOptions(
-                            height: 220,
-                            aspectRatio: 16 / 9,
-                            viewportFraction: 1.0,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            reverse: false,
-                            autoPlay: false,
-                            autoPlayInterval: const Duration(seconds: 3),
-                            autoPlayAnimationDuration:
-                                const Duration(milliseconds: 800),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            enlargeCenterPage: false,
-                            scrollDirection: Axis.horizontal,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                currentImageIndex =
-                                    index; // Update the current image index
-                              });
-                            },
-                          ),
-                          items: propertyImagesList.map((String imageUrl) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(10.0),
-                                    topRight: Radius.circular(10.0),
-                                  ),
-                                  child: CachedNetworkImage(
-                                    imageUrl: Configuration.WEB_URL + imageUrl,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              },
+                    Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return DetailsPage(propertyID: propertyID);
+                              }),
                             );
-                          }).toList(),
+                          },
+                          child:
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(10.0),
+                            topRight: Radius.circular(10.0),
+                          ),
+                          child: CarouselSlider(
+                            options: CarouselOptions(
+                              height: 220,
+                              aspectRatio: 16 / 9,
+                              viewportFraction: 1.0,
+                              initialPage: 0,
+                              enableInfiniteScroll: true,
+                              autoPlay: false,
+                              onPageChanged: (index, reason) {
+                                setState(() {
+                                  currentImageIndices[propertyID] = index;
+                                });
+                              },
+                            ),
+                            items: propertyImagesList.map((String imageUrl) {
+                              return CachedNetworkImage(
+                                imageUrl: Configuration.WEB_URL + imageUrl,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              );
+                            }).toList(),
+                          ),
                         ),
-                      ),
+                        ),
+                        Positioned(
+                          bottom: 10,
+                          child: AnimatedSmoothIndicator(
+                            activeIndex: currentImageIndex,
+                            count: propertyImagesList.length,
+                            effect: const ExpandingDotsEffect(
+                              dotHeight: 8,
+                              dotWidth: 8,
+                              activeDotColor: Colors.purple,
+                              dotColor: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) {
+                    //         return DetailsPage(propertyID: propertyID);
+                    //       }),
+                    //     );
+                    //   },
+                    //   child: ClipRRect(
+                    //     borderRadius: const BorderRadius.only(
+                    //       topLeft: Radius.circular(10.0),
+                    //       topRight: Radius.circular(10.0),
+                    //     ),
+                    //     child: CarouselSlider(
+                    //       options: CarouselOptions(
+                    //         height: 220,
+                    //         aspectRatio: 16 / 9,
+                    //         viewportFraction: 1.0,
+                    //         initialPage: 0,
+                    //         enableInfiniteScroll: true,
+                    //         reverse: false,
+                    //         autoPlay: false,
+                    //         autoPlayInterval: const Duration(seconds: 3),
+                    //         autoPlayAnimationDuration:
+                    //             const Duration(milliseconds: 800),
+                    //         autoPlayCurve: Curves.fastOutSlowIn,
+                    //         enlargeCenterPage: false,
+                    //         scrollDirection: Axis.horizontal,
+                    //         onPageChanged: (index, reason) {
+                    //           setState(() {
+                    //             currentImageIndex =
+                    //                 index; // Update the current image index
+                    //           });
+                    //         },
+                    //       ),
+                    //       items: propertyImagesList.map((String imageUrl) {
+                    //         return Builder(
+                    //           builder: (BuildContext context) {
+                    //             return ClipRRect(
+                    //               borderRadius: const BorderRadius.only(
+                    //                 topLeft: Radius.circular(10.0),
+                    //                 topRight: Radius.circular(10.0),
+                    //               ),
+                    //               child: CachedNetworkImage(
+                    //                 imageUrl: Configuration.WEB_URL + imageUrl,
+                    //                 width: double.infinity,
+                    //                 fit: BoxFit.cover,
+                    //               ),
+                    //             );
+                    //           },
+                    //         );
+                    //       }).toList(),
+                    //     ),
+                    //   ),
+                    // ),
                     Positioned(
                       top: 10,
                       right: 15,
@@ -200,32 +263,32 @@ class _LatestPropertiesWidgetState extends State<LatestPropertiesWidget>
                         ),
                       ),
                     ),
-                    Positioned(
-                      bottom: 8,
-                      left: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: propertyImagesList.map((String imageUrl) {
-                            int index = propertyImagesList.indexOf(imageUrl);
-                            return Container(
-                              width: 10.0,
-                              height: 10.0,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 2.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: currentImageIndex == index
-                                    ? Colors.white
-                                    : Colors.grey,
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
+                    // Positioned(
+                    //   bottom: 8,
+                    //   left: 0,
+                    //   right: 0,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       children: propertyImagesList.map((String imageUrl) {
+                    //         int index = propertyImagesList.indexOf(imageUrl);
+                    //         return Container(
+                    //           width: 10.0,
+                    //           height: 10.0,
+                    //           margin:
+                    //           const EdgeInsets.symmetric(horizontal: 2.0),
+                    //           decoration: BoxDecoration(
+                    //             shape: BoxShape.circle,
+                    //             color: currentImageIndex == index
+                    //                 ? Colors.white
+                    //                 : Colors.grey,
+                    //           ),
+                    //         );
+                    //       }).toList(),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 GestureDetector(

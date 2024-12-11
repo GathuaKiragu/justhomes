@@ -71,6 +71,7 @@ dependencies:
   timeago:
   fluttertoast:
   cupertino_icons:
+  smooth_page_indicator:
 
 dev_dependencies:
   flutter_lints: ^3.0.0
