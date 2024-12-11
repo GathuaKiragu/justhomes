@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -406,38 +407,59 @@ Future<void> _pickVideoFromGallery(
     BuildContext context, bool _hasLoggedIn) async {
   final ImagePicker _picker = ImagePicker();
 
-  final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
+  try {
+    final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
 
-  if (videoFile != null) {
-    final file = File(videoFile.path);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => TrimmerView(file),
-      ),
-    );
+    if (videoFile != null) {
+      final file = File(videoFile.path);
+
+      logger.i("videoFile.path FROM GALLERY: ${videoFile.path}");
+
+      // Proceed with the next steps, such as navigating to TrimmerView
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrimmerView(file),
+        ),
+      );
+    } else {
+      // Handle the case where no video is selected
+      logger.e("No video selected");
+    }
+  } catch (e) {
+    logger.e("Error picking video: $e");
   }
 }
 
 Future<void> _recordVideo(BuildContext context) async {
   final ImagePicker _picker = ImagePicker();
-  final XFile? videoFile = await _picker.pickVideo(
-    source: ImageSource.camera,
-    maxDuration: const Duration(minutes: 5),
-  );
-
-  if (videoFile != null) {
-    final file = File(videoFile.path);
-    logger.i("videoFile.path: ${videoFile.path}");
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => TrimmerView(
-          file,
-          isLiveVideo: true,
-        ),
-      ),
+  try {
+    // Use ImagePicker to record a video from the camera
+    final XFile? videoFile = await _picker.pickVideo(
+      source: ImageSource.camera,
+      maxDuration: const Duration(minutes: 5),
     );
+
+    if (videoFile != null) {
+      final file = File(videoFile.path);
+      logger.i("videoFile.path: ${videoFile.path}");
+
+      // Navigate to TrimmerView with the recorded video file
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrimmerView(
+            file,
+            isLiveVideo: true,
+          ),
+        ),
+      );
+    } else {
+      logger.e("No video recorded");
+    }
+  } catch (e) {
+    logger.e("Error recording video: $e");
   }
 }
+
 
 Widget iconDetail(IconData icon, String number, VoidCallback onPressed) {
   return GestureDetector(
@@ -511,8 +533,8 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(CupertinoIcons.videocam,
-                        color: Colors.purple, size: 36),
+                    icon: const Icon(CupertinoIcons.camera_on_rectangle_fill,
+                        color: Colors.white, size: 36),
                     // onPressed: () {
                     onPressed: () {
                       _showVideoOptions(context, widget.isLoggedIn);
