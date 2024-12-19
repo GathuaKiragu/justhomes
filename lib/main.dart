@@ -22,8 +22,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
-      light: ThemeData.light(),
-      dark: ThemeData.dark(),
+      light: ThemeData(
+        brightness: Brightness.light,
+        fontFamily: 'Poppins', // Set Poppins as the default font
+      ),
+      dark: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: 'Poppins', // Set Poppins as the default font
+      ),
       initial: AdaptiveThemeMode.system,
       builder: (theme, darkTheme) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(

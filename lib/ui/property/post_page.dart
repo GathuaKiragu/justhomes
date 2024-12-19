@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:just_apartment_live/api/api.dart';
 import 'package:just_apartment_live/ui/property/post_property/models/submit_property.dart';
 import 'package:just_apartment_live/widgets/header_main_widget.dart';
@@ -139,17 +140,15 @@ class _PostPageState extends State<PostPage> {
 
   Future<void> pickAssets(BuildContext context) async {
     try {
-      // Request permissions using photo_manager
       final PermissionState result =
           await PhotoManager.requestPermissionExtend();
       if (result.isAuth) {
         final List<AssetEntity>? result = await AssetPicker.pickAssets(
           context,
           pickerConfig: AssetPickerConfig(
-            maxAssets: 40, // Allow up to 40 images
+            maxAssets: 40,
             requestType: RequestType.image,
-            specialPickerType: SpecialPickerType.noPreview, // Disables camera
-            selectedAssets: images, // Pass selected assets to pre-select them
+            selectedAssets: images,
           ),
         );
 
@@ -164,14 +163,8 @@ class _PostPageState extends State<PostPage> {
 
           setState(() {
             _images.addAll(newImages);
-            images = result; // Update the assets list
+            images = result;
           });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No images selected.'),
-            ),
-          );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -240,72 +233,88 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _buildPostForm(context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          ImageUploadInput(
-            pickAssets: () => pickAssets(context),
-          ),
-          ImagePreview(
-            images: _images,
-            onRemoveImage: (index) {
-              setState(() {
-                _images.removeAt(index);
-              });
-            },
-          ),
-          TitleInput(
-            titleController: _titleController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter property title';
-              }
-              return null;
-            },
-          ),
-          TownInput(
-            townsList: _townsList,
-            userTown: _userTown,
-            isLoadingSubRegions: _isLoadingSubRegions,
-            isDarkMode: Theme.of(context).brightness == Brightness.dark,
-            onTownChanged: (selectedTown) {
-              setState(() {
-                _userTown = selectedTown?["id"].toString() ?? '';
-                _showRegionsInput = true;
-              });
-            },
-            fetchSubRegions: () => _getSubRegions(_userTown),
-            initDataFetched: _initDataFetched,
-          ),
-          SubRegionInput(
-            isSubRegionEnabled: _isSubRegionEnabled,
-            subRegionsList: _subRegionsList,
-            onChanged: (selectedSubRegion) {
-              setState(() {
-                _userRegion = selectedSubRegion?["id"].toString() ?? '';
-              });
-            },
-            validator: (value) {
-              if (value == null) {
-                return 'Please select sub-region';
-              }
-              return null;
-            },
-            selectedSubRegion: _userRegion,
-          ),
-          NextButtonWidget(
-            formKey: _formKey,
-            images: _images,
-            userTown: _userTown,
-            userRegion: _userRegion,
-            titleController: _titleController,
-            propertyID: _propertyID.toString(),
-            propertySubmissionService: _propertySubmissionService,
-          )
-        ],
-      ),
-    );
+  Future<void> uploadImage(File image) async {
+    // Simulate a network delay
+    await Future.delayed(const Duration(seconds: 2));
   }
+
+
+
+
+
+
+  Widget _buildPostForm(context) {
+  return Form(
+  key: _formKey,
+  child: Column(
+  children: [
+  ImageUploadInput(
+  pickAssets: () => pickAssets(context),
+  ),
+    ImagePreview(
+      images: _images, // List<File>
+      onRemoveImage: (index) {
+        setState(() {
+          _images.removeAt(index);
+        });
+      },
+      onAddImage: () => pickAssets(context), // Your image picker logic
+      onUploadImage: uploadImage, // Your upload logic
+    ),
+
+
+    TitleInput(
+  titleController: _titleController,
+  validator: (value) {
+  if (value == null || value.isEmpty) {
+  return 'Please enter property title';
+  }
+  return null;
+  },
+  ),
+  TownInput(
+  townsList: _townsList,
+  userTown: _userTown,
+  isLoadingSubRegions: _isLoadingSubRegions,
+  isDarkMode: Theme.of(context).brightness == Brightness.dark,
+  onTownChanged: (selectedTown) {
+  setState(() {
+  _userTown = selectedTown?["id"].toString() ?? '';
+  _showRegionsInput = true;
+  });
+  },
+  fetchSubRegions: () => _getSubRegions(_userTown),
+  initDataFetched: _initDataFetched,
+  ),
+  SubRegionInput(
+  isSubRegionEnabled: _isSubRegionEnabled,
+  subRegionsList: _subRegionsList,
+  onChanged: (selectedSubRegion) {
+  setState(() {
+  _userRegion = selectedSubRegion?["id"].toString() ?? '';
+  });
+  },
+  validator: (value) {
+  if (value == null) {
+  return 'Please select sub-region';
+  }
+  return null;
+  },
+  selectedSubRegion: _userRegion,
+  ),
+  NextButtonWidget(
+  formKey: _formKey,
+  images: _images,
+  userTown: _userTown,
+  userRegion: _userRegion,
+  titleController: _titleController,
+  propertyID: _propertyID.toString(),
+  propertySubmissionService: _propertySubmissionService,
+  )
+  ],
+  ),
+  );
+  }
+
+
 }
