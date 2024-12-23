@@ -106,7 +106,7 @@ class _PostPageState extends State<PostPage> {
     };
 
     var res =
-        await CallApi().postData(data, 'property/get-sub-regions-and-post');
+    await CallApi().postData(data, 'property/get-sub-regions-and-post');
 
     if (res.statusCode == 200) {
       var body = json.decode(res.body);
@@ -141,7 +141,7 @@ class _PostPageState extends State<PostPage> {
   Future<void> pickAssets(BuildContext context) async {
     try {
       final PermissionState result =
-          await PhotoManager.requestPermissionExtend();
+      await PhotoManager.requestPermissionExtend();
       if (result.isAuth) {
         final List<AssetEntity>? result = await AssetPicker.pickAssets(
           context,
@@ -240,80 +240,75 @@ class _PostPageState extends State<PostPage> {
 
 
 
-
-
-
   Widget _buildPostForm(context) {
-  return Form(
-  key: _formKey,
-  child: Column(
-  children: [
-  ImageUploadInput(
-  pickAssets: () => pickAssets(context),
-  ),
-    ImagePreview(
-      images: _images, // List<File>
-      onRemoveImage: (index) {
-        setState(() {
-          _images.removeAt(index);
-        });
-      },
-      onAddImage: () => pickAssets(context), // Your image picker logic
-      onUploadImage: uploadImage, // Your upload logic
-    ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+
+          ImagePreview(
+            images: _images, // List<File>
+            onRemoveImage: (index) {
+              setState(() {
+                _images.removeAt(index);
+              });
+            },
+            onAddImage: () => pickAssets(context), // Your image picker logic
+            onUploadImage: uploadImage, // Your upload logic
+          ),
 
 
-    TitleInput(
-  titleController: _titleController,
-  validator: (value) {
-  if (value == null || value.isEmpty) {
-  return 'Please enter property title';
-  }
-  return null;
-  },
-  ),
-  TownInput(
-  townsList: _townsList,
-  userTown: _userTown,
-  isLoadingSubRegions: _isLoadingSubRegions,
-  isDarkMode: Theme.of(context).brightness == Brightness.dark,
-  onTownChanged: (selectedTown) {
-  setState(() {
-  _userTown = selectedTown?["id"].toString() ?? '';
-  _showRegionsInput = true;
-  });
-  },
-  fetchSubRegions: () => _getSubRegions(_userTown),
-  initDataFetched: _initDataFetched,
-  ),
-  SubRegionInput(
-  isSubRegionEnabled: _isSubRegionEnabled,
-  subRegionsList: _subRegionsList,
-  onChanged: (selectedSubRegion) {
-  setState(() {
-  _userRegion = selectedSubRegion?["id"].toString() ?? '';
-  });
-  },
-  validator: (value) {
-  if (value == null) {
-  return 'Please select sub-region';
-  }
-  return null;
-  },
-  selectedSubRegion: _userRegion,
-  ),
-  NextButtonWidget(
-  formKey: _formKey,
-  images: _images,
-  userTown: _userTown,
-  userRegion: _userRegion,
-  titleController: _titleController,
-  propertyID: _propertyID.toString(),
-  propertySubmissionService: _propertySubmissionService,
-  )
-  ],
-  ),
-  );
+          TitleInput(
+            titleController: _titleController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter property title';
+              }
+              return null;
+            },
+          ),
+          TownInput(
+            townsList: _townsList,
+            userTown: _userTown,
+            isLoadingSubRegions: _isLoadingSubRegions,
+            isDarkMode: Theme.of(context).brightness == Brightness.dark,
+            onTownChanged: (selectedTown) {
+              setState(() {
+                _userTown = selectedTown?["id"].toString() ?? '';
+                _showRegionsInput = true;
+              });
+            },
+            fetchSubRegions: () => _getSubRegions(_userTown),
+            initDataFetched: _initDataFetched,
+          ),
+          SubRegionInput(
+            isSubRegionEnabled: _isSubRegionEnabled,
+            subRegionsList: _subRegionsList,
+            onChanged: (selectedSubRegion) {
+              setState(() {
+                _userRegion = selectedSubRegion?["id"].toString() ?? '';
+              });
+            },
+            validator: (value) {
+              if (value == null) {
+                return 'Please select sub-region';
+              }
+              return null;
+            },
+            selectedSubRegion: _userRegion,
+          ),
+          NextButtonWidget(
+            formKey: _formKey,
+            images: _images,
+            userTown: _userTown,
+            userRegion: _userRegion,
+            titleController: _titleController,
+            propertyID: _propertyID.toString(),
+            propertySubmissionService: _propertySubmissionService,
+          )
+        ],
+      ),
+    );
   }
 
 

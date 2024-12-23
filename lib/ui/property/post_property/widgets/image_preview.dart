@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../reelsplayer/reels_page.dart';
 
 class ImagePreview extends StatefulWidget {
   final List<File> images;
@@ -21,8 +25,6 @@ class ImagePreview extends StatefulWidget {
 
 class _ImagePreviewState extends State<ImagePreview> {
   bool _isExpanded = false; // Controls the collapsible state
-  bool _isUploading = false; // Indicates if an image is being uploaded
-  int _uploadingIndex = -1; // Index of the image being uploaded
 
   void _toggleExpandCollapse() {
     setState(() {
@@ -30,22 +32,18 @@ class _ImagePreviewState extends State<ImagePreview> {
     });
   }
 
-  Future<void> _handleUpload(File image, int index) async {
-    setState(() {
-      _isUploading = true;
-      _uploadingIndex = index;
-    });
-    try {
-      await widget.onUploadImage(image);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to upload image: $e")),
-      );
-    } finally {
-      setState(() {
-        _isUploading = false;
-        _uploadingIndex = -1;
-      });
+  Future<String> _uploadImage(File image) async {
+    final url = Uri.parse('https://justhomes.co.ke/api/property/upload-property-image');
+    final request = http.MultipartRequest('POST', url);
+    request.files.add(await http.MultipartFile.fromPath('image', image.path));
+    final response = await request.send();
+    final responseData = await response.stream.bytesToString();
+    logger.i('RESPNSE IOMG + ${json.decode(responseData)} + ${response.statusCode}');
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(responseData);
+      return data['image_path']; // Adjust based on actual API response format
+    } else {
+      throw Exception('Failed to upload image');
     }
   }
 
@@ -76,17 +74,38 @@ class _ImagePreviewState extends State<ImagePreview> {
         ...List.generate(visibleImagesCount, (index) {
           return Stack(
             children: [
-              GestureDetector(
-                onTap: () => _handleUpload(widget.images[index], index),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    image: DecorationImage(
-                      image: FileImage(widget.images[index]),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+              FutureBuilder<String>(
+                future: _uploadImage(widget.images[index]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      color: Colors.black.withOpacity(0.1),
+                      child: const Center(
+                        child: SizedBox(child: CircularProgressIndicator(color: Colors.purple),height: 10, width: 10),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Container(
+                      color: Colors.red.withOpacity(0.5),
+                      child: Center(
+                        child: Text(
+                          'Error',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        image: DecorationImage(
+                          image: FileImage(widget.images[index]),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
               Positioned(
                 top: 4,
@@ -108,15 +127,6 @@ class _ImagePreviewState extends State<ImagePreview> {
                   ),
                 ),
               ),
-              if (_isUploading && _uploadingIndex == index)
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: const Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
-                  ),
-                ),
             ],
           );
         }),
@@ -126,7 +136,7 @@ class _ImagePreviewState extends State<ImagePreview> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Please upload at least 1 photo. You can add up to 40 photos.",
+          "Please upload at least 1 photo. You can add up to 20 photos.",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 8),
@@ -148,10 +158,6 @@ class _ImagePreviewState extends State<ImagePreview> {
             child: Text(_isExpanded ? "Show less" : "Show more (${widget.images.length - 6})"),
           ),
         const SizedBox(height: 8),
-        // const Text(
-        //   "First picture - is the title picture. Drag to reorder.",
-        //   style: TextStyle(color: Colors.grey, fontSize: 12),
-        // ),
         const Text(
           "Supported formats are .jpg and .png. Pictures may not exceed 5MB.",
           style: TextStyle(color: Colors.grey, fontSize: 12),
