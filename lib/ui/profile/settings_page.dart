@@ -451,16 +451,17 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+
+
   Widget _buildUploadProfilePhoto() {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
-        width: double.infinity, // Full screen width
-        padding: const EdgeInsets.all(10), // Padding inside the border
+        width: double.infinity,
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          border: Border.all(
-              color: Colors.grey, width: 1), // Border color and width
-          borderRadius: BorderRadius.circular(5), // Border radius
+          border: Border.all(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -474,22 +475,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.grey[300],
-                    // backgroundImage: _logoImage != null
-                    //     ? FileImage(_logoImage!) // Display selected image
-                    //     : (_userProfilePhoto != null &&
-                    //             _userProfilePhoto!.isNotEmpty
-                    //         ? NetworkImage(_userProfilePhoto!.startsWith("http")
-                    //                 ? _userProfilePhoto! // Use as-is if starts with http
-                    //                 : Configuration.WEB_URL +
-                    //                     _userProfilePhoto! // Prefix if not
-                    //             )
-                    //         : null),
-                    child: _logoImage == null &&
-                            (_userProfilePhoto == null ||
-                                _userProfilePhoto!.isEmpty)
+                    backgroundImage: _logoImage != null
+                        ? FileImage(_logoImage!) as ImageProvider<Object> // Ensure type safety
+                        : (_userProfilePhoto != null &&
+                        _userProfilePhoto!.isNotEmpty
+                        ? NetworkImage(
+                      _userProfilePhoto!.startsWith("http")
+                          ? _userProfilePhoto! // Use as-is if starts with http
+                          : "${Configuration.WEB_URL}$_userProfilePhoto",
+                    ) as ImageProvider<Object>
+                        : null), // Fallback to null
+                    child: (_logoImage == null &&
+                        (_userProfilePhoto == null ||
+                            _userProfilePhoto!.isEmpty))
                         ? Icon(Icons.add_a_photo,
-                            size: 30, color: Colors.grey[700])
-                        : null,
+                        size: 30, color: Colors.grey[700])
+                        : null, // Show an icon if no image is present
                   ),
                   if (_logoImage != null ||
                       (_userProfilePhoto != null &&
@@ -499,7 +500,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       top: 0,
                       child: IconButton(
                         icon: const Icon(Icons.close, color: Colors.red),
-                        onPressed: _removeImage, // Call updated remove function
+                        onPressed: _removeImage,
                       ),
                     ),
                 ],
@@ -512,6 +513,70 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+
+
+
+  // Widget _buildUploadProfilePhoto() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(10.0),
+  //     child: Container(
+  //       width: double.infinity, // Full screen width
+  //       padding: const EdgeInsets.all(10), // Padding inside the border
+  //       decoration: BoxDecoration(
+  //         border: Border.all(
+  //             color: Colors.grey, width: 1), // Border color and width
+  //         borderRadius: BorderRadius.circular(5), // Border radius
+  //       ),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           const Text("Upload the Profile Photo"),
+  //           GestureDetector(
+  //             onTap: _pickImage,
+  //             child: Stack(
+  //               alignment: Alignment.topRight,
+  //               children: [
+  //                 CircleAvatar(
+  //                   radius: 50,
+  //                   backgroundColor: Colors.grey[300],
+  //                   // backgroundImage: _logoImage != null
+  //                   //     ? FileImage(_logoImage!) // Display selected image
+  //                   //     : (_userProfilePhoto != null &&
+  //                   //             _userProfilePhoto!.isNotEmpty
+  //                   //         ? NetworkImage(_userProfilePhoto!.startsWith("http")
+  //                   //                 ? _userProfilePhoto! // Use as-is if starts with http
+  //                   //                 : Configuration.WEB_URL +
+  //                   //                     _userProfilePhoto! // Prefix if not
+  //                   //             )
+  //                   //         : null),
+  //                   child: _logoImage == null &&
+  //                           (_userProfilePhoto == null ||
+  //                               _userProfilePhoto!.isEmpty)
+  //                       ? Icon(Icons.add_a_photo,
+  //                           size: 30, color: Colors.grey[700])
+  //                       : null,
+  //                 ),
+  //                 if (_logoImage != null ||
+  //                     (_userProfilePhoto != null &&
+  //                         _userProfilePhoto!.isNotEmpty))
+  //                   Positioned(
+  //                     right: 0,
+  //                     top: 0,
+  //                     child: IconButton(
+  //                       icon: const Icon(Icons.close, color: Colors.red),
+  //                       onPressed: _removeImage, // Call updated remove function
+  //                     ),
+  //                   ),
+  //               ],
+  //             ),
+  //           ),
+  //           const SizedBox(height: 10),
+  //           if (_isUploading) const CircularProgressIndicator(),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<void> _uploadLogo() async {
     if (_logoImage == null) return;
