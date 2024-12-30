@@ -14,6 +14,7 @@ import 'package:just_apartment_live/ui/login/login.dart';
 import 'package:just_apartment_live/ui/reels/trimmer_view.dart';
 import 'package:just_apartment_live/ui/reelsplayer/widgets/likes_widget.dart';
 import 'package:just_apartment_live/ui/reelsplayer/widgets/share_widget.dart';
+import 'package:just_apartment_live/widgets/header_main_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -203,8 +204,10 @@ void showCommentsDialog(BuildContext context, var comments) {
                               comment['user'] is Map
                                   ? comment['user']["name"]
                                   : ".",
-                              comment['user'] is Map
-                                  ? (comment['user']["avatar"] ??
+                              comment['user'] is Map ?
+
+                                (comment['user']["avatar"].startsWith('http') ||  comment['user']["avatar"].startsWith('https')  ?  comment['user']["avatar"] : "https://justhomes.co.ke/${comment['user']["avatar"]}" ??
+                                  // ? (comment['user']["avatar"] ??
                                       'https://www.shutterstock.com/image-vector/default-profile-picture-avatar-photo-260nw-1681253560.jpg')
                                   : 'https://www.shutterstock.com/image-vector/default-profile-picture-avatar-photo-260nw-1681253560.jpg',
                               comments.length,
@@ -308,159 +311,6 @@ Future<void> _showLoginPrompt(BuildContext context) async {
   );
 }
 
-void _showVideoOptions(BuildContext context, bool _hasLoggedIn) {
-  showModalBottomSheet(
-    context: context,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (context) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        height: 180,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                leading:
-                    const Icon(Icons.fiber_manual_record, color: Colors.red),
-                title: const Text('Live'),
-                onTap: () {
-                  // Navigator.of(context).pop();
-                  //
-                  _hasLoggedIn
-                      ? {Navigator.of(context).pop(), _recordVideo(context)}
-                      : showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                'Please log in or create an account first',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const LoginPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Log in'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.video_library),
-                title: const Text('Add Video'),
-                onTap: () {
-                  _hasLoggedIn
-                      ? {
-                          Navigator.of(context).pop(),
-                          _pickVideoFromGallery(context, _hasLoggedIn)
-                        }
-                      : showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                'Please log in or create an account first',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const LoginPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Log in'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
-Future<void> _pickVideoFromGallery(
-    BuildContext context, bool _hasLoggedIn) async {
-  final ImagePicker _picker = ImagePicker();
-
-  try {
-    final XFile? videoFile = await _picker.pickVideo(source: ImageSource.gallery);
-
-    if (videoFile != null) {
-      final file = File(videoFile.path);
-
-      logger.i("videoFile.path FROM GALLERY: ${videoFile.path}");
-
-      // Proceed with the next steps, such as navigating to TrimmerView
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TrimmerView(file),
-        ),
-      );
-    } else {
-      // Handle the case where no video is selected
-      logger.e("No video selected");
-    }
-  } catch (e) {
-    logger.e("Error picking video: $e");
-  }
-}
-
-Future<void> _recordVideo(BuildContext context) async {
-  final ImagePicker _picker = ImagePicker();
-  try {
-    // Use ImagePicker to record a video from the camera
-    final XFile? videoFile = await _picker.pickVideo(
-      source: ImageSource.camera,
-      maxDuration: const Duration(minutes: 5),
-    );
-
-    if (videoFile != null) {
-      final file = File(videoFile.path);
-      logger.i("videoFile.path: ${videoFile.path}");
-
-      // Navigate to TrimmerView with the recorded video file
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => TrimmerView(
-            file,
-            isLiveVideo: true,
-          ),
-        ),
-      );
-    } else {
-      logger.e("No video recorded");
-    }
-  } catch (e) {
-    logger.e("Error recording video: $e");
-  }
-}
-
-
 Widget iconDetail(IconData icon, String number, VoidCallback onPressed) {
   return GestureDetector(
     onTap: onPressed, // Trigger onPressed callback when tapped
@@ -498,6 +348,171 @@ class CommentWithPublisher extends StatefulWidget {
 }
 
 class _CommentWithPublisherState extends State<CommentWithPublisher> {
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickVideoFromGallery() async {
+    final XFile? videoFile =
+        await _picker.pickVideo(source: ImageSource.gallery);
+
+    if (videoFile != null) {
+      final file = File(videoFile.path);
+      logger.e("XXXXXXXX.path: ${videoFile.path}");
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrimmerView(file, isLiveVideo: false),
+        ),
+      );
+    }
+  }
+
+  Future<void> _recordVideo() async {
+    final XFile? videoFile = await _picker.pickVideo(
+      source: ImageSource.camera,
+      maxDuration: const Duration(minutes: 5),
+    );
+
+    if (videoFile != null) {
+      final file = File(videoFile.path);
+      logger.e("YYYYYYYY.path: ${videoFile.path}");
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TrimmerView(
+            file,
+            isLiveVideo: true,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showVideoOptions(BuildContext context, bool _hasLoggedIn) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          height: 180,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ListTile(
+                    leading: const Icon(Icons.fiber_manual_record,
+                        color: Colors.red),
+                    title: const Text('Live'),
+                    onTap: () async {
+                      // Navigator.of(context).pop();
+                      //
+                      if (_hasLoggedIn) {
+                        Navigator.of(context).pop();
+                        await _recordVideo();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text(
+                                'Please log in or create an account first',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const LoginPage(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Log in'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }),
+                ListTile(
+                  leading: const Icon(Icons.video_library),
+                  title: const Text('Add Video'),
+                  onTap: () async {
+                    if (_hasLoggedIn) {
+                      Navigator.of(context).pop();
+                      await _pickVideoFromGallery();
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text(
+                              'Please log in or create an account first',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginPage(),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Log in'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    // _hasLoggedIn
+                    //     ? {
+                    //         Navigator.of(context).pop(),
+                    //         _pickVideoFromGallery(context, _hasLoggedIn)
+                    //       }
+                    //     : showDialog(
+                    //         context: context,
+                    //         builder: (context) {
+                    //           return AlertDialog(
+                    //             title: const Text(
+                    //               'Please log in or create an account first',
+                    //               style: TextStyle(fontSize: 15),
+                    //             ),
+                    //             actions: [
+                    //               TextButton(
+                    //                 onPressed: () {
+                    //                   Navigator.of(context).pop();
+                    //                   Navigator.push(
+                    //                     context,
+                    //                     MaterialPageRoute(
+                    //                       builder: (context) => const LoginPage(),
+                    //                     ),
+                    //                   );
+                    //                 },
+                    //                 child: const Text('Log in'),
+                    //               ),
+                    //             ],
+                    //           );
+                    //         },
+                    //       );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Column(children: [
         const SizedBox(height: 30),
@@ -521,7 +536,7 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
                   );
                 },
               ),
-              const Text(
+               Text(
                 'Reels',
                 style: TextStyle(
                   fontSize: 22,
@@ -533,84 +548,111 @@ class _CommentWithPublisherState extends State<CommentWithPublisher> {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(CupertinoIcons.camera_on_rectangle_fill,
-                        color: Colors.white, size: 36),
-                    // onPressed: () {
-                    onPressed: () {
-                      _showVideoOptions(context, widget.isLoggedIn);
-                    },
+                      icon: const Icon(CupertinoIcons.camera_on_rectangle_fill,
+                          color: Colors.white, size: 36),
+                      // onPressed: () {
+                      onPressed: () {
+                        _showVideoOptions(context, widget.isLoggedIn);
+                      }
+                      //
+                      // showDialog(
+                      // context: context,
+                      // builder: (context) {
+                      // return AlertDialog(
+                      // title: const Text(
+                      // 'Please log in or create an account first',
+                      // style: TextStyle(fontSize: 15),
+                      // ),
+                      // actions: [
+                      // TextButton(
+                      // onPressed: () {
+                      // Navigator.of(context).pop();
+                      // Navigator.push(
+                      // context,
+                      // MaterialPageRoute(
+                      // builder: (context) =>
+                      // const LoginPage(),
+                      // ),
+                      // );
+                      // },
+                      // child: const Text('Log in'),
+                      // ),
+                      // ],
+                      // );
+                      //
+                      // },
 
-                    // FullPicker(
-                    //   context: context,
-                    //   prefixName: 'just homes',
-                    //   file: false,
-                    //   voiceRecorder: false,
-                    //   video: true,
-                    //   videoCamera: true,
-                    //   imageCamera: false,
-                    //   imageCropper: false,
-                    //   multiFile: false,
-                    //   url: false,
-                    //   onError: (final int value) {
-                    //     if (kDebugMode) {
-                    //       print(' ----  onError ----=$value');
-                    //     }
-                    //   },
-                    //   onSelected: (final FullPickerOutput value) async {
-                    //     if (kDebugMode) {
-                    //       print(' ----  onSelected ----');
-                    //     }
-                    //
-                    //     // Check if there are any selected videos
-                    //     if (value.xFile.isNotEmpty) {
-                    //       // Access the first file in the list (since it's a List<XFile?>)
-                    //       XFile selectedXFile = value.xFile.firstWhere(
-                    //           (xfile) => xfile != null,
-                    //           orElse: () =>
-                    //               null // Handle the case where the file is null
-                    //           )!;
-                    //
-                    //       // Convert XFile to File
-                    //       File videoFile = File(selectedXFile.path);
-                    //
-                    //       final uint8List = await VideoThumbnail.thumbnailData(
-                    //         video: videoFile.path,
-                    //         imageFormat: ImageFormat.PNG,
-                    //         maxWidth: 1280,
-                    //         quality: 75,
-                    //       );
-                    //
-                    //       final filePath = '${videoFile.path}_thumbnail.png';
-                    //       final file = File(filePath);
-                    //       await file.writeAsBytes(uint8List!);
-                    //
-                    //       final screenshotFile = file;
-                    //
-                    //       // Assuming you want to take a screenshot from the video (e.g., a preview image)
-                    //       // You can either manually create a screenshot or use an existing file as the screenshot
-                    //       // Here, we assume `screenshotFile` is pre-defined or fetched as needed
-                    //
-                    //       // Now, call the `uploadVideoLive` function to upload the video and screenshot
-                    //       await uploadVideoLive(
-                    //         url:
-                    //             'https://justhomes.co.ke/api/reels/upload-video', // Replace with the actual upload URL
-                    //         userId: 123, // Replace with the actual user ID
-                    //         description:
-                    //             'New Video', // Replace with your description
-                    //         videoFile: videoFile,
-                    //         screenshotFile: screenshotFile,
-                    //         context:
-                    //             context, // Pass the context for showing progress
-                    //       );
-                    //
-                    //       setState(() {});
-                    //     } else {
-                    //       print('No video selected');
-                    //     }
-                    //   },
-                    // );
-                    // },
-                  ),
+                      // FullPicker(
+                      //   context: context,
+                      //   prefixName: 'just homes',
+                      //   file: false,
+                      //   voiceRecorder: false,
+                      //   video: true,
+                      //   videoCamera: true,
+                      //   imageCamera: false,
+                      //   imageCropper: false,
+                      //   multiFile: false,
+                      //   url: false,
+                      //   onError: (final int value) {
+                      //     if (kDebugMode) {
+                      //       print(' ----  onError ----=$value');
+                      //     }
+                      //   },
+                      //   onSelected: (final FullPickerOutput value) async {
+                      //     if (kDebugMode) {
+                      //       print(' ----  onSelected ----');
+                      //     }
+                      //
+                      //     // Check if there are any selected videos
+                      //     if (value.xFile.isNotEmpty) {
+                      //       // Access the first file in the list (since it's a List<XFile?>)
+                      //       XFile selectedXFile = value.xFile.firstWhere(
+                      //           (xfile) => xfile != null,
+                      //           orElse: () =>
+                      //               null // Handle the case where the file is null
+                      //           )!;
+                      //
+                      //       // Convert XFile to File
+                      //       File videoFile = File(selectedXFile.path);
+                      //
+                      //       final uint8List = await VideoThumbnail.thumbnailData(
+                      //         video: videoFile.path,
+                      //         imageFormat: ImageFormat.PNG,
+                      //         maxWidth: 1280,
+                      //         quality: 75,
+                      //       );
+                      //
+                      //       final filePath = '${videoFile.path}_thumbnail.png';
+                      //       final file = File(filePath);
+                      //       await file.writeAsBytes(uint8List!);
+                      //
+                      //       final screenshotFile = file;
+                      //
+                      //       // Assuming you want to take a screenshot from the video (e.g., a preview image)
+                      //       // You can either manually create a screenshot or use an existing file as the screenshot
+                      //       // Here, we assume `screenshotFile` is pre-defined or fetched as needed
+                      //
+                      //       // Now, call the `uploadVideoLive` function to upload the video and screenshot
+                      //       await uploadVideoLive(
+                      //         url:
+                      //             'https://justhomes.co.ke/api/reels/upload-video', // Replace with the actual upload URL
+                      //         userId: 123, // Replace with the actual user ID
+                      //         description:
+                      //             'New Video', // Replace with your description
+                      //         videoFile: videoFile,
+                      //         screenshotFile: screenshotFile,
+                      //         context:
+                      //             context, // Pass the context for showing progress
+                      //       );
+                      //
+                      //       setState(() {});
+                      //     } else {
+                      //       print('No video selected');
+                      //     }
+                      //   },
+                      // );
+                      // },
+                      ),
                   // Text('New Video', style: TextStyle(color: Colors.white))
                 ],
               ),

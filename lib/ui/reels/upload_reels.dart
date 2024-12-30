@@ -168,7 +168,7 @@ class _UserReelsState extends State<UserReels> {
                                 });
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => TrimmerView(file),
+                                    builder: (context) => TrimmerView(file, isLiveVideo: false,),
                                   ),
                                 );
                               }
@@ -202,9 +202,13 @@ class _UserReelsState extends State<UserReels> {
                       children: [
                         const SizedBox(height: 10),
                         if (_userReels.isEmpty)
-                          const Text(
-                            "No reels yet.",
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          const SizedBox(
+                            height: 20,
+                            child: Text(
+                              "No reels yet.",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
+                            ),
                           )
                         else
                           Expanded(

@@ -144,7 +144,7 @@ class _ImagePreviewState extends State<ImagePreview> {
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, // Number of items per row
+            crossAxisCount: 4, // Number of items per row
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
             childAspectRatio: 1, // Maintain square items

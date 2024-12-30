@@ -1,3 +1,4 @@
+import 'package:country_ip/country_ip.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_apartment_live/api/api.dart';
@@ -14,6 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter/services.dart';
+
+import '../reelsplayer/reels_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -35,6 +38,8 @@ class _DashBoardPageState extends State<DashBoardPage>
 
   int _selectedFooterIndex = 0;
 
+  String country = "";
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +50,7 @@ class _DashBoardPageState extends State<DashBoardPage>
     ));
 
     _getInitData();
+    _getCountryCode();
 
     _checkifUserisLoggedIn().then((result) {
       if (mounted) {
@@ -53,6 +59,15 @@ class _DashBoardPageState extends State<DashBoardPage>
         });
       }
     });
+  }
+
+  _getCountryCode() async{
+    final countryIpResponse = await CountryIp.find();
+
+    country = countryIpResponse!.countryCode;
+
+    logger.e("YOUR COUNTRY IS $country");
+
   }
 
   _getInitData() async {
@@ -219,9 +234,9 @@ class _DashBoardPageState extends State<DashBoardPage>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                'Just Homes',
-                                style: TextStyle(
+                              Text(
+                                'Just Homes ' + country,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 30.0,
                                 ),

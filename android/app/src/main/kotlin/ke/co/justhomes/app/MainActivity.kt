@@ -1,4 +1,4 @@
-package com.example.just_apartment_live
+package ke.co.justhomes.app
 
 import io.flutter.embedding.android.FlutterActivity
 

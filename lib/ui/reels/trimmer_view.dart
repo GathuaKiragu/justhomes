@@ -14,13 +14,13 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 
 class TrimmerView extends StatefulWidget {
-  bool? isLiveVideo;
+  final bool isLiveVideo;
   final File file;
 
   TrimmerView(
     this.file, {
     super.key,
-    this.isLiveVideo = false,
+    required this.isLiveVideo,
   });
 
   @override

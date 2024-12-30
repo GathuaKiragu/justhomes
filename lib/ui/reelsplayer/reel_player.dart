@@ -147,7 +147,7 @@ class _ReelsState extends State<Reels> {
                           // Overlay for comments and user info
                           CommentWithPublisher(
                             userName: username,
-                            imageProfile: profile,
+                            imageProfile: profile.startsWith('http') || profile.startsWith('https')  ? profile : "https://justhomes.co.ke/$profile",
                             description: description,
                             isLoggedIn: isUserLoggedIn,
                           ),
@@ -180,7 +180,7 @@ class _ReelsState extends State<Reels> {
                                 // Profile Photo
                                 CircleAvatar(
                                   radius: 20, // Adjust the size as needed
-                                  backgroundImage: NetworkImage(profile),
+                                  backgroundImage: NetworkImage(profile.startsWith('http') || profile.startsWith('https')  ? profile : "https://justhomes.co.ke/$profile"),
                                 ),
                                 SizedBox(width: 10),
                                 // Username and Description

@@ -20,7 +20,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.just_apartment_live"
+    namespace = "ke.co.justhomes.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "25.1.8937393"
 
@@ -39,7 +39,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "net.justapartments.app" // Your app’s unique identifier
+        applicationId "ke.co.justhomes.app" // Your app’s unique identifier
         //  minSdk = flutter.minSdkVersion // Uses Flutter's specified min SDK version
 
         minSdk=24
