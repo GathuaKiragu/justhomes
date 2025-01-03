@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "768012370397",
-    "project_id": "just-homes-80480",
-    "storage_bucket": "just-homes-80480.firebasestorage.app"
+    "project_number": "1080995934620",
+    "project_id": "justhomes-753d1",
+    "storage_bucket": "justhomes-753d1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:768012370397:android:b3d37aa222e76f7558f634",
+        "mobilesdk_app_id": "1:1080995934620:android:5ff9b9bdc2334fcd899859",
         "android_client_info": {
           "package_name": "ke.co.justhomes.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "768012370397-n3o7uo3oh1irps31udq4f1bok1p6grnq.apps.googleusercontent.com",
+          "client_id": "1080995934620-1ttpp37hjnmigdktormqo2prjfkpsmpp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ke.co.justhomes.app",
+            "certificate_hash": "2b5dcca1ad4343e156448f633dffcb03be2b03de"
+          }
+        },
+        {
+          "client_id": "1080995934620-2oeqc73tgppvg82ed9fbpstrh1sos3kf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCp1dpgDwMqeqXBtyNV4L5XC3bzMIgL4So"
+          "current_key": "AIzaSyCFD5asToWvG7I4o8gWJYfgywGmLJeGIus"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "768012370397-n3o7uo3oh1irps31udq4f1bok1p6grnq.apps.googleusercontent.com",
+              "client_id": "1080995934620-2oeqc73tgppvg82ed9fbpstrh1sos3kf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

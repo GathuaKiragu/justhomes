@@ -44,7 +44,7 @@ android {
 
         minSdk=24
         targetSdk = flutter.targetSdkVersion // Uses Flutter's specified target SDK version
-        versionCode = flutter.versionCode // Version code from Flutter
+        versionCode = 28 // Version code from Flutter
         versionName = flutter.versionName // Version name from Flutter
     }
 
@@ -70,6 +70,14 @@ android {
 
 flutter {
     source = "../.." // Defines the path to your Flutter project
+//    buildTypes {
+//        release {
+//            dartObfuscation true // Enables Dart code obfuscation
+//            shrinkResources true // Removes unused resources
+//            splitDebugInfo 'build/flutter/obfuscation' // Stores debug symbols for stack traces
+//            trackWidgetCreation false
+//        }
+//    }
 }
 
 // Dependencies for Google Sign-In or Firebase if necessary
